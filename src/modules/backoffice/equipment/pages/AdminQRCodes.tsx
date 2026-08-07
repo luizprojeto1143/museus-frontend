@@ -1,6 +1,6 @@
 import React, { useState, useCallback, useRef, useEffect } from "react";
 import { isAxiosError } from "axios";
-import html2canvas from "html2canvas";
+
 import { api } from "../../../../api/client";
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -11,6 +11,38 @@ import { useAuth } from "../../../auth/AuthContext";
 import { QRCodeCanvas } from "qrcode.react";
 import { QRCodeArtCard } from "../../../../components/qrcode/QRCodeArtCard";
 import "./AdminQRCodes.css";
+
+// ---------- Canvas helpers ----------
+function roundRect(ctx: CanvasRenderingContext2D, x: number, y: number, w: number, h: number, r: number) {
+  ctx.beginPath();
+  ctx.moveTo(x + r, y);
+  ctx.lineTo(x + w - r, y);
+  ctx.arcTo(x + w, y, x + w, y + r, r);
+  ctx.lineTo(x + w, y + h - r);
+  ctx.arcTo(x + w, y + h, x + w - r, y + h, r);
+  ctx.lineTo(x + r, y + h);
+  ctx.arcTo(x, y + h, x, y + h - r, r);
+  ctx.lineTo(x, y + r);
+  ctx.arcTo(x, y, x + r, y, r);
+  ctx.closePath();
+}
+
+function wrapText(ctx: CanvasRenderingContext2D, text: string, x: number, y: number, maxWidth: number, lineHeight: number) {
+  const words = text.split(" ");
+  let line = "";
+  for (const word of words) {
+    const test = line ? `${line} ${word}` : word;
+    if (ctx.measureText(test).width > maxWidth && line) {
+      ctx.fillText(line, x, y);
+      line = word;
+      y += lineHeight;
+    } else {
+      line = test;
+    }
+  }
+  if (line) ctx.fillText(line, x, y);
+}
+// ------------------------------------
 
 type QRType =
   | "CITY" | "EQUIPMENT" | "WORK" | "EVENT"
@@ -175,12 +207,144 @@ export const AdminQRCodes: React.FC = () => {
   };
 
   const handleDownloadArtPNG = async () => {
-    if (!generated || !qrArtRef.current) return;
-    const canvas = await html2canvas(qrArtRef.current, {
-      backgroundColor: null,
-      scale: 2,
-      useCORS: true,
-    });
+    if (!generated) return;
+
+    // Find the QR canvas rendered inside the art card ref
+    const qrCanvas = qrArtRef.current?.querySelector("canvas") as HTMLCanvasElement | null;
+
+    const SCALE = 2;
+    const W = 720 * SCALE;
+    const H = 940 * SCALE;
+
+    const canvas = document.createElement("canvas");
+    canvas.width = W;
+    canvas.height = H;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+
+    ctx.scale(SCALE, SCALE);
+
+    // --- Outer golden board ---
+    const outerR = 44;
+    ctx.save();
+    const grad = ctx.createLinearGradient(0, 0, 720, 940);
+    grad.addColorStop(0, "#e9c997");
+    grad.addColorStop(0.48, "#d8a965");
+    grad.addColorStop(1, "#c89350");
+    ctx.fillStyle = grad;
+    roundRect(ctx, 0, 0, 720, 940, outerR);
+    ctx.fill();
+    ctx.restore();
+
+    // Outer border
+    ctx.save();
+    ctx.strokeStyle = "rgba(99,60,24,0.35)";
+    ctx.lineWidth = 2;
+    roundRect(ctx, 1, 1, 718, 938, outerR);
+    ctx.stroke();
+    ctx.restore();
+
+    // Inner frame line
+    ctx.save();
+    ctx.strokeStyle = "rgba(90,55,24,0.24)";
+    ctx.lineWidth = 1;
+    roundRect(ctx, 16, 16, 688, 908, 34);
+    ctx.stroke();
+    ctx.restore();
+
+    // --- Inner paper ---
+    const paperX = 52, paperY = 52, paperW = 616, paperH = 836, paperR = 34;
+    ctx.save();
+    const paperGrad = ctx.createLinearGradient(paperX, paperY, paperX + paperW, paperY + paperH);
+    paperGrad.addColorStop(0, "#fffaf0");
+    paperGrad.addColorStop(1, "#f6ecd8");
+    ctx.fillStyle = paperGrad;
+    roundRect(ctx, paperX, paperY, paperW, paperH, paperR);
+    ctx.fill();
+    ctx.restore();
+
+    // Paper border
+    ctx.save();
+    ctx.strokeStyle = "rgba(107,69,31,0.18)";
+    ctx.lineWidth = 1;
+    roundRect(ctx, paperX, paperY, paperW, paperH, paperR);
+    ctx.stroke();
+    ctx.restore();
+
+    const cx = 360; // horizontal center
+    let y = paperY + 44;
+
+    // --- Brand ---
+    ctx.save();
+    ctx.fillStyle = "#7b4b1e";
+    ctx.font = "bold 28px Georgia, serif";
+    ctx.textAlign = "center";
+    ctx.fillText("Cultura Viva", cx, y + 28);
+    ctx.restore();
+    y += 56;
+
+    // Divider line
+    ctx.save();
+    ctx.strokeStyle = "rgba(120,75,30,0.3)";
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(paperX + 60, y);
+    ctx.lineTo(paperX + paperW - 60, y);
+    ctx.stroke();
+    ctx.restore();
+    y += 24;
+
+    // --- Title ---
+    ctx.save();
+    ctx.fillStyle = "#2b2118";
+    ctx.font = "bold 34px Georgia, serif";
+    ctx.textAlign = "center";
+    wrapText(ctx, generated.title || "QR Code", cx, y, paperW - 80, 42);
+    y += 52;
+
+    // Type label
+    ctx.save();
+    ctx.fillStyle = "#7b4b1e";
+    ctx.font = "20px Georgia, serif";
+    ctx.textAlign = "center";
+    const typeLabel = generated.type === "WORK" ? "Obra" : generated.type === "EQUIPMENT" ? "Entrada" : "QR";
+    ctx.fillText(`${typeLabel} nº ${generated.code}`, cx, y + 22);
+    ctx.restore();
+    y += 44;
+
+    // Short divider
+    ctx.save();
+    ctx.strokeStyle = "rgba(120,75,30,0.3)";
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(cx - 80, y);
+    ctx.lineTo(cx + 80, y);
+    ctx.stroke();
+    ctx.restore();
+    y += 24;
+
+    // --- QR Code ---
+    const qrSize = 260;
+    const qrX = cx - qrSize / 2;
+    if (qrCanvas) {
+      ctx.save();
+      ctx.fillStyle = "#fbf6eb";
+      ctx.fillRect(qrX - 10, y - 10, qrSize + 20, qrSize + 20);
+      ctx.drawImage(qrCanvas, qrX, y, qrSize, qrSize);
+      ctx.restore();
+    }
+    y += qrSize + 24;
+
+    // --- Footer instruction ---
+    ctx.save();
+    ctx.fillStyle = "#7b4b1e";
+    ctx.font = "18px Georgia, serif";
+    ctx.textAlign = "center";
+    const instruction = generated.type === "EQUIPMENT" ? "Aponte a câmera para entrar" : "Aponte a câmera para acessar";
+    ctx.fillText(instruction, cx, y + 20);
+    ctx.restore();
+
+    // Download
     const a = document.createElement("a");
     a.href = canvas.toDataURL("image/png", 1);
     a.download = `qrcode-placa-${generated.code}.png`;
