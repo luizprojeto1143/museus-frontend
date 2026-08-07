@@ -1,5 +1,5 @@
 import React from "react";
-import { useLocation, Navigate } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import { Register } from "./Register";
 
 export const RegisterWrapper: React.FC = () => {
@@ -9,18 +9,16 @@ export const RegisterWrapper: React.FC = () => {
     tenantName?: string; 
     cityId?: string; 
     equipamentoId?: string 
-  };
+  } | null;
 
-  if (!state?.tenantId || !state?.tenantName) {
-    return <Navigate to="/select-museum" replace />;
-  }
-
+  // Allow platform-level registration without a museum selected.
+  // tenantId is optional — the backend handles null tenantId fine.
   return (
     <Register 
-      tenantId={state.tenantId} 
-      tenantName={state.tenantName} 
-      cityId={state.cityId || ""}
-      equipamentoId={state.equipamentoId || ""}
+      tenantId={state?.tenantId || ""}
+      tenantName={state?.tenantName || ""}
+      cityId={state?.cityId || ""}
+      equipamentoId={state?.equipamentoId || ""}
     />
   );
 };

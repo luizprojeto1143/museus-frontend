@@ -8,8 +8,8 @@ import { isAxiosError } from "axios";
 import { z } from "zod";
 
 interface RegisterProps {
-  tenantId: string;
-  tenantName: string;
+  tenantId?: string;
+  tenantName?: string;
   cityId?: string;
   equipamentoId?: string;
 }
@@ -25,7 +25,7 @@ interface ApiErrorResponse {
 }
 
 const visitorRegisterSchema = z.object({
-  tenantId: z.string().trim().min(1),
+  tenantId: z.string().trim().optional().nullable(),
   cityId: z.string().optional(),
   equipamentoId: z.string().optional(),
   name: z.string().trim().min(2, "Informe seu nome."),
@@ -189,7 +189,7 @@ export const Register: React.FC<RegisterProps> = ({ tenantId, tenantName, cityId
           marginBottom: "2rem",
           lineHeight: "1.5"
         }}>
-          {t("welcome.subtitle")} <strong>{tenantName}</strong>.
+          {tenantName ? <>{t("welcome.subtitle")} <strong>{tenantName}</strong>.</> : "Crie sua conta e explore a cultura do Brasil."}
         </p>
 
         {/* Foto (opcional) */}
