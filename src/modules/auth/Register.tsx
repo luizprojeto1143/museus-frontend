@@ -25,18 +25,18 @@ interface ApiErrorResponse {
 }
 
 const visitorRegisterSchema = z.object({
-  tenantId: z.string().trim().optional().nullable(),
-  cityId: z.string().optional(),
-  equipamentoId: z.string().optional(),
+  tenantId: z.string().trim().optional().nullable().or(z.literal("")),
+  cityId: z.string().optional().nullable(),
+  equipamentoId: z.string().optional().nullable(),
   name: z.string().trim().min(2, "Informe seu nome."),
-  email: z.string().trim().email("Informe um e-mail valido."),
-  password: z.string().min(10, "A senha deve ter no minimo 10 caracteres."),
-  confirmPassword: z.string().min(10),
-  age: z.number().int().min(1).max(120),
+  email: z.string().trim().email("Informe um e-mail válido."),
+  password: z.string().min(6, "A senha deve ter no mínimo 6 caracteres."),
+  confirmPassword: z.string().min(6),
+  age: z.number().int().min(1).max(120).optional().nullable(),
   photoUrl: z.string().nullable(),
   isTeacher: z.boolean()
 }).refine(data => data.password === data.confirmPassword, {
-  message: "As senhas nao conferem.",
+  message: "As senhas não conferem.",
   path: ["confirmPassword"]
 });
 
@@ -103,22 +103,27 @@ export const Register: React.FC<RegisterProps> = ({ tenantId, tenantName, cityId
     }
 
     const numericAge = Number(age);
+    const parsedAge = age && Number.isFinite(numericAge) && numericAge > 0 ? Math.trunc(numericAge) : null;
+    const cleanTenantId = tenantId && tenantId.trim() !== "" ? tenantId.trim() : null;
+    const cleanCityId = cityId && cityId.trim() !== "" ? cityId.trim() : null;
+    const cleanEquipamentoId = equipamentoId && equipamentoId.trim() !== "" ? equipamentoId.trim() : null;
+
     const validation = visitorRegisterSchema.safeParse({
-      tenantId,
-      cityId,
-      equipamentoId,
+      tenantId: cleanTenantId,
+      cityId: cleanCityId,
+      equipamentoId: cleanEquipamentoId,
       name,
       email,
       password,
       confirmPassword,
-      age: Number.isFinite(numericAge) ? Math.trunc(numericAge) : 0,
+      age: parsedAge,
       photoUrl: photoPreview,
       isTeacher
     });
     if (!validation.success) {
       const issue = validation.error.issues[0];
       setError(issue?.path[0] === "confirmPassword"
-        ? t("auth.errors.passwordMismatch", "As senhas nao conferem.")
+        ? t("auth.errors.passwordMismatch", "As senhas não conferem.")
         : issue?.message || t("auth.errors.registerFailed", "Falha ao registrar."));
       return;
     }
@@ -127,21 +132,19 @@ export const Register: React.FC<RegisterProps> = ({ tenantId, tenantName, cityId
       setIsSubmitting(true);
 
       await api.post("/auth/register", {
-        tenantId: validation.data.tenantId,
-        cityId: validation.data.cityId,
-        equipamentoId: validation.data.equipamentoId,
+        tenantId: cleanTenantId,
+        cityId: cleanCityId,
+        equipamentoId: cleanEquipamentoId,
         name: validation.data.name,
         email: validation.data.email,
         password: validation.data.password,
-        age: validation.data.age,
+        age: parsedAge,
         photoUrl: validation.data.photoUrl,
         isTeacher: validation.data.isTeacher
       });
 
       // Return to login preserving the QR destination, when present.
       navigate(safeRedirect ? `/login?redirect=${encodeURIComponent(safeRedirect)}` : "/login");
-    } catch (err: unknown) {
-      logger.error("Error registering visitor", err);
       setError(getApiErrorMessage(err, t("auth.errors.registerFailed", "Falha ao registrar.")));
     } finally {
       setIsSubmitting(false);

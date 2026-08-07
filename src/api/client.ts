@@ -125,7 +125,18 @@ api.interceptors.response.use(
           || currentPath.startsWith("/verify/")
           || currentPath.startsWith("/p/");
 
-        if (!isPublicRoute && !originalRequest.url?.includes("/auth/me")) {
+        let isGuest = false;
+        try {
+          const rawAuth = storage.get("museus_auth_v1");
+          if (rawAuth) {
+            const parsed = JSON.parse(rawAuth);
+            isGuest = !!parsed.isGuest;
+          }
+        } catch {
+          // ignore
+        }
+
+        if (!isPublicRoute && !originalRequest.url?.includes("/auth/me") && !isGuest) {
           logger.warn("[API] Redirecting to login.");
           window.location.href = "/login";
         }

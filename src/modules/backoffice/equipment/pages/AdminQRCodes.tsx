@@ -194,23 +194,28 @@ export const AdminQRCodes: React.FC = () => {
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
-
-  const handleDownloadPNG = () => {
     if (!generated) return;
-    const canvas = qrCanvasRef.current?.querySelector("canvas");
+    const canvas = (qrCanvasRef.current?.querySelector("canvas") || document.querySelector("canvas")) as HTMLCanvasElement | null;
     if (!canvas) return;
     
-    const a = document.createElement("a");
-    a.href = canvas.toDataURL("image/png");
-    a.download = `qr-${generated.code}.png`;
-    a.click();
+    canvas.toBlob((blob) => {
+      if (!blob) return;
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `qr-${generated.code}.png`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }, "image/png");
   };
 
   const handleDownloadArtPNG = async () => {
     if (!generated) return;
 
-    // Find the QR canvas rendered inside the art card ref
-    const qrCanvas = qrArtRef.current?.querySelector("canvas") as HTMLCanvasElement | null;
+    // Find the QR canvas rendered inside the art card ref or preview fallback
+    const qrCanvas = (qrArtRef.current?.querySelector("canvas") || qrCanvasRef.current?.querySelector("canvas") || document.querySelector("canvas")) as HTMLCanvasElement | null;
 
     const SCALE = 2;
     const W = 720 * SCALE;
@@ -344,11 +349,18 @@ export const AdminQRCodes: React.FC = () => {
     ctx.fillText(instruction, cx, y + 20);
     ctx.restore();
 
-    // Download
-    const a = document.createElement("a");
-    a.href = canvas.toDataURL("image/png", 1);
-    a.download = `qrcode-placa-${generated.code}.png`;
-    a.click();
+    // Download via Blob
+    canvas.toBlob((blob) => {
+      if (!blob) return;
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `qrcode-placa-${generated.code}.png`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }, "image/png");
   };
 
   const handleDelete = async () => {
