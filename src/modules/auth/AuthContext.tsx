@@ -133,11 +133,14 @@ function readStoredAuth(): AuthState {
     const raw = storage.get(STORAGE_KEY);
     if (!raw) return EMPTY_STATE;
     const parsed = JSON.parse(raw) as Partial<StoredAuth>;
+    const isGuest = parsed.isGuest ?? false;
     return {
       ...EMPTY_STATE,
-      isGuest: parsed.isGuest ?? false,
+      isGuest,
       cityId: parsed.cityId ?? null,
       tenantId: parsed.tenantId ?? null,
+      // Pre-populate guest identity so RequireRole passes immediately on page load
+      ...(isGuest ? { role: "visitor" as const, userId: "guest-id", name: "Visitante" } : {}),
     };
   } catch {
     return EMPTY_STATE;
@@ -361,7 +364,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       id: state.userId,
       tenantId: state.tenantId
     } : null),
-    isAuthenticated: !!state.userId,
+    isAuthenticated: !!state.userId || state.isGuest,
     login,
     enterAsGuest,
     logout,
