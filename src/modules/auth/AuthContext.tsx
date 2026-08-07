@@ -131,19 +131,37 @@ const STORAGE_KEY = "museus_auth_v1";
 function readStoredAuth(): AuthState {
   try {
     const raw = storage.get(STORAGE_KEY);
-    if (!raw) return EMPTY_STATE;
+    if (!raw) {
+      return {
+        ...EMPTY_STATE,
+        role: "visitor",
+        userId: "guest-id",
+        name: "Visitante",
+        isGuest: true
+      };
+    }
     const parsed = JSON.parse(raw) as Partial<StoredAuth>;
-    const isGuest = parsed.isGuest ?? false;
+    const isGuest = parsed.isGuest ?? true;
+    if (isGuest) {
+      return {
+        ...EMPTY_STATE,
+        role: "visitor",
+        userId: "guest-id",
+        name: "Visitante",
+        isGuest: true,
+        cityId: parsed.cityId ?? null,
+        tenantId: parsed.tenantId ?? null,
+      };
+    }
+    return EMPTY_STATE;
+  } catch {
     return {
       ...EMPTY_STATE,
-      isGuest,
-      cityId: parsed.cityId ?? null,
-      tenantId: parsed.tenantId ?? null,
-      // Pre-populate guest identity so RequireRole passes immediately on page load
-      ...(isGuest ? { role: "visitor" as const, userId: "guest-id", name: "Visitante" } : {}),
+      role: "visitor",
+      userId: "guest-id",
+      name: "Visitante",
+      isGuest: true
     };
-  } catch {
-    return EMPTY_STATE;
   }
 }
 
@@ -308,15 +326,10 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
           };
           dispatch({ type: "LOGIN", payload: restoredState });
         }
-      } catch (e: unknown) {
-        // Not authenticated or error, clear storage
-        if (!isAxiosError(e) || e.response?.status !== 401) {
-          logger.info("Session restore failed, treating as guest/logged out.");
-        }
-        dispatch({ type: "LOGOUT" });
-        storage.remove(STORAGE_KEY);
-        storage.remove("museus_access_token");
-        storage.remove("museus_refresh_token");
+      } catch {
+        // Not authenticated on backend -> preserve visitor guest session
+        const stored = readStoredAuth();
+        dispatch({ type: "LOGIN", payload: stored });
       } finally {
         setIsRestoring(false);
       }

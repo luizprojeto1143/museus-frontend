@@ -70,12 +70,11 @@ const RequireRole: React.FC<{ allowed: (Role | string)[]; children: React.ReactE
   allowed,
   children
 }) => {
-  const { isAuthenticated, role, enterAsGuest } = useAuth();
+  const { isAuthenticated, role } = useAuth();
   const location = useLocation();
 
   if (!isAuthenticated || !role) {
     if (allowed.includes("visitor")) {
-      enterAsGuest();
       return children;
     }
     return <Navigate to="/welcome" replace state={{ from: location }} />;
