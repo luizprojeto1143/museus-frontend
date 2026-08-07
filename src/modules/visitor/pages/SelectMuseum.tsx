@@ -112,7 +112,7 @@ export const SelectMuseum: React.FC = () => {
       const res = await api.get("/equipamentos/public", { signal });
       setEquipamentos(Array.isArray(res.data) ? res.data : []);
     } catch (err: unknown) {
-      if (err.name === 'CanceledError' || err.code === 'ERR_CANCELED') return;
+      if (isCanceledRequest(err)) return;
       logger.error("Error loading equipments", err);
       setErrorMsg("O servidor está momentaneamente fora do ar. Estamos restabelecendo a conexão!");
     } finally {
@@ -126,7 +126,7 @@ export const SelectMuseum: React.FC = () => {
       const res = await api.get("/events?discovery=true", { signal });
       setEvents(Array.isArray(res.data.data) ? res.data.data : []);
     } catch (err: unknown) {
-      if (err.name === 'CanceledError' || err.code === 'ERR_CANCELED') return;
+      if (isCanceledRequest(err)) return;
       logger.error("Error loading events", err);
     } finally {
       setLoadingEvents(false);
@@ -545,7 +545,7 @@ export const SelectMuseum: React.FC = () => {
               ) : !selectedCidade ? (
                 cidadesDoEstado.map(cidade => (
                    <motion.div key={cidade} variants={staggerItem}>
-                     <Card animated glow className="p-10 cursor-pointer text-center group border-white/5 bg-white/5 backdrop-blur-md" onClick={() => setSelectedCidade(cidade)}>
+                     <Card animated glow className="p-10 cursor-pointer text-center group border-white/5 bg-white/5 backdrop-blur-md" onClick={() => setSelectedCidade(cidade || null)}>
                        <Navigation size={40} className="mx-auto mb-6 text-[var(--accent-primary)] opacity-50 group-hover:opacity-100 group-hover:scale-110 transition-all duration-500" />
                        <h3 className="text-2xl font-bold text-[var(--fg-main)] group-hover:text-[var(--accent-primary)] transition-colors">{cidade}</h3>
                        <p className="text-[var(--fg-tertiary)] mt-4 font-medium uppercase tracking-widest text-xs">
