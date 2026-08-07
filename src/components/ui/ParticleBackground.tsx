@@ -1,8 +1,36 @@
-import React, { useRef, useState } from 'react';
+import React, { Component, ErrorInfo, ReactNode, useRef, useState, useEffect } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
 import { Points, PointMaterial } from '@react-three/drei';
 import * as THREE from 'three';
 import { useVisitorTheme } from '../../modules/visitor/context/VisitorThemeProvider';
+
+class ThreeErrorBoundary extends Component<{ children: ReactNode; fallback?: ReactNode }, { hasError: boolean }> {
+  state = { hasError: false };
+
+  static getDerivedStateFromError() {
+    return { hasError: true };
+  }
+
+  componentDidCatch(error: Error, errorInfo: ErrorInfo) {
+    console.warn("[Three.js WebGL Warning]:", error, errorInfo);
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return this.props.fallback || null;
+    }
+    return this.props.children;
+  }
+}
+
+function isWebGLSupported(): boolean {
+  try {
+    const canvas = document.createElement("canvas");
+    return !!(window.WebGLRenderingContext && (canvas.getContext("webgl") || canvas.getContext("experimental-webgl")));
+  } catch {
+    return false;
+  }
+}
 
 const ParticleCloud = ({ count = 3000, color = "#d4af37", isLight = false }) => {
   const points = useRef<THREE.Points>(null);
@@ -57,12 +85,21 @@ export const ParticleBackground: React.FC<ParticleBackgroundProps> = ({
 }) => {
   const { theme } = useVisitorTheme();
   const isLight = theme.theme === 'light';
+  const [canRenderWebGL, setCanRenderWebGL] = useState(false);
+
+  useEffect(() => {
+    setCanRenderWebGL(isWebGLSupported());
+  }, []);
 
   return (
     <div className={`absolute inset-0 z-0 pointer-events-none ${isLight ? 'opacity-30' : 'opacity-60'}`}>
-      <Canvas camera={{ position: [0, 0, 8], fov: 60 }}>
-        <ParticleCloud color={color} count={count} isLight={isLight} />
-      </Canvas>
+      {canRenderWebGL && (
+        <ThreeErrorBoundary>
+          <Canvas camera={{ position: [0, 0, 8], fov: 60 }} gl={{ powerPreference: "low-power", antialias: false }}>
+            <ParticleCloud color={color} count={count} isLight={isLight} />
+          </Canvas>
+        </ThreeErrorBoundary>
+      )}
       <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(ellipse_at_center,_transparent_0%,_var(--bg-page)_80%)]" />
     </div>
   );

@@ -148,10 +148,10 @@ export const GlobalBackground: React.FC<GlobalBackgroundProps> = ({
       window.removeEventListener('resize', resize);
       window.removeEventListener('mousemove', handleMouseMove);
       cancelAnimationFrame(animationFrameId);
-      gl.deleteProgram(program);
-      gl.deleteShader(vs);
-      gl.deleteShader(fs);
-      gl.deleteBuffer(positionBuffer);
+      if (program) gl.deleteProgram(program);
+      if (vs) gl.deleteShader(vs);
+      if (fs) gl.deleteShader(fs);
+      if (positionBuffer) gl.deleteBuffer(positionBuffer);
     };
   }, [primaryColor, secondaryColor, theme, imageUrl]);
 
