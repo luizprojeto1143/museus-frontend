@@ -321,6 +321,26 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
     if (isDemoMode) {
       setIsRestoring(false);
+    } else if (state.isGuest) {
+      // Guest sessions are local-only — no server call needed.
+      // Restore their role and userId so the app recognises them as a visitor.
+      dispatch({
+        type: "LOGIN",
+        payload: {
+          role: "visitor",
+          tenantId: state.tenantId,
+          equipamentoId: state.equipamentoId,
+          tenantType: state.tenantType ?? "MUSEUM",
+          email: null,
+          name: "Visitante",
+          userId: "guest-id",
+          hasProviderProfile: false,
+          isGuest: true,
+          cityId: state.cityId,
+          permissions: null,
+        },
+      });
+      setIsRestoring(false);
     } else {
       restore();
     }
