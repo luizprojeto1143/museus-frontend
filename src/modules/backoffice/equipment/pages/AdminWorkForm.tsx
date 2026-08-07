@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { logger } from "@/utils/logger";
 
 import { useTranslation } from "react-i18next";
@@ -334,6 +334,201 @@ export const AdminWorkForm: React.FC = () => {
         setVestigeType(data.vestigeType || "WORK");
         if (data.vestigeExpiresAt) setVestigeExpiresAt(new Date(data.vestigeExpiresAt).toISOString().split('T')[0]);
         setVestigeImageUrl(data.vestigeImageUrl || "");
+  librasUrl?: string;
+  vestigeActive: boolean;
+  lat?: number;
+  lng?: number;
+  latitude?: number | string;
+  longitude?: number | string;
+  captureRadiusM: number;
+  vestigeType: string;
+  vestigeExpiresAt?: string;
+  vestigeImageUrl?: string;
+}
+
+interface CreateWorkResponse {
+  id?: string;
+}
+
+interface ApiErrorResponse {
+  error?: string;
+  message?: string;
+}
+
+const workSchema = z.object({
+  title: z.string().trim().min(2, "Informe o titulo."),
+  code: z.string().trim().min(1, "Informe o codigo do discador."),
+  equipamentoId: z.string().trim().min(1, "Selecione o equipamento responsavel."),
+  radius: z.number().min(1, "O raio de deteccao precisa ser maior que zero."),
+  captureRadius: z.number().min(1, "O raio de captura precisa ser maior que zero."),
+  vestigeActive: z.boolean(),
+  vestigeLat: z.union([z.string(), z.number()]),
+  vestigeLng: z.union([z.string(), z.number()])
+}).refine((data) => {
+  if (!data.vestigeActive) return true;
+  return data.vestigeLat !== "" && data.vestigeLng !== "";
+}, {
+  message: "Informe latitude e longitude para ativar o modo vestigio.",
+  path: ["vestigeLat"]
+});
+
+function getApiErrorMessage(err: unknown, fallback: string) {
+  if (isAxiosError<ApiErrorResponse>(err)) {
+    return err.response?.data?.message || err.response?.data?.error || fallback;
+  }
+  return fallback;
+}
+
+function parseMetadata(metadata: WorkResponse["metadata"]): WorkTranslations | null {
+  if (!metadata) return null;
+  if (typeof metadata === "string") {
+    try {
+      return JSON.parse(metadata) as WorkTranslations;
+    } catch {
+      return null;
+    }
+  }
+  return metadata;
+}
+
+export const AdminWorkForm: React.FC = () => {
+  const { t } = useTranslation();
+  const { id } = useParams<{ id: string }>();
+  const { tenantId } = useAuth();
+  const term = useTerminology();
+  const isEdit = Boolean(id);
+  const navigate = useNavigate();
+
+  const isCity = useIsCityMode();
+  const tenant = useTenant();
+  const isCultural = tenant?.type === 'CULTURAL_SPACE';
+
+  // Steps Configuration Adjusted
+  const steps = [
+    { id: 0, title: "Dados Básicos", icon: FileText, description: `Informações principais da ${term.work.toLowerCase()}` },
+    { id: 1, title: "Localização", icon: MapPin, description: `Onde encontrar o ${term.work.toLowerCase()}` },
+    { id: 2, title: "Mídia e Conteúdo", icon: MonitorPlay, description: "Imagens, áudios e vídeos" },
+    { id: 3, title: "Modo Vestígio", icon: Sparkles, description: "Gamificação e Coleção" },
+    { id: 4, title: "Revisão", icon: CheckCircle, description: "Confirmação e publicação" }
+  ];
+
+  // Wizard State
+  const [currentStep, setCurrentStep] = useState(0);
+  const [direction, setDirection] = useState(0);
+
+  // Modal State
+  const [showAccessModal, setShowAccessModal] = useState(false);
+  const [requestType, setRequestType] = useState<AccessibilityRequestType>("BOTH");
+  const [requestNotes, setRequestNotes] = useState("");
+  const [isRequesting, setIsRequesting] = useState(false);
+
+  // Data State
+  const [saving, setSaving] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
+  const [isExtracting, setIsExtracting] = useState(false);
+  const [categories, setCategories] = useState<CategoryOption[]>([]);
+  const [equipamentos, setEquipamentos] = useState<EquipmentOption[]>([]);
+
+  // Form Fields
+  const [code, setCode] = useState("");
+  const [title, setTitle] = useState("");
+  const [titleEn, setTitleEn] = useState("");
+  const [titleEs, setTitleEs] = useState("");
+  const [artist, setArtist] = useState("");
+  const [year, setYear] = useState("");
+  const [category, setCategory] = useState("");
+  const [description, setDescription] = useState(t("admin.workForm.defaultDescription"));
+  const [descriptionEn, setDescriptionEn] = useState("");
+  const [descriptionEs, setDescriptionEs] = useState("");
+  const [room, setRoom] = useState("Sala 2");
+  const [floor, setFloor] = useState("1º andar");
+  const [imageUrl, setImageUrl] = useState("");
+  const [audioUrl, setAudioUrl] = useState("");
+  const [librasUrl, setLibrasUrl] = useState("");
+  const [published, setPublished] = useState(false);
+  const [technique, setTechnique] = useState("");
+  const [period, setPeriod] = useState("");
+  const [workMedium, setWorkMedium] = useState("");
+  const [dimensions, setDimensions] = useState("");
+  const [radius, setRadius] = useState(5);
+  const [equipamentoId, setEquipamentoId] = useState("");
+
+  // Vestige Fields
+  const [vestigeActive, setVestigeActive] = useState(false);
+  const [vestigeLat, setVestigeLat] = useState<number | string>("");
+  const [vestigeLng, setVestigeLng] = useState<number | string>("");
+  const [latitude, setLatitude] = useState<number | string>("");
+  const [longitude, setLongitude] = useState<number | string>("");
+  const [captureRadius, setCaptureRadius] = useState(15);
+  const [vestigeType, setVestigeType] = useState("WORK"); // L4 Fix: Default should be type, not rarity
+  const [vestigeExpiresAt, setVestigeExpiresAt] = useState("");
+  const [vestigeImageUrl, setVestigeImageUrl] = useState("");
+
+  // Fetch Data
+  useEffect(() => {
+    if (tenantId) {
+      api.get<CategoryOption[]>(`/categories`, { params: { tenantId } })
+        .then(res => setCategories(res.data))
+        .catch(console.error);
+
+      api.get<EquipmentOption[]>(`/equipamentos`)
+        .then(res => setEquipamentos(res.data))
+        .catch(console.error);
+    }
+
+    if (id && tenantId) {
+      api.get<WorkResponse>(`/works/${id}`).then((res) => {
+        const data = res.data;
+        setTitle(data.title || "");
+        setArtist(data.artist || "");
+        setYear(data.year?.toString() || "");
+        setCategory(data.categoryId || "");
+        setDescription(data.description || "");
+        setRoom(data.room || "");
+        setFloor(data.floor || "");
+        setImageUrl(data.imageUrl || "");
+        setAudioUrl(data.audioUrl || "");
+        setLibrasUrl(data.librasUrl || "");
+        setPublished(data.published ?? true);
+        setEquipamentoId(data.equipamentoId || "");
+
+        try {
+          if (data?.metadata) {
+            const meta = parseMetadata(data.metadata);
+            const trans = meta?.translations;
+            
+            if (trans) {
+              if (trans.en) {
+                setTitleEn(trans.en.title || "");
+                setDescriptionEn(trans.en.description || "");
+              }
+              if (trans.es) {
+                setTitleEs(trans.es.title || "");
+                setDescriptionEs(trans.es.description || "");
+              }
+            }
+          }
+        } catch (err) {
+          logger.warn("Could not parse metadata translations", err);
+        }
+
+        setRadius(data.radius || 5);
+        setTechnique(data.technique || "");
+        setPeriod(data.period || "");
+        setWorkMedium(data.medium || "");
+        setDimensions(data.dimensions || "");
+        if (data.qrCode?.code) setCode(data.qrCode.code);
+
+        // Vestige Data
+        setVestigeActive(!!data.vestigeActive);
+        setVestigeLat(data.lat || "");
+        setVestigeLng(data.lng || "");
+        setLatitude(data.latitude || "");
+        setLongitude(data.longitude || "");
+        setCaptureRadius(data.captureRadiusM || 15);
+        setVestigeType(data.vestigeType || "WORK");
+        if (data.vestigeExpiresAt) setVestigeExpiresAt(new Date(data.vestigeExpiresAt).toISOString().split('T')[0]);
+        setVestigeImageUrl(data.vestigeImageUrl || "");
       }).catch((err: unknown) => {
         logger.error(`Erro ao carregar ${term.work.toLowerCase()}`, err);
         toast.error(getApiErrorMessage(err, `Erro ao carregar ${term.work.toLowerCase()}`));
@@ -342,7 +537,7 @@ export const AdminWorkForm: React.FC = () => {
   }, [id, tenantId, term.work]);
   
   const handleDownloadQR = () => {
-    const originalCanvas = document.querySelector(`#qr-${code} canvas`) as HTMLCanvasElement;
+    const originalCanvas = (document.querySelector(`#qr-${code} canvas`) || document.querySelector("canvas")) as HTMLCanvasElement | null;
     if (originalCanvas) {
       const canvas = document.createElement("canvas");
       const ctx = canvas.getContext("2d");
@@ -404,7 +599,7 @@ export const AdminWorkForm: React.FC = () => {
       ctx.fillText(safeTitle, canvas.width / 2, 288, 500);
 
       ctx.font = "34px Georgia, serif";
-      ctx.fillText(`Obra n° ${code}`, canvas.width / 2, 358);
+      ctx.fillText(`Obra nº ${code}`, canvas.width / 2, 358);
 
       ctx.strokeStyle = "#8b5a2b";
       ctx.beginPath();
@@ -421,7 +616,7 @@ export const AdminWorkForm: React.FC = () => {
 
       ctx.fillStyle = "#3a2b1f";
       ctx.font = "25px Inter, Arial, sans-serif";
-      ctx.fillText("Aponte a camera para acessar", canvas.width / 2, 790);
+      ctx.fillText("Aponte a câmera para acessar", canvas.width / 2, 790);
 
       ctx.strokeStyle = "#7b4b1e";
       ctx.lineWidth = 3;
@@ -430,16 +625,6 @@ export const AdminWorkForm: React.FC = () => {
       ctx.quadraticCurveTo(360, 840, 460, 868);
       ctx.stroke();
 
-      const url = canvas.toDataURL("image/png");
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = `qrcode-moldura-${code}.png`;
-      a.click();
-    }
-  };
-
-  // Handlers
-  const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>, type: "image" | "audio" | "video", setter: (url: string) => void) => {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
       
@@ -969,7 +1154,7 @@ export const AdminWorkForm: React.FC = () => {
 
                     {code && (
                       <div className="pt-6 border-t border-white/5 flex flex-col items-center gap-6">
-                        <div className="p-4 bg-white rounded-3xl shadow-2xl shadow-gold-400/10">
+                        <div id={`qr-${code}`} className="p-4 bg-white rounded-3xl shadow-2xl shadow-gold-400/10">
                           <QRCodeCanvas value={`${window.location.origin}/qr/${code}`} size={160} level="H" />
                         </div>
                         <Button

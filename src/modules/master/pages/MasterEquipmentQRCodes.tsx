@@ -126,21 +126,82 @@ export const MasterEquipmentQRCodes: React.FC = () => {
   };
 
   const handleDownloadArt = async () => {
-    if (!artRef.current || !generated || !selectedEquipment) return;
+    if (!generated || !selectedEquipment) return;
 
     try {
       setDownloading(true);
-      const canvas = await html2canvas(artRef.current, {
-        backgroundColor: null,
-        scale: 2,
-        useCORS: true,
-      });
-      const link = document.createElement("a");
-      link.href = canvas.toDataURL("image/png", 1);
-      link.download = `qr-entrada-${selectedEquipment.slug || generated.code}.png`;
-      link.click();
+      const qrCanvas = (artRef.current?.querySelector("canvas") || document.querySelector("canvas")) as HTMLCanvasElement | null;
+
+      const SCALE = 2;
+      const W = 720 * SCALE;
+      const H = 940 * SCALE;
+
+      const canvas = document.createElement("canvas");
+      canvas.width = W;
+      canvas.height = H;
+      const ctx = canvas.getContext("2d");
+      if (!ctx) return;
+
+      ctx.scale(SCALE, SCALE);
+
+      // Outer board
+      const grad = ctx.createLinearGradient(0, 0, 720, 940);
+      grad.addColorStop(0, "#e9c997");
+      grad.addColorStop(0.48, "#d8a965");
+      grad.addColorStop(1, "#c89350");
+      ctx.fillStyle = grad;
+      ctx.fillRect(0, 0, 720, 940);
+
+      // Inner paper
+      const paperX = 52, paperY = 52, paperW = 616, paperH = 836;
+      ctx.fillStyle = "#f6ecd8";
+      ctx.fillRect(paperX, paperY, paperW, paperH);
+
+      const cx = 360;
+      let y = paperY + 44;
+
+      ctx.fillStyle = "#7b4b1e";
+      ctx.font = "bold 28px Georgia, serif";
+      ctx.textAlign = "center";
+      ctx.fillText("Cultura Viva", cx, y + 28);
+      y += 60;
+
+      ctx.fillStyle = "#2b2118";
+      ctx.font = "bold 32px Georgia, serif";
+      ctx.fillText(selectedEquipment.nome || "Equipamento Cultural", cx, y + 32);
+      y += 50;
+
+      ctx.fillStyle = "#7b4b1e";
+      ctx.font = "20px Georgia, serif";
+      ctx.fillText(`Entrada nº ${generated.code}`, cx, y + 20);
+      y += 44;
+
+      const qrSize = 260;
+      const qrX = cx - qrSize / 2;
+      if (qrCanvas) {
+        ctx.fillStyle = "#fbf6eb";
+        ctx.fillRect(qrX - 10, y - 10, qrSize + 20, qrSize + 20);
+        ctx.drawImage(qrCanvas, qrX, y, qrSize, qrSize);
+      }
+      y += qrSize + 30;
+
+      ctx.fillStyle = "#7b4b1e";
+      ctx.font = "18px Georgia, serif";
+      ctx.fillText("Aponte a câmera para entrar", cx, y + 20);
+
+      canvas.toBlob((blob) => {
+        if (!blob) return;
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = `qr-entrada-${selectedEquipment.slug || generated.code}.png`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+      }, "image/png");
     } catch (err) {
-      toast.error("Nao foi possivel baixar a arte do QR Code.");
+      toast.error("Não foi possível baixar a arte do QR Code.");
     } finally {
       setDownloading(false);
     }
