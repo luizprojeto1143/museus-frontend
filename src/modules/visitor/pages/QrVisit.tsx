@@ -1,4 +1,4 @@
-﻿import { logger } from "@/utils/logger";
+import { logger } from "@/utils/logger";
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
@@ -41,7 +41,7 @@ export const QrVisit: React.FC = () => {
   const { t } = useTranslation();
   const { code } = useParams<{ code: string }>();
   const navigate = useNavigate();
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, enterAsGuest } = useAuth();
 
   const { stats: _stats, refreshGamification } = useGamification();
   const [data, setData] = useState<ResolveResponse | null>(null);
@@ -95,16 +95,8 @@ export const QrVisit: React.FC = () => {
     setRegistering(true);
 
     try {
-      if (needsLogin) {
-        navigate(buildLoginUrl(), {
-          state: {
-            from: { pathname: data.redirectUrl },
-            tenantId: data.tenantId,
-            tenantName: data.tenantName,
-            equipamentoId: data.equipmentId || undefined
-          }
-        });
-        return;
+      if (!isAuthenticated) {
+        enterAsGuest(data.tenantId, data.equipmentId || null);
       }
 
       if (data.trackScan) {
@@ -193,9 +185,7 @@ export const QrVisit: React.FC = () => {
           </div>
         ) : (
           <p className="qr-visit-hint mt-2 text-sm text-gray-400">
-            {needsLogin
-              ? "Entre ou cadastre-se para acessar o painel deste equipamento."
-              : "Você será redirecionado para o destino."}
+            Você será redirecionado para o conteúdo.
           </p>
         )}
 
@@ -208,9 +198,9 @@ export const QrVisit: React.FC = () => {
           {registering ? (
             <>
               <span className="qr-visit-register-spinner"></span>
-              {scanResult ? "Carregando destino..." : "Registrando..."}
+              {scanResult ? "Carregando destino..." : "Abrindo..."}
             </>
-          ) : (needsLogin ? "Entrar ou Cadastrar" : (isAuthenticated ? "Registrar e Abrir" : "Abrir"))}
+          ) : (isAuthenticated ? "Registrar e Abrir" : "Abrir Conteúdo")}
         </button>
       </div>
 
