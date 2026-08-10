@@ -14,8 +14,15 @@ import { logger } from "@/utils/logger";
 // ─── Tipos ────────────────────────────────────────────────────────
 interface StoredAuth {
   isGuest?: boolean;
+  role?: Role | string | null;
+  userId?: string | null;
+  email?: string | null;
+  name?: string | null;
   cityId?: string | null;
   tenantId?: string | null;
+  equipamentoId?: string | null;
+  tenantType?: TenantType | null;
+  hasProviderProfile?: boolean;
 }
 
 interface AuthState {
@@ -128,40 +135,54 @@ function authReducer(state: AuthState, action: AuthAction): AuthState {
 // ─── Leitura única do localStorage ────────────────────────────────
 const STORAGE_KEY = "museus_auth_v1";
 
+const DEFAULT_GUEST_STATE: AuthState = {
+  role: "visitor",
+  tenantId: null,
+  equipamentoId: null,
+  tenantType: "MUSEUM",
+  email: null,
+  name: "Visitante",
+  userId: "guest-id",
+  hasProviderProfile: false,
+  isGuest: true,
+  cityId: null,
+  permissions: null,
+};
+
 function readStoredAuth(): AuthState {
   try {
     const raw = storage.get(STORAGE_KEY);
     if (!raw) {
-      return {
-        ...EMPTY_STATE,
-        role: "visitor",
-        userId: "guest-id",
-        name: "Visitante",
-        isGuest: true
-      };
+      return DEFAULT_GUEST_STATE;
     }
-    const parsed = JSON.parse(raw) as Partial<StoredAuth>;
-    const isGuest = parsed.isGuest ?? true;
+    const parsed = (typeof raw === "string" ? JSON.parse(raw) : raw) as Partial<StoredAuth>;
+    const isGuest = parsed.isGuest ?? (parsed.role === "visitor" && !parsed.userId);
     if (isGuest) {
       return {
-        ...EMPTY_STATE,
-        role: "visitor",
-        userId: "guest-id",
-        name: "Visitante",
-        isGuest: true,
+        ...DEFAULT_GUEST_STATE,
         cityId: parsed.cityId ?? null,
         tenantId: parsed.tenantId ?? null,
+        equipamentoId: parsed.equipamentoId ?? null,
       };
     }
-    return EMPTY_STATE;
+    if (parsed.role || parsed.userId) {
+      return {
+        ...EMPTY_STATE,
+        role: normalizeRole(parsed.role),
+        tenantId: parsed.tenantId ?? null,
+        equipamentoId: parsed.equipamentoId ?? null,
+        tenantType: normalizeTenantType(parsed.tenantType),
+        email: parsed.email ?? null,
+        name: parsed.name ?? null,
+        userId: parsed.userId ?? null,
+        hasProviderProfile: parsed.hasProviderProfile ?? false,
+        isGuest: false,
+        cityId: parsed.cityId ?? null,
+      };
+    }
+    return DEFAULT_GUEST_STATE;
   } catch {
-    return {
-      ...EMPTY_STATE,
-      role: "visitor",
-      userId: "guest-id",
-      name: "Visitante",
-      isGuest: true
-    };
+    return DEFAULT_GUEST_STATE;
   }
 }
 
@@ -169,8 +190,15 @@ function persistAuth(state: AuthState): void {
   try {
     const toStore: StoredAuth = {
       isGuest: state.isGuest,
+      role: state.role,
+      userId: state.userId,
+      email: state.email,
+      name: state.name,
       cityId: state.cityId,
-      tenantId: state.tenantId, // Safe to keep for context routing
+      tenantId: state.tenantId,
+      equipamentoId: state.equipamentoId,
+      tenantType: state.tenantType,
+      hasProviderProfile: state.hasProviderProfile,
     };
     storage.set(STORAGE_KEY, JSON.stringify(toStore));
   } catch {
