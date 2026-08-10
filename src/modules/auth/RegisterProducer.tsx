@@ -47,8 +47,12 @@ const producerSchema = z.object({
 });
 
 function getApiErrorMessage(err: unknown, fallback: string) {
-    if (isAxiosError<ApiErrorResponse>(err)) {
-        return err.response?.data?.message || err.response?.data?.error || fallback;
+    if (isAxiosError<any>(err)) {
+        const data = err.response?.data;
+        if (data?.errors && Array.isArray(data.errors) && data.errors.length > 0) {
+            return data.errors[0].message || data.message || fallback;
+        }
+        return data?.message || data?.error || fallback;
     }
     return fallback;
 }
