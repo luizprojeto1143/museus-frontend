@@ -81,16 +81,16 @@ export const VisitorHub: React.FC = () => {
         // Fallback to standard fetch without coordinates
       }
 
-      const isRegisteredUser = !isGuest && role && role !== "visitor";
+      const isVisitorUser = !isGuest && (role === "visitor" || !role);
 
       const requests: Promise<any>[] = [
-        api.get<ListResponse<Equipamento>>(equipamentosQuery)
+        api.get<ListResponse<Equipamento>>(equipamentosQuery).catch(() => ({ data: [] } as any))
       ];
 
-      if (isRegisteredUser) {
-        requests.push(api.get<ListResponse<RecentVisit>>("/visitors/me/recent-visits?limit=3"));
-        requests.push(api.get<ListResponse<ActiveTicket>>("/visitors/me/active-tickets?limit=3"));
-        requests.push(api.get<Partial<UserStats>>("/visitors/me/stats"));
+      if (isVisitorUser) {
+        requests.push(api.get<ListResponse<RecentVisit>>("/visitors/me/recent-visits?limit=3").catch(() => ({ data: [] } as any)));
+        requests.push(api.get<ListResponse<ActiveTicket>>("/visitors/me/active-tickets?limit=3").catch(() => ({ data: [] } as any)));
+        requests.push(api.get<Partial<UserStats>>("/visitors/me/stats").catch(() => ({ data: {} } as any)));
       }
 
       const results = await Promise.allSettled(requests);
@@ -112,14 +112,17 @@ export const VisitorHub: React.FC = () => {
         
         setEstados(estList);
       }
-      if (isRegisteredUser && results[1]?.status === "fulfilled") {
+      if (isVisitorUser && results[1]?.status === "fulfilled") {
         setRecentVisits(unwrapList(results[1].value.data));
       }
-      if (isRegisteredUser && results[2]?.status === "fulfilled") {
+      if (isVisitorUser && results[2]?.status === "fulfilled") {
         setActiveTickets(unwrapList(results[2].value.data));
       }
-      if (isRegisteredUser && results[3]?.status === "fulfilled") {
-        setStats(prev => ({ ...prev, ...results[3].value.data }));
+      if (isVisitorUser && results[3]?.status === "fulfilled") {
+        const statsObj = results[3].value.data;
+        if (statsObj && typeof statsObj === "object") {
+          setStats(prev => ({ ...prev, ...statsObj }));
+        }
       }
     } catch (_err) {
       // UI shows empty states gracefully if optional hub calls fail.

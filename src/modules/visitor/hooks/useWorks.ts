@@ -35,10 +35,12 @@ export function useWorks(params?: { limit?: number; page?: number; search?: stri
     return useQuery({
         queryKey: ["works", tenantId, equipamentoId, params],
         queryFn: async (): Promise<Work[]> => {
-            if (!tenantId) return [];
+            const queryParams: Record<string, unknown> = { ...params };
+            if (tenantId) queryParams.tenantId = tenantId;
+            if (equipamentoId) queryParams.equipamentoId = equipamentoId;
 
             const { data } = await api.get<WorkResponse[] | _WorksResponse>("/works", {
-                params: { ...params, tenantId, equipamentoId }
+                params: queryParams
             });
 
             const rawData = Array.isArray(data) ? data : (data.data || []);
@@ -53,7 +55,6 @@ export function useWorks(params?: { limit?: number; page?: number; search?: stri
                 imageUrl: getFullUrl(w.imageUrl)
             }));
         },
-        enabled: !!tenantId,
         staleTime: 1000 * 60 * 5 // 5 minutes cache
     });
 }

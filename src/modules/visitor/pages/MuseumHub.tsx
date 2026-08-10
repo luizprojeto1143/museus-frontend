@@ -73,9 +73,9 @@ export const MuseumHub: React.FC = () => {
       const res = await api.get(`/equipamentos/public/${equipmentSlug}`);
       if (res?.data) {
         setMuseum(res.data);
-        // Atualiza sessão com esse equipamento
-        if (isAuthenticated && res.data.id) {
-          updateSession(role || "visitor", res.data.tenantId || res.data.id, authName, res.data.id, citySlug || null);
+        // Atualiza sessão com esse equipamento apenas para gestores
+        if (isAuthenticated && res.data.id && role && role !== "visitor") {
+          updateSession(role, res.data.tenantId || res.data.id, authName, res.data.id, citySlug || null);
         }
         // Busca conteúdo associado
         const eqId = res.data.id;
