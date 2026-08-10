@@ -57,7 +57,7 @@ const unwrapList = <T,>(payload: ListResponse<T>): T[] => {
 };
 export const VisitorHub: React.FC = () => {
   const navigate = useNavigate();
-  const { name, role } = useAuth();
+  const { name, role, isGuest } = useAuth();
 
   const [estados, setEstados] = useState<EstadoGroup[]>([]);
   const [recentVisits, setRecentVisits] = useState<RecentVisit[]>([]);
@@ -81,12 +81,19 @@ export const VisitorHub: React.FC = () => {
         // Fallback to standard fetch without coordinates
       }
 
-      const results = await Promise.allSettled([
-        api.get<ListResponse<Equipamento>>(equipamentosQuery),
-        api.get<ListResponse<RecentVisit>>("/visitors/me/recent-visits?limit=3"),
-        api.get<ListResponse<ActiveTicket>>("/visitors/me/active-tickets?limit=3"),
-        api.get<Partial<UserStats>>("/visitors/me/stats"),
-      ]);
+      const isRegisteredUser = !isGuest && role && role !== "visitor";
+
+      const requests: Promise<any>[] = [
+        api.get<ListResponse<Equipamento>>(equipamentosQuery)
+      ];
+
+      if (isRegisteredUser) {
+        requests.push(api.get<ListResponse<RecentVisit>>("/visitors/me/recent-visits?limit=3"));
+        requests.push(api.get<ListResponse<ActiveTicket>>("/visitors/me/active-tickets?limit=3"));
+        requests.push(api.get<Partial<UserStats>>("/visitors/me/stats"));
+      }
+
+      const results = await Promise.allSettled(requests);
 
       if (results[0].status === "fulfilled") {
         const eqData = unwrapList(results[0].value.data);
@@ -105,22 +112,21 @@ export const VisitorHub: React.FC = () => {
         
         setEstados(estList);
       }
-      if (results[1].status === "fulfilled") {
+      if (isRegisteredUser && results[1]?.status === "fulfilled") {
         setRecentVisits(unwrapList(results[1].value.data));
       }
-      if (results[2].status === "fulfilled") {
+      if (isRegisteredUser && results[2]?.status === "fulfilled") {
         setActiveTickets(unwrapList(results[2].value.data));
       }
-      const statsResult = results[3];
-      if (statsResult.status === "fulfilled") {
-        setStats(prev => ({ ...prev, ...statsResult.value.data }));
+      if (isRegisteredUser && results[3]?.status === "fulfilled") {
+        setStats(prev => ({ ...prev, ...results[3].value.data }));
       }
     } catch (_err) {
       // UI shows empty states gracefully if optional hub calls fail.
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [isGuest, role]);
 
   useEffect(() => {
     if (role === "master") { navigate("/master", { replace: true }); return; }

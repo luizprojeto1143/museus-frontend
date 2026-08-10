@@ -119,25 +119,29 @@ api.interceptors.response.use(
         isRefreshing = false;
         refreshSubscribers = [];
 
-        const publicRoutes = ["/login", "/welcome", "/register", "/", "/select-museum", "/nacional", "/events"];
+        const publicRoutes = [
+          "/login", "/welcome", "/register", "/", "/select-museum", 
+          "/nacional", "/events", "/hub", "/cidades", "/equipamentos", 
+          "/obras", "/trilhas", "/eventos", "/qr"
+        ];
         const currentPath = window.location.pathname;
-        const isPublicRoute = publicRoutes.includes(currentPath)
+        const isPublicRoute = publicRoutes.some(r => currentPath === r || currentPath.startsWith(r + "/") || currentPath.startsWith(r + "?"))
           || currentPath.startsWith("/verify/")
           || currentPath.startsWith("/p/");
 
         let isGuest = false;
         try {
-          const rawAuth = storage.get("museus_auth_v1");
+          const rawAuth = storage.get<any>("museus_auth_v1");
           if (rawAuth) {
-            const parsed = JSON.parse(rawAuth);
-            isGuest = !!parsed.isGuest;
+            const parsed = typeof rawAuth === "string" ? JSON.parse(rawAuth) : rawAuth;
+            isGuest = !!parsed.isGuest || parsed.role === "visitor";
           }
         } catch {
           // ignore
         }
 
         if (!isPublicRoute && !originalRequest.url?.includes("/auth/me") && !isGuest) {
-          logger.warn("[API] Redirecting to login.");
+          logger.warn("[API] Session expired. Redirecting to login.");
           window.location.href = "/login";
         }
 
