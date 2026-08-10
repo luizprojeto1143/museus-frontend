@@ -73,10 +73,12 @@ const RequireRole: React.FC<{ allowed: (Role | string)[]; children: React.ReactE
   const { isAuthenticated, role } = useAuth();
   const location = useLocation();
 
+  // Visitor routes are accessible by guests and all authenticated user roles
+  if (allowed.includes("visitor")) {
+    return children;
+  }
+
   if (!isAuthenticated || !role) {
-    if (allowed.includes("visitor")) {
-      return children;
-    }
     return <Navigate to="/welcome" replace state={{ from: location }} />;
   }
 

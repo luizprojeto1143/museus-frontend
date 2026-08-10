@@ -67,8 +67,14 @@ const ProviderDetail = React.lazy(() => import("../modules/roteiro/ProviderDetai
 type RequireRoleProps = { allowed: (Role | string)[]; children: React.ReactElement };
 
 /** Helper to wrap a visitor page with layout + role guard */
+const ALL_VISITOR_ROLES: (Role | string)[] = [
+  "visitor", "admin", "equipment_admin", "equipment_collaborator", "master",
+  "producer", "provider", "municipal_admin", "municipal_secretary",
+  "theater_admin", "collaborator", "sponsor", "totem_operator"
+];
+
 const vr = (Component: React.ComponentType, RequireRole: React.FC<RequireRoleProps>) => (
-    <RequireRole allowed={["visitor", "admin", "equipment_admin", "equipment_collaborator", "master"]}>
+    <RequireRole allowed={ALL_VISITOR_ROLES}>
         <VisitorLayout>
             <Component />
         </VisitorLayout>
@@ -138,8 +144,13 @@ export function visitorRoutes(RequireRole: React.FC<RequireRoleProps>) {
 
             
             <Route path="/meus-ingressos" element={vr(MyTickets, RequireRole)} />
+            <Route path="/ingressos" element={<Navigate to="/meus-ingressos" replace />} />
+            <Route path="/passaporte" element={vr(Passport, RequireRole)} />
+            <Route path="/passaporte-cultural" element={vr(Passport, RequireRole)} />
+            <Route path="/passport" element={<Navigate to="/passaporte" replace />} />
             <Route path="/favoritos" element={vr(Favorites, RequireRole)} />
             <Route path="/perfil" element={vr(VisitorProfile, RequireRole)} />
+            <Route path="/profile" element={<Navigate to="/perfil" replace />} />
             <Route path="/chat" element={vr(ChatAI, RequireRole)} />
             <Route path="/roteiro-inteligente" element={vr(SmartItineraryWizard, RequireRole)} />
             <Route path="/roteiro-inteligente/resultado" element={vr(SmartItineraryResult, RequireRole)} />

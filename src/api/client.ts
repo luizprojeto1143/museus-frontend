@@ -122,7 +122,8 @@ api.interceptors.response.use(
         const publicRoutes = [
           "/login", "/welcome", "/register", "/", "/select-museum", 
           "/nacional", "/events", "/hub", "/cidades", "/equipamentos", 
-          "/obras", "/trilhas", "/eventos", "/qr"
+          "/obras", "/trilhas", "/eventos", "/qr", "/passaporte",
+          "/meus-ingressos", "/perfil", "/favoritos", "/rpg", "/colecao", "/guarda-roupa"
         ];
         const currentPath = window.location.pathname;
         const isPublicRoute = publicRoutes.some(r => currentPath === r || currentPath.startsWith(r + "/") || currentPath.startsWith(r + "?"))
