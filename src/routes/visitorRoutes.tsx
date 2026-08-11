@@ -141,6 +141,11 @@ export function visitorRoutes(RequireRole: React.FC<RequireRoleProps>) {
             <Route path="/scanner/qr" element={vr(ScannerPage, RequireRole)} />
             <Route path="/scanner/ai" element={vr(VisualScannerPage, RequireRole)} />
             <Route path="/qr/:code" element={vr(QrVisit, RequireRole)} />
+            <Route path="/obras" element={vr(WorksList, RequireRole)} />
+            <Route path="/mapa" element={vr(MapView, RequireRole)} />
+            <Route path="/trilhas" element={vr(TrailsList, RequireRole)} />
+            <Route path="/eventos" element={vr(EventsList, RequireRole)} />
+            <Route path="/agenda" element={vr(CulturalAgenda, RequireRole)} />
 
             
             <Route path="/meus-ingressos" element={vr(MyTickets, RequireRole)} />

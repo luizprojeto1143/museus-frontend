@@ -10,7 +10,7 @@ export const NavPill: React.FC<NavPillProps> = ({ onMenuClick }) => {
   const location = useLocation();
 
   const navItems = [
-    { to: '/home', label: 'Início', icon: '🏠' },
+    { to: '/hub', label: 'Início', icon: '🏠' },
     { to: '/obras', label: 'Obras', icon: '🏛️' },
     { to: '/scanner', label: 'Scan', icon: '📷' },
     { to: '/mapa', label: 'Mapa', icon: '📍' },

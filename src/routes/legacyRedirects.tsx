@@ -39,8 +39,6 @@ export const legacyRedirects = () => (
     <Route path="/hub-cidades" element={<Navigate to="/hub" replace />} />
     <Route path="/select-museum" element={<Navigate to="/cidades" replace />} />
     <Route path="/my-tickets" element={<Navigate to="/meus-ingressos" replace />} />
-    <Route path="/mapa" element={<Navigate to="/hub" replace />} />
-    <Route path="/agenda" element={<Navigate to="/hub" replace />} />
     
     <Route path="/obras/:id" element={<LegacyResolver type="work" />} />
     <Route path="/eventos/:id" element={<LegacyResolver type="event" />} />

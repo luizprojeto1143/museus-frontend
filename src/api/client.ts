@@ -119,30 +119,23 @@ api.interceptors.response.use(
         isRefreshing = false;
         refreshSubscribers = [];
 
-        const publicRoutes = [
-          "/login", "/welcome", "/register", "/", "/select-museum", 
-          "/nacional", "/events", "/hub", "/cidades", "/equipamentos", 
-          "/obras", "/trilhas", "/eventos", "/qr", "/passaporte",
-          "/meus-ingressos", "/perfil", "/favoritos", "/rpg", "/colecao", "/guarda-roupa"
-        ];
-        const currentPath = window.location.pathname;
-        const isPublicRoute = publicRoutes.some(r => currentPath === r || currentPath.startsWith(r + "/") || currentPath.startsWith(r + "?"))
-          || currentPath.startsWith("/verify/")
-          || currentPath.startsWith("/p/");
-
-        let isGuest = false;
+        let isVisitorRole = true;
         try {
           const rawAuth = storage.get<any>("museus_auth_v1");
           if (rawAuth) {
             const parsed = typeof rawAuth === "string" ? JSON.parse(rawAuth) : rawAuth;
-            isGuest = !!parsed.isGuest || parsed.role === "visitor";
+            isVisitorRole = !parsed.role || parsed.role === "visitor" || !!parsed.isGuest;
           }
         } catch {
           // ignore
         }
 
-        if (!isPublicRoute && !originalRequest.url?.includes("/auth/me") && !isGuest) {
-          logger.warn("[API] Session expired. Redirecting to login.");
+        const isAdminRoute = [
+          "/admin", "/master", "/producer", "/provider", "/municipal", "/theater", "/totem"
+        ].some(prefix => currentPath.startsWith(prefix));
+
+        if (isAdminRoute && !isVisitorRole && !originalRequest.url?.includes("/auth/me")) {
+          logger.warn("[API] Admin session expired. Redirecting to login.");
           window.location.href = "/login";
         }
 
