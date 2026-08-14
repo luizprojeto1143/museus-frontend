@@ -4,6 +4,7 @@ import React, { useEffect, useState, useCallback } from "react";
 import { api } from "../../../api/client";
 import { useAuth } from "../../auth/AuthContext";
 import { Loader2, Sword, Shield, Trophy, User, Crown, Shirt, ShoppingBag, IdCard } from "lucide-react";
+import { UserSilhouette } from "@/components/UserSilhouette";
 import { toast } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import { SelfieCapture } from "../components/SelfieCapture";
@@ -181,15 +182,20 @@ export const VisitorRPG: React.FC = () => {
             {/* ═══ CHARACTER CARD ══════════════ */}
             <div className={`rpg-card premium-glass`}>
                 <div className="rpg-card-glow"></div>
-                <div className="rpg-avatar-wrapper">
+
+                <div className="rpg-avatar-wrapper flex items-center justify-center">
                     <div className="rpg-avatar-ring"></div>
                     <div className="rpg-avatar-scanner"></div>
                     <div className="rpg-hologram-effect"></div>
-                    <img 
-                        src={activeChar?.displayAvatarUrl || '/default_avatar.png'} 
-                        className="rpg-avatar-img"
-                        alt="Character" 
-                    />
+                    {activeChar?.displayAvatarUrl && !activeChar.displayAvatarUrl.includes('default_avatar') ? (
+                        <img 
+                            src={activeChar.displayAvatarUrl} 
+                            className="rpg-avatar-img"
+                            alt="Character" 
+                        />
+                    ) : (
+                        <UserSilhouette size={110} className="z-10 text-yellow-500/90 drop-shadow-[0_10px_20px_rgba(212,175,55,0.3)]" />
+                    )}
                 </div>
 
                 {editing ? (

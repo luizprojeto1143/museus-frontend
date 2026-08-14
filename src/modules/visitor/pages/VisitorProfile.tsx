@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../auth/AuthContext";
 import { api } from "../../../api/client";
 import { Award, LogOut, ChevronRight, User, Star, Map, ShoppingBag, TicketPercent, Zap } from 'lucide-react';
+import { UserSilhouette } from "@/components/UserSilhouette";
 import { QRCodeSVG } from 'qrcode.react';
 import { useGamification } from "../../gamification/context/GamificationContext";
 import { TicketCard } from "../components/TicketCard";
@@ -99,6 +100,7 @@ export const VisitorProfile: React.FC = () => {
     const [_redeemedCoupons, setRedeemedCoupons] = useState<RedeemedCoupon[]>([]);
     const [stamps, setStamps] = useState<VisitorStamp[]>([]);
     const [favorites, setFavorites] = useState<FavoriteItem[]>([]);
+    const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
     const [loading, setLoading] = useState(false);
 
     useEffect(() => {
@@ -109,7 +111,14 @@ export const VisitorProfile: React.FC = () => {
         setLoading(true);
         Promise.all([
             api.get<VisitorStamp[]>('/visitors/stamps', { signal }).then(res => setStamps(Array.isArray(res.data) ? res.data.slice(0, 4) : [])).catch(() => {}),
-            api.get<FavoriteItem[]>('/favorites', { signal }).then(res => setFavorites(Array.isArray(res.data) ? res.data.slice(0, 3) : [])).catch(() => {})
+            api.get<FavoriteItem[]>('/favorites', { signal }).then(res => setFavorites(Array.isArray(res.data) ? res.data.slice(0, 3) : [])).catch(() => {}),
+            api.get<{ characters?: Array<{ isActive?: boolean; displayAvatarUrl?: string }> }>('/rpg/me', { signal }).then(res => {
+                const chars = res.data?.characters || [];
+                const active = chars.find(c => c.isActive) || chars[0];
+                if (active?.displayAvatarUrl && !active.displayAvatarUrl.includes('default_avatar')) {
+                    setAvatarUrl(active.displayAvatarUrl);
+                }
+            }).catch(() => {})
         ]).finally(() => setLoading(false));
 
         return () => abortController.abort();
@@ -382,11 +391,11 @@ export const VisitorProfile: React.FC = () => {
             {!isGuest ? (
                 <section className="profile-card-premium">
                     <div className="profile-hero-premium">
-                        <div className="avatar-premium">
-                            {name ? (
-                                <span>{name.charAt(0).toUpperCase()}</span>
+                        <div className="avatar-premium flex items-center justify-center relative overflow-hidden bg-slate-900 border-2 border-yellow-500/40">
+                            {avatarUrl ? (
+                                <img src={avatarUrl} alt={name || "Perfil"} className="w-full h-full object-cover rounded-full" />
                             ) : (
-                                <User size={64} />
+                                <UserSilhouette size={64} className="text-yellow-500/90 drop-shadow-md" />
                             )}
                             <div className="level-badge-premium">LVL {currentLevel.level}</div>
                         </div>
