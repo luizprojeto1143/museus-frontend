@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import React, { useEffect, useState, useCallback } from "react";
 import { api } from "../../../api/client";
 import { useAuth } from "../../auth/AuthContext";
-import { Loader2, Sword, Shield, Trophy, User, Crown } from "lucide-react";
+import { Loader2, Sword, Shield, Trophy, User, Crown, Shirt, ShoppingBag, IdCard } from "lucide-react";
 import { toast } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import { SelfieCapture } from "../components/SelfieCapture";
@@ -269,27 +269,33 @@ export const VisitorRPG: React.FC = () => {
             {/* ═══ ACTIONS & EVOLUTION ═════════ */}
             <div className="flex flex-col gap-3">
                 <div className="grid grid-cols-2 gap-3">
-                    <button onClick={() => navigate('/wardrobe')} className="bento-card !p-6 flex-row items-center gap-4 cursor-pointer">
-                        <span className="text-2xl">🎒</span>
+                    <button onClick={() => navigate('/wardrobe')} className="bento-card !p-5 flex flex-row items-center gap-4 cursor-pointer transition-all hover:scale-[1.02]">
+                        <div className="p-3 rounded-2xl bg-yellow-500/10 border border-yellow-500/30 text-yellow-500 flex items-center justify-center">
+                            <Shirt size={24} />
+                        </div>
                         <div className="text-left">
-                            <div className="text-[9px] uppercase tracking-tighter text-yellow-600">Skins</div>
-                            <div className="text-xs font-bold text-white">Vestiário</div>
+                            <div className="text-[10px] uppercase font-bold tracking-wider text-yellow-600">Skins</div>
+                            <div className="text-sm font-black text-white italic">Vestiário</div>
                         </div>
                     </button>
-                    <button onClick={() => navigate('/marketplace')} className="bento-card !p-6 flex-row items-center gap-4 cursor-pointer">
-                        <span className="text-2xl">🛒</span>
+                    <button onClick={() => navigate('/marketplace')} className="bento-card !p-5 flex flex-row items-center gap-4 cursor-pointer transition-all hover:scale-[1.02]">
+                        <div className="p-3 rounded-2xl bg-yellow-500/10 border border-yellow-500/30 text-yellow-500 flex items-center justify-center">
+                            <ShoppingBag size={24} />
+                        </div>
                         <div className="text-left">
-                            <div className="text-[9px] uppercase tracking-tighter text-yellow-600">Trading</div>
-                            <div className="text-xs font-bold text-white">Mercado</div>
+                            <div className="text-[10px] uppercase font-bold tracking-wider text-yellow-600">Trading</div>
+                            <div className="text-sm font-black text-white italic">Mercado</div>
                         </div>
                     </button>
                 </div>
                 
-                <button onClick={() => navigate('/cracha/rastreio')} className="bento-card !p-6 flex-row items-center gap-4 cursor-pointer">
-                    <span className="text-2xl">🚚</span>
+                <button onClick={() => navigate('/cracha/rastreio')} className="bento-card !p-5 flex flex-row items-center gap-4 cursor-pointer transition-all hover:scale-[1.02]">
+                    <div className="p-3 rounded-2xl bg-yellow-500/10 border border-yellow-500/30 text-yellow-500 flex items-center justify-center">
+                        <IdCard size={24} />
+                    </div>
                     <div className="text-left">
-                        <div className="text-[9px] uppercase tracking-tighter text-yellow-600">Status Físico</div>
-                        <div className="text-xs font-bold text-white">Rastrear Crachá de Embaixador</div>
+                        <div className="text-[10px] uppercase font-bold tracking-wider text-yellow-600">Status Físico</div>
+                        <div className="text-sm font-black text-white italic">Rastrear Crachá de Embaixador</div>
                     </div>
                 </button>
             </div>

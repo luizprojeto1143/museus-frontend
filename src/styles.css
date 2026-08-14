@@ -1675,6 +1675,61 @@ h2, .section-title {
   color: #94a3b8 !important; 
 }
 
+/* --- GLOBAL BUTTON & CARD VISIBLE BORDER/OUTLINE RULES --- */
+
+/* Dark mode button & card outlines */
+:root:not([data-theme="light"]) .btn-secondary,
+:root:not([data-theme="light"]) .bento-card,
+:root:not([data-theme="light"]) .rpg-card,
+:root:not([data-theme="light"]) .rpg-stat-box,
+:root:not([data-theme="light"]) .premium-glass,
+:root:not([data-theme="light"]) .glass-card,
+:root:not([data-theme="light"]) .card,
+:root:not([data-theme="light"]) [class*="card"],
+:root[data-theme="dark"] .btn-secondary,
+:root[data-theme="dark"] .bento-card,
+:root[data-theme="dark"] .rpg-card,
+:root[data-theme="dark"] .rpg-stat-box,
+:root[data-theme="dark"] .premium-glass,
+:root[data-theme="dark"] .glass-card,
+:root[data-theme="dark"] .card,
+:root[data-theme="dark"] [class*="card"] {
+  border: 1px solid rgba(255, 255, 255, 0.22) !important;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+}
+
+:root:not([data-theme="light"]) .bento-card,
+:root[data-theme="dark"] .bento-card {
+  background: rgba(22, 22, 34, 0.9) !important;
+  border: 1px solid rgba(212, 175, 55, 0.4) !important;
+}
+
+:root:not([data-theme="light"]) .rpg-stat-box,
+:root[data-theme="dark"] .rpg-stat-box {
+  background: rgba(22, 22, 34, 0.9) !important;
+  border: 1px solid rgba(255, 255, 255, 0.18) !important;
+}
+
+/* Light mode button & card outlines */
+:root[data-theme="light"] .btn-secondary,
+:root[data-theme="light"] .bento-card,
+:root[data-theme="light"] .rpg-card,
+:root[data-theme="light"] .rpg-stat-box,
+:root[data-theme="light"] .premium-glass,
+:root[data-theme="light"] .glass-card,
+:root[data-theme="light"] .card,
+:root[data-theme="light"] [class*="card"] {
+  border: 1px solid #cbd5e1 !important;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.06) !important;
+  background-color: #ffffff !important;
+  color: #0f172a !important;
+}
+
+:root[data-theme="light"] .bento-card {
+  background: #ffffff !important;
+  border: 1px solid #cbd5e1 !important;
+}
+
 
 /* 📱 MOBILE UI/UX PERFECTION PATCH */
 @media (max-width: 768px) {
