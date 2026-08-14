@@ -44,9 +44,9 @@ export const SelfieCapture: React.FC<SelfieCaptureProps> = ({ onCapture, isGener
       </p>
 
       <div className="capture-actions">
-        <label className="capture-btn primary">
-          <Camera size={24} />
-          <span>Tirar Selfie</span>
+        <label className="capture-btn primary cursor-pointer">
+          <Camera size={24} className="text-slate-950" />
+          <span className="text-slate-950 font-black">Tirar Selfie</span>
           <input 
             type="file" 
             accept="image/*" 
@@ -57,9 +57,9 @@ export const SelfieCapture: React.FC<SelfieCaptureProps> = ({ onCapture, isGener
           />
         </label>
 
-        <label className="capture-btn secondary">
+        <label className="capture-btn secondary cursor-pointer">
           <ImageIcon size={20} />
-          <span>Escolher da Galeria</span>
+          <span className="font-bold">Escolher da Galeria</span>
           <input 
             type="file" 
             accept="image/*" 
