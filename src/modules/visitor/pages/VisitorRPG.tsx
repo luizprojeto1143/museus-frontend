@@ -160,12 +160,20 @@ export const VisitorRPG: React.FC = () => {
         );
     }
 
-    if (!visitor) return null;
+    const activeVisitor = visitor || {
+        class: "NOVATO",
+        currentXp: 0,
+        nextLevelXp: 100,
+        level: 1,
+        totalVisits: 0,
+        totalWorks: 0,
+        totalCards: 0
+    };
 
-    const visitorClass = visitor.class || "NOVATO";
+    const visitorClass = activeVisitor.class || "NOVATO";
     const cls = classConfig[visitorClass] || classConfig.NOVATO;
-    const currentXp = Number(visitor.currentXp) || 0;
-    const nextLevelXp = Number(visitor.nextLevelXp) || 100;
+    const currentXp = Number(activeVisitor.currentXp) || 0;
+    const nextLevelXp = Number(activeVisitor.nextLevelXp) || 100;
     const xpPct = nextLevelXp > 0 ? Math.round((currentXp / nextLevelXp) * 100) : 0;
 
     return (
@@ -206,7 +214,7 @@ export const VisitorRPG: React.FC = () => {
                 <div className="bg-black/40 rounded-3xl p-6 border border-white/5">
                     <div className="flex justify-between items-end mb-3">
                         <div className="flex items-center gap-3">
-                            <span className="text-3xl font-black text-white italic">Nv. {visitor.level || 1}</span>
+                            <span className="text-3xl font-black text-white italic">Nv. {activeVisitor.level || 1}</span>
                             <span className="text-[10px] bg-yellow-600/20 text-yellow-600 px-2 rounded-md font-mono">{xpPct}%</span>
                         </div>
                         <span className="text-[10px] font-mono text-zinc-500 uppercase tracking-widest">{currentXp.toLocaleString()} / {nextLevelXp.toLocaleString()} XP</span>
@@ -223,15 +231,15 @@ export const VisitorRPG: React.FC = () => {
             {/* ═══ STATS GRID ══════════════════ */}
             <div className="rpg-stats">
                 <div className="rpg-stat-box">
-                    <span className="rpg-stat-val italic">{visitor.totalVisits || 0}</span>
+                    <span className="rpg-stat-val italic">{activeVisitor.totalVisits || 0}</span>
                     <span className="rpg-stat-lbl">Explorações</span>
                 </div>
                 <div className="rpg-stat-box">
-                    <span className="rpg-stat-val italic">{visitor.totalWorks || 0}</span>
+                    <span className="rpg-stat-val italic">{activeVisitor.totalWorks || 0}</span>
                     <span className="rpg-stat-lbl">Relíquias</span>
                 </div>
                 <div className="rpg-stat-box">
-                    <span className="rpg-stat-val italic">{visitor.totalCards || 0}</span>
+                    <span className="rpg-stat-val italic">{activeVisitor.totalCards || 0}</span>
                     <span className="rpg-stat-lbl">Grimório</span>
                 </div>
             </div>
