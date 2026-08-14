@@ -123,7 +123,10 @@
       "password": "Senha",
       "submit": "Entrar",
       "forgotPassword": "Esqueci minha senha",
-      "noAccount": "Não tem uma conta? Cadastre-se"
+      "noAccount": "Não tem uma conta? Cadastre-se",
+      "subtitle": "Sua jornada cultural começa aqui",
+      "emailPlaceholder": "seu@email.com",
+      "registerNow": "Cadastre-se agora"
     },
     "register": {
       "title": "Crie sua conta",
@@ -308,7 +311,10 @@
   },
   "visitor": {
     "layout": {
-      "guest_banner": "Você está em modo visitante. Crie uma conta para salvar seu progresso!"
+      "VocEstExplorandoComoVisitanteC": "✨ Você está explorando como visitante. Crie uma conta para salvar favoritos e ganhar selos!",
+      "VocEstExplorandoComoVisitanteCrieUmaCont": "Explore como visitante ou crie uma conta para ganhar selos!",
+      "criarContaGrtis": "Criar Conta Grátis",
+      "abrirTecladoNumrico": "Abrir teclado numérico"
     },
     "ai": {
       "chatTitle": "Chat IA",
@@ -397,13 +403,34 @@
         "cityBadge": "Secretaria Municipal de Cultura"
       },
       "bento": {
-        "scanner": { "label": "Scanner Inteligente", "title": "Decifrar Obra" },
-        "map": { "label": "Cartografia Digital", "title": "Explorar Mapa" },
-        "events": { "label": "Efemérides", "title": "Eventos" },
-        "trails": { "label": "Roteiros Históricos", "title": "Trilhas" },
-        "rpg": { "label": "Selo de Embaixador", "title": "Minha Jornada RPG" },
-        "challenges": { "label": "Provas de Saber", "title": "Desafios" },
-        "ranking": { "label": "Hall da Fama", "title": "Ranking" }
+        "scanner": {
+          "label": "Scanner Inteligente",
+          "title": "Decifrar Obra"
+        },
+        "map": {
+          "label": "Cartografia Digital",
+          "title": "Explorar Mapa"
+        },
+        "events": {
+          "label": "Efemérides",
+          "title": "Eventos"
+        },
+        "trails": {
+          "label": "Roteiros Históricos",
+          "title": "Trilhas"
+        },
+        "rpg": {
+          "label": "Selo de Embaixador",
+          "title": "Minha Jornada RPG"
+        },
+        "challenges": {
+          "label": "Provas de Saber",
+          "title": "Desafios"
+        },
+        "ranking": {
+          "label": "Hall da Fama",
+          "title": "Ranking"
+        }
       },
       "gallery": {
         "badge": "Galeria de Destaques",
@@ -561,7 +588,8 @@
       "work": "Obra",
       "visitedAt": "Visitado em",
       "guest_prompt": "Registre-se para começar a colecionar carimbos, ganhar XP e desbloquear conquistas exclusivas durante sua visita.",
-      "start_now": "Começar Agora"
+      "start_now": "Começar Agora",
+      "exploreMap": "Explorar Mapa"
     },
     "achievements": {
       "title": "Conquistas",
@@ -777,12 +805,6 @@
       "perodo": "Período",
       "tcnica": "Técnica",
       "dimenses": "Dimensões"
-    },
-    "layout": {
-      "VocEstExplorandoComoVisitanteC": "✨ Você está explorando como visitante. Crie uma conta para salvar favoritos e ganhar selos!",
-      "VocEstExplorandoComoVisitanteCrieUmaCont": "Explore como visitante ou crie uma conta para ganhar selos!",
-      "criarContaGrtis": "Criar Conta Grátis",
-      "abrirTecladoNumrico": "Abrir teclado numérico"
     }
   },
   "admin": {
@@ -2713,7 +2735,6 @@
       "descrioProfissionalCurrculoResumido": "Descrição Profissional / Currículo resumido"
     }
   },
-
   "totem": {
     "totemdashboard": {
       "escanearQrCodeParaEntradaRpida": "Escanear QR Code para entrada rápida",
