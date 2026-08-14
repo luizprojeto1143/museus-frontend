@@ -9,7 +9,9 @@ import {
   Menu, 
   X, 
   User as UserIcon,
-  ShieldCheck
+  ShieldCheck,
+  Palette,
+  FileText
 } from "lucide-react";
 import { useAuth } from "../../auth/AuthContext";
 import "./SponsorLayout.css";
@@ -27,18 +29,28 @@ export const SponsorLayout: React.FC = () => {
       icon: <BarChart3 size={20} />
     },
     {
+      path: "/sponsor/browse",
+      label: "Patrocinar Obras",
+      icon: <Palette size={20} />
+    },
+    {
+      path: "/sponsor/my-sponsorships",
+      label: "Minhas Obras",
+      icon: <Building2 size={20} />
+    },
+    {
       path: "/sponsor/opportunities",
-      label: "Buscar Oportunidades",
+      label: "Editais & Cotas",
       icon: <Handshake size={20} />
     },
     {
       path: "/sponsor/contracts",
-      label: "Meus Contratos & Marca",
-      icon: <Building2 size={20} />
+      label: "Meus Ativos & Marca",
+      icon: <FileText size={20} />
     },
     {
       path: "/sponsor/certificates",
-      label: "Certificados Culturais",
+      label: "Certificados ESG",
       icon: <Award size={20} />
     }
   ];

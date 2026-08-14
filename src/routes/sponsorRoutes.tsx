@@ -8,6 +8,7 @@ const SponsorCheckout = React.lazy(() => import('../modules/backoffice/sponsor')
 const SponsorSuccess = React.lazy(() => import('../modules/backoffice/sponsor').then(m => ({ default: m.SponsorSuccess })));
 
 const SponsorImpact = React.lazy(() => import('../modules/backoffice/sponsor').then(m => ({ default: m.SponsorImpact })));
+const SponsorDashboard = React.lazy(() => import('../modules/backoffice/sponsor').then(m => ({ default: m.SponsorDashboard })));
 const SponsorOpportunities = React.lazy(() => import('../modules/backoffice/sponsor').then(m => ({ default: m.SponsorOpportunities })));
 const SponsorAssets = React.lazy(() => import('../modules/backoffice/sponsor').then(m => ({ default: m.SponsorAssets })));
 const SponsorCertificates = React.lazy(() => import('../modules/backoffice/sponsor').then(m => ({ default: m.SponsorCertificates })));
@@ -36,7 +37,10 @@ export const sponsorRoutes = (RequireRole: React.FC<{ allowed: (Role | string)[]
         <SponsorLayout />
       </RequireRole>
     }>
+      <Route index element={<SponsorImpact />} />
       <Route path="dashboard" element={<SponsorImpact />} />
+      <Route path="browse" element={<SponsorBrowseWorks />} />
+      <Route path="my-sponsorships" element={<SponsorDashboard />} />
       <Route path="opportunities" element={<SponsorOpportunities />} />
       <Route path="contracts" element={<SponsorAssets />} />
       <Route path="certificates" element={<SponsorCertificates />} />
