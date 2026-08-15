@@ -41,7 +41,7 @@ const AdminCalendar = React.lazy(() => import("../modules/backoffice/equipment/p
 type RequireRoleProps = { allowed: (Role | string)[]; children: React.ReactElement };
 
 const pr = (Component: React.ComponentType, RequireRole: React.FC<RequireRoleProps>) => (
-    <RequireRole allowed={["producer"]}>
+    <RequireRole allowed={["producer", "master", "municipal_admin", "admin"]}>
         <ProducerLayout>
             <Component />
         </ProducerLayout>
