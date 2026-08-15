@@ -275,8 +275,16 @@ export const VisitorHub: React.FC = () => {
           transition={{ duration: 0.4, delay: 0.1 }}
         >
           <button
-            id="hub-btn-scanner"
+            id="hub-btn-agenda"
             className="hub-action-btn hub-action-primary"
+            onClick={() => navigate("/agenda")}
+          >
+            <Calendar size={22} />
+            <span>Agenda Cultural</span>
+          </button>
+          <button
+            id="hub-btn-scanner"
+            className="hub-action-btn"
             onClick={() => navigate("/scanner")}
           >
             <QrCode size={22} />
@@ -309,6 +317,77 @@ export const VisitorHub: React.FC = () => {
             <Compass size={22} />
             <span>Meu Perfil</span>
           </button>
+        </motion.section>
+
+        {/* Agenda Cultural da Semana */}
+        <motion.section
+          className="hub-agenda-section"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4, delay: 0.12 }}
+          style={{ padding: "24px 16px 0" }}
+        >
+          <div className="hub-section-header">
+            <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+              <Calendar size={22} color="#d4af37" />
+              <h2 style={{ fontSize: "1.1rem", fontWeight: "800", color: "#fff", margin: 0 }}>
+                Agenda Cultural da Semana
+              </h2>
+            </div>
+            <button className="hub-see-all" onClick={() => navigate("/agenda")}>
+              Ver agenda completa <ChevronRight size={16} />
+            </button>
+          </div>
+
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(260px, 1fr))", gap: "12px", marginTop: "12px" }}>
+            <div 
+              onClick={() => navigate("/agenda")}
+              style={{
+                background: "rgba(255,255,255,0.04)",
+                border: "1px solid rgba(212, 175, 55, 0.2)",
+                borderRadius: "20px",
+                padding: "16px",
+                cursor: "pointer",
+                display: "flex",
+                gap: "14px",
+                alignItems: "center"
+              }}
+            >
+              <div style={{ background: "rgba(212, 175, 55, 0.15)", borderRadius: "16px", padding: "12px", textAlign: "center", color: "#d4af37", minWidth: "60px" }}>
+                <span style={{ display: "block", fontSize: "0.65rem", fontWeight: "900", textTransform: "uppercase" }}>SEXTA</span>
+                <strong style={{ fontSize: "1.4rem", fontWeight: "900" }}>15</strong>
+              </div>
+              <div>
+                <span style={{ fontSize: "0.65rem", color: "#34d399", fontWeight: "800", textTransform: "uppercase" }}>Entrada Gratuita</span>
+                <h4 style={{ fontSize: "0.95rem", fontWeight: "800", color: "#fff", margin: "2px 0" }}>Noite de Jazz no Museu</h4>
+                <p style={{ fontSize: "0.75rem", color: "#94a3b8", margin: 0 }}>19:30h • Museu de Arte Sacra</p>
+              </div>
+            </div>
+
+            <div 
+              onClick={() => navigate("/agenda")}
+              style={{
+                background: "rgba(255,255,255,0.04)",
+                border: "1px solid rgba(255,255,255,0.08)",
+                borderRadius: "20px",
+                padding: "16px",
+                cursor: "pointer",
+                display: "flex",
+                gap: "14px",
+                alignItems: "center"
+              }}
+            >
+              <div style={{ background: "rgba(255, 255, 255, 0.08)", borderRadius: "16px", padding: "12px", textAlign: "center", color: "#fff", minWidth: "60px" }}>
+                <span style={{ display: "block", fontSize: "0.65rem", fontWeight: "900", textTransform: "uppercase" }}>SÁBADO</span>
+                <strong style={{ fontSize: "1.4rem", fontWeight: "900" }}>16</strong>
+              </div>
+              <div>
+                <span style={{ fontSize: "0.65rem", color: "#fbbf24", fontWeight: "800", textTransform: "uppercase" }}>Teatro & Música</span>
+                <h4 style={{ fontSize: "0.95rem", fontWeight: "800", color: "#fff", margin: "2px 0" }}>O Auto da Compadecida</h4>
+                <p style={{ fontSize: "0.75rem", color: "#94a3b8", margin: 0 }}>20:00h • Teatro Municipal</p>
+              </div>
+            </div>
+          </div>
         </motion.section>
 
         {/* Teatros & Espetáculos em Cartaz */}
