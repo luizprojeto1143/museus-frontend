@@ -49,16 +49,14 @@ export default defineConfig({
       },
       workbox: {
         // Increase file size limit for caching
-        maximumFileSizeToCacheInBytes: 10000000,
+        maximumFileSizeToCacheInBytes: 15000000,
+        cleanupOutdatedCaches: true,
+        skipWaiting: true,
+        clientsClaim: true,
 
         // Precache essential assets
         globPatterns: [
           '**/*.{js,css,html,ico,png,svg,woff,woff2}'
-        ],
-        globIgnores: [
-          '**/vendor-tf-*.js',
-          '**/vendor-three-*.js',
-          '**/vendor-scanner-*.js'
         ],
 
         // Runtime caching strategies
@@ -155,9 +153,9 @@ export default defineConfig({
           }
         ],
 
-        // Offline fallback
+        // Offline fallback - never return index.html for JS assets
         navigateFallback: '/index.html',
-        navigateFallbackDenylist: [/^\/api/]
+        navigateFallbackDenylist: [/^\/api/, /\/assets\//, /\.js$/]
       },
 
       // Dev options

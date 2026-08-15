@@ -13,6 +13,33 @@ import "leaflet/dist/leaflet.css";
 import { ErrorBoundary } from "./components/ErrorBoundary";
 import { HelmetProvider } from "react-helmet-async";
 
+// Auto-recovery from stale Service Worker / MIME type error on deployment
+if (typeof window !== "undefined") {
+  window.addEventListener("error", (event) => {
+    const errorMsg = event.message || "";
+    if (
+      errorMsg.includes("Failed to load module script") ||
+      errorMsg.includes("dynamically imported module") ||
+      errorMsg.includes("Expected a JavaScript-or-Wasm module script")
+    ) {
+      console.warn("[PWA] Stale chunk detected, unregistering ServiceWorker and refreshing...");
+      if ("serviceWorker" in navigator) {
+        navigator.serviceWorker.getRegistrations().then((registrations) => {
+          for (const registration of registrations) {
+            registration.unregister();
+          }
+        });
+      }
+      if ("caches" in window) {
+        caches.keys().then((names) => {
+          for (const name of names) caches.delete(name);
+        });
+      }
+      window.location.reload();
+    }
+  });
+}
+
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   <React.StrictMode>
     <HelmetProvider>
