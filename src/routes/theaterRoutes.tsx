@@ -12,6 +12,7 @@ const TheaterCueMaster = React.lazy(() => import("../modules/theater/pages/Theat
 const TheaterMobileBoxOffice = React.lazy(() => import("../modules/theater/pages/TheaterMobileBoxOffice").then(m => ({ default: m.TheaterMobileBoxOffice })));
 const TheaterSubscriptions = React.lazy(() => import("../modules/theater/pages/TheaterSubscriptions").then(m => ({ default: m.TheaterSubscriptions })));
 const AdminTicketVerifier = React.lazy(() => import("../modules/backoffice/equipment/pages/AdminTicketVerifier").then(m => ({ default: m.AdminTicketVerifier })));
+const TheaterTeamManagement = React.lazy(() => import("../modules/theater/pages/TheaterTeamManagement").then(m => ({ default: m.TheaterTeamManagement })));
 
 const THEATER_ALLOWED_ROLES = ["theater", "theater_admin", "admin", "equipment_admin", "master", "municipal_admin", "producer"];
 
@@ -206,6 +207,28 @@ export const theaterRoutes = (RequireRole: React.FC<{ allowed: (Role | string)[]
                 <RequireRole allowed={THEATER_ALLOWED_ROLES}>
                     <TheaterLayout>
                         <TheaterSubscriptions />
+                    </TheaterLayout>
+                </RequireRole>
+            }
+        />
+
+        {/* Team & Granular Permissions */}
+        <Route
+            path="/theater/equipe"
+            element={
+                <RequireRole allowed={THEATER_ALLOWED_ROLES}>
+                    <TheaterLayout>
+                        <TheaterTeamManagement />
+                    </TheaterLayout>
+                </RequireRole>
+            }
+        />
+        <Route
+            path="/teatro/equipe"
+            element={
+                <RequireRole allowed={THEATER_ALLOWED_ROLES}>
+                    <TheaterLayout>
+                        <TheaterTeamManagement />
                     </TheaterLayout>
                 </RequireRole>
             }

@@ -3,7 +3,7 @@ import { Link, useLocation } from "react-router-dom";
 import { useAuth } from "../../auth/AuthContext";
 import { useTranslation } from "react-i18next";
 import { LanguageSwitcher } from "../../../components/LanguageSwitcher";
-import { LayoutDashboard, Theater, Armchair, Users2, LogOut, Menu, X, FileText, Ticket, QrCode } from "lucide-react";
+import { LayoutDashboard, Theater, Armchair, Users2, LogOut, Menu, X, FileText, Ticket, QrCode, Shield } from "lucide-react";
 import "./TheaterLayout.css";
 
 interface TheaterLayoutProps {
@@ -13,18 +13,26 @@ interface TheaterLayoutProps {
 export const TheaterLayout: React.FC<TheaterLayoutProps> = ({ children }) => {
   const { t } = useTranslation();
   const location = useLocation();
-  const { name, logout } = useAuth();
+  const { name, logout, permissions, role } = useAuth();
   const [mobileOpen, setMobileOpen] = useState(false);
 
-  const menuItems = [
-    { path: "/theater", label: "Painel Geral", icon: <LayoutDashboard size={20} /> },
-    { path: "/theater/sessoes", label: "Sessões e Bilheteria", icon: <Ticket size={20} /> },
-    { path: "/theater/portaria", label: "Portaria & Entrada", icon: <QrCode size={20} /> },
-    { path: "/theater/assentos", label: "Mapa de Assentos", icon: <Armchair size={20} /> },
-    { path: "/theater/playbill", label: "Programação (Playbill)", icon: <FileText size={20} /> },
-    { path: "/theater/elenco", label: "Elenco e Staff", icon: <Users2 size={20} /> },
-    { path: "/theater/theater-club", label: "Clube de Teatro", icon: <Theater size={20} /> },
+  const allMenuItems = [
+    { path: "/theater", label: "Painel Geral", icon: <LayoutDashboard size={20} />, key: "theater_dashboard" },
+    { path: "/theater/sessoes", label: "Sessões e Bilheteria", icon: <Ticket size={20} />, key: "theater_pos" },
+    { path: "/theater/portaria", label: "Portaria & Entrada", icon: <QrCode size={20} />, key: "theater_gate" },
+    { path: "/theater/assentos", label: "Mapa de Assentos", icon: <Armchair size={20} />, key: "theater_seats" },
+    { path: "/theater/playbill", label: "Programação (Playbill)", icon: <FileText size={20} />, key: "theater_playbill" },
+    { path: "/theater/elenco", label: "Elenco e Staff", icon: <Users2 size={20} />, key: "theater_cast" },
+    { path: "/theater/theater-club", label: "Clube de Teatro", icon: <Theater size={20} />, key: "theater_club" },
+    { path: "/theater/equipe", label: "Equipe & Permissões", icon: <Shield size={20} />, key: "theater_admin" },
   ];
+
+  // Admin roles get access to all menu items. Operators get filtered menu items based on active checkboxes!
+  const menuItems = allMenuItems.filter(item => {
+    if (role === "master" || role === "equipment_admin" || role === "theater_admin" || !permissions) return true;
+    if (item.path === "/theater") return true;
+    return !!permissions[item.key] || !!permissions["theater_admin"];
+  });
 
   const getInitials = (n: string) => n.split(" ").map(p => p[0]).join("").toUpperCase().substring(0, 2);
 
