@@ -1,5 +1,5 @@
 import React from "react";
-import { Route } from "react-router-dom";
+import { Route, Navigate } from "react-router-dom";
 import { ProducerLayout } from "../modules/backoffice/producer/ProducerLayout";
 import { Role } from "../modules/auth/AuthContext";
 
@@ -22,15 +22,6 @@ const ProducerNoticeTransparency = React.lazy(() => import("../modules/backoffic
 const ProducerDocuments = React.lazy(() => import("../modules/backoffice/producer/ProducerDocuments").then(m => ({ default: m.ProducerDocuments })));
 const ProducerProviders = React.lazy(() => import("../modules/backoffice/producer/ProducerProviders").then(m => ({ default: m.ProducerProviders })));
 const ProducerFinance = React.lazy(() => import("../modules/backoffice/producer/pages/ProducerFinance").then(m => ({ default: m.ProducerFinance })));
-
-// Theater pages
-const TheaterDashboard = React.lazy(() => import("../modules/theater/pages/TheaterDashboard").then(m => ({ default: m.TheaterDashboard })));
-const TheaterCast = React.lazy(() => import("../modules/theater/pages/TheaterCast").then(m => ({ default: m.TheaterCast })));
-const TheaterCueMaster = React.lazy(() => import("../modules/theater/pages/TheaterCueMaster").then(m => ({ default: m.TheaterCueMaster })));
-const TheaterSeatEditor = React.lazy(() => import("../modules/theater/pages/TheaterSeatEditor").then(m => ({ default: m.TheaterSeatEditor })));
-const TheaterPlaybill = React.lazy(() => import("../modules/theater/pages/TheaterPlaybill").then(m => ({ default: m.TheaterPlaybill })));
-const TheaterSubscriptions = React.lazy(() => import("../modules/theater/pages/TheaterSubscriptions").then(m => ({ default: m.TheaterSubscriptions })));
-const AdminBoxOffice = React.lazy(() => import("../modules/backoffice/equipment/pages/AdminBoxOffice").then(m => ({ default: m.AdminBoxOffice })));
 
 // Reused admin components for museum features (converted to lazy)
 const AdminWorks = React.lazy(() => import("../modules/backoffice/equipment/pages/AdminWorks").then(m => ({ default: m.AdminWorks })));
@@ -77,14 +68,8 @@ export function producerRoutes(RequireRole: React.FC<RequireRoleProps>) {
             <Route path="/producer/reports" element={pr(ProducerReports, RequireRole)} />
             <Route path="/producer/finance" element={pr(ProducerFinance, RequireRole)} />
 
-            {/* Theater Module */}
-            <Route path="/producer/theater" element={pr(TheaterDashboard, RequireRole)} />
-            <Route path="/producer/theater/cast" element={pr(TheaterCast, RequireRole)} />
-            <Route path="/producer/theater/cue/:id" element={pr(TheaterCueMaster, RequireRole)} />
-            <Route path="/producer/theater/seats" element={pr(TheaterSeatEditor, RequireRole)} />
-            <Route path="/producer/theater/playbill" element={pr(TheaterPlaybill, RequireRole)} />
-            <Route path="/producer/theater/subscriptions" element={pr(TheaterSubscriptions, RequireRole)} />
-            <Route path="/producer/box-office" element={pr(AdminBoxOffice, RequireRole)} />
+            {/* Redirect legacy /producer/theater to dedicated standalone /theater module */}
+            <Route path="/producer/theater/*" element={<Navigate to="/theater" replace />} />
 
             <Route path="/producer/*" element={pr(ProducerDashboard, RequireRole)} />
         </>

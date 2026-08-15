@@ -12,12 +12,15 @@ const TheaterCueMaster = React.lazy(() => import("../modules/theater/pages/Theat
 const TheaterMobileBoxOffice = React.lazy(() => import("../modules/theater/pages/TheaterMobileBoxOffice").then(m => ({ default: m.TheaterMobileBoxOffice })));
 const TheaterSubscriptions = React.lazy(() => import("../modules/theater/pages/TheaterSubscriptions").then(m => ({ default: m.TheaterSubscriptions })));
 
+const THEATER_ALLOWED_ROLES = ["theater", "theater_admin", "admin", "equipment_admin", "master", "municipal_admin", "producer"];
+
 export const theaterRoutes = (RequireRole: React.FC<{ allowed: (Role | string)[]; children: React.ReactElement }>) => (
     <>
+        {/* Main Theater Dashboard */}
         <Route
             path="/theater"
             element={
-                <RequireRole allowed={["theater", "theater_admin", "admin", "equipment_admin"]}>
+                <RequireRole allowed={THEATER_ALLOWED_ROLES}>
                     <TheaterLayout>
                         <TheaterDashboard />
                     </TheaterLayout>
@@ -25,17 +28,39 @@ export const theaterRoutes = (RequireRole: React.FC<{ allowed: (Role | string)[]
             }
         />
         <Route
+            path="/teatro"
+            element={
+                <RequireRole allowed={THEATER_ALLOWED_ROLES}>
+                    <TheaterLayout>
+                        <TheaterDashboard />
+                    </TheaterLayout>
+                </RequireRole>
+            }
+        />
+
+        {/* Mobile Box Office */}
+        <Route
             path="/theater/mobile"
             element={
-                <RequireRole allowed={["theater", "theater_admin", "admin", "equipment_admin"]}>
+                <RequireRole allowed={THEATER_ALLOWED_ROLES}>
                     <TheaterMobileBoxOffice />
                 </RequireRole>
             }
         />
         <Route
+            path="/teatro/mobile"
+            element={
+                <RequireRole allowed={THEATER_ALLOWED_ROLES}>
+                    <TheaterMobileBoxOffice />
+                </RequireRole>
+            }
+        />
+
+        {/* Seat Editor / Plateia */}
+        <Route
             path="/theater/assentos"
             element={
-                <RequireRole allowed={["theater", "theater_admin", "admin", "equipment_admin"]}>
+                <RequireRole allowed={THEATER_ALLOWED_ROLES}>
                     <TheaterLayout>
                         <TheaterSeatEditor />
                     </TheaterLayout>
@@ -43,9 +68,21 @@ export const theaterRoutes = (RequireRole: React.FC<{ allowed: (Role | string)[]
             }
         />
         <Route
+            path="/teatro/assentos"
+            element={
+                <RequireRole allowed={THEATER_ALLOWED_ROLES}>
+                    <TheaterLayout>
+                        <TheaterSeatEditor />
+                    </TheaterLayout>
+                </RequireRole>
+            }
+        />
+
+        {/* Sessions & Box Office */}
+        <Route
             path="/theater/sessoes"
             element={
-                <RequireRole allowed={["theater", "theater_admin", "admin", "equipment_admin"]}>
+                <RequireRole allowed={THEATER_ALLOWED_ROLES}>
                     <TheaterLayout>
                         <AdminBoxOffice />
                     </TheaterLayout>
@@ -53,9 +90,21 @@ export const theaterRoutes = (RequireRole: React.FC<{ allowed: (Role | string)[]
             }
         />
         <Route
+            path="/teatro/sessoes"
+            element={
+                <RequireRole allowed={THEATER_ALLOWED_ROLES}>
+                    <TheaterLayout>
+                        <AdminBoxOffice />
+                    </TheaterLayout>
+                </RequireRole>
+            }
+        />
+
+        {/* Cue Master / Caderno de Cena */}
+        <Route
             path="/theater/sessoes/:id/cue-master"
             element={
-                <RequireRole allowed={["theater", "theater_admin", "admin", "equipment_admin"]}>
+                <RequireRole allowed={THEATER_ALLOWED_ROLES}>
                     <TheaterLayout>
                         <TheaterCueMaster />
                     </TheaterLayout>
@@ -63,9 +112,21 @@ export const theaterRoutes = (RequireRole: React.FC<{ allowed: (Role | string)[]
             }
         />
         <Route
+            path="/teatro/sessoes/:id/cue-master"
+            element={
+                <RequireRole allowed={THEATER_ALLOWED_ROLES}>
+                    <TheaterLayout>
+                        <TheaterCueMaster />
+                    </TheaterLayout>
+                </RequireRole>
+            }
+        />
+
+        {/* Playbill / Programação */}
+        <Route
             path="/theater/playbill"
             element={
-                <RequireRole allowed={["theater", "theater_admin", "admin", "equipment_admin"]}>
+                <RequireRole allowed={THEATER_ALLOWED_ROLES}>
                     <TheaterLayout>
                         <TheaterPlaybill />
                     </TheaterLayout>
@@ -73,9 +134,21 @@ export const theaterRoutes = (RequireRole: React.FC<{ allowed: (Role | string)[]
             }
         />
         <Route
+            path="/teatro/playbill"
+            element={
+                <RequireRole allowed={THEATER_ALLOWED_ROLES}>
+                    <TheaterLayout>
+                        <TheaterPlaybill />
+                    </TheaterLayout>
+                </RequireRole>
+            }
+        />
+
+        {/* Cast & Technical Staff */}
+        <Route
             path="/theater/elenco"
             element={
-                <RequireRole allowed={["theater", "theater_admin", "admin", "equipment_admin"]}>
+                <RequireRole allowed={THEATER_ALLOWED_ROLES}>
                     <TheaterLayout>
                         <TheaterCast />
                     </TheaterLayout>
@@ -83,9 +156,31 @@ export const theaterRoutes = (RequireRole: React.FC<{ allowed: (Role | string)[]
             }
         />
         <Route
+            path="/teatro/elenco"
+            element={
+                <RequireRole allowed={THEATER_ALLOWED_ROLES}>
+                    <TheaterLayout>
+                        <TheaterCast />
+                    </TheaterLayout>
+                </RequireRole>
+            }
+        />
+
+        {/* Theater Subscriptions / Clube de Teatro */}
+        <Route
             path="/theater/theater-club"
             element={
-                <RequireRole allowed={["theater", "theater_admin", "admin", "equipment_admin"]}>
+                <RequireRole allowed={THEATER_ALLOWED_ROLES}>
+                    <TheaterLayout>
+                        <TheaterSubscriptions />
+                    </TheaterLayout>
+                </RequireRole>
+            }
+        />
+        <Route
+            path="/teatro/clube"
+            element={
+                <RequireRole allowed={THEATER_ALLOWED_ROLES}>
                     <TheaterLayout>
                         <TheaterSubscriptions />
                     </TheaterLayout>
