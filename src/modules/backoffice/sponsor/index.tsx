@@ -8,3 +8,5 @@ export { SponsorImpact } from './pages/SponsorImpact';
 export { SponsorOpportunities } from './pages/SponsorOpportunities';
 export { SponsorAssets } from './pages/SponsorAssets';
 export { SponsorCertificates } from './pages/SponsorCertificates';
+export { SponsorLoginPage } from './pages/SponsorLoginPage';
+export { SponsorRegisterPage } from './pages/SponsorRegisterPage';

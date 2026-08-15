@@ -12,6 +12,8 @@ const SponsorDashboard = React.lazy(() => import('../modules/backoffice/sponsor'
 const SponsorOpportunities = React.lazy(() => import('../modules/backoffice/sponsor').then(m => ({ default: m.SponsorOpportunities })));
 const SponsorAssets = React.lazy(() => import('../modules/backoffice/sponsor').then(m => ({ default: m.SponsorAssets })));
 const SponsorCertificates = React.lazy(() => import('../modules/backoffice/sponsor').then(m => ({ default: m.SponsorCertificates })));
+const SponsorLoginPage = React.lazy(() => import('../modules/backoffice/sponsor').then(m => ({ default: m.SponsorLoginPage })));
+const SponsorRegisterPage = React.lazy(() => import('../modules/backoffice/sponsor').then(m => ({ default: m.SponsorRegisterPage })));
 
 import { Role } from '../types/auth';
 
@@ -19,6 +21,12 @@ const SPONSOR_ALLOWED_ROLES = ["sponsor", "master", "municipal_admin", "admin", 
 
 export const sponsorRoutes = (RequireRole: React.FC<{ allowed: (Role | string)[]; children: React.ReactElement }>) => (
   <>
+    {/* Dedicated Sponsor Auth routes */}
+    <Route path="/sponsor/login" element={<SponsorLoginPage />} />
+    <Route path="/patrocinar/login" element={<SponsorLoginPage />} />
+    <Route path="/sponsor/register" element={<SponsorRegisterPage />} />
+    <Route path="/patrocinar/cadastro" element={<SponsorRegisterPage />} />
+
     {/* Public/Landing paths */}
     <Route path="/patrocinar" element={<SponsorLanding />} />
     <Route path="/patrocinar/obras" element={<SponsorBrowseWorks />} />
