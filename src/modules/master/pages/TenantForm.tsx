@@ -3,7 +3,7 @@ import {
 useParams, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { api, isDemoMode } from "../../../api/client";
-import { Building2, Save, ArrowLeft, Package, Map, Settings, Landmark, Music, Tent, CheckCircle2, Users, Mail, Lock, Globe, CheckCircle, Zap, ShieldCheck, Layers, ArrowRight, Database, Dna, Activity, Briefcase, Ticket, Bot, HeartHandshake, Sticker, Puzzle, Microscope, Award, Calendar, type LucideIcon } from "lucide-react";
+import { Building2, Save, ArrowLeft, Package, Map, Settings, Landmark, Music, Tent, CheckCircle2, Users, Mail, Lock, Globe, CheckCircle, Zap, ShieldCheck, Layers, ArrowRight, Database, Dna, Activity, Briefcase, Ticket, Bot, HeartHandshake, Sticker, Puzzle, Microscope, Award, Calendar, Theater, type LucideIcon } from "lucide-react";
 import { Button, Input, Select, Card, Badge, AnimateIn } from "@/components/ui";
 import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "react-hot-toast";
@@ -29,7 +29,7 @@ interface PlanOption {
   name: string;
 }
 
-type TenantType = "MUSEUM" | "PRODUCER" | "CITY" | "CULTURAL_SPACE" | "SECRETARIA";
+type TenantType = "MUSEUM" | "PRODUCER" | "CITY" | "CULTURAL_SPACE" | "SECRETARIA" | "THEATER";
 type PlanCode = "START" | "PRO" | "ENTERPRISE" | "CUSTOM" | string;
 
 interface TenantFeatures {
@@ -92,7 +92,7 @@ interface ApiErrorResponse {
   message?: string;
 }
 
-const tenantTypes: TenantType[] = ["MUSEUM", "PRODUCER", "CITY", "CULTURAL_SPACE", "SECRETARIA"];
+const tenantTypes: TenantType[] = ["MUSEUM", "PRODUCER", "CITY", "CULTURAL_SPACE", "SECRETARIA", "THEATER"];
 
 const tenantSchema = z.object({
   name: z.string().trim().min(2, "Informe o nome da instituicao."),
@@ -345,6 +345,7 @@ export const TenantForm: React.FC = () => {
     { value: "SECRETARIA", icon: <Building2 size={28} />, label: "Secretaria de Cultura", desc: "Gestão pública de múltiplos equipamentos culturais." },
     { value: "CITY", icon: <Map size={28} />, label: "Cidade / Órgão", desc: "Instância de governança turística ou cultural." },
     { value: "MUSEUM", icon: <Landmark size={28} />, label: "Museu / Unidade", desc: "Tipologia clássica com acervo e exposições." },
+    { value: "THEATER", icon: <Theater size={28} />, label: "Teatro / Casa de Espetáculos", desc: "Teatros com mapa de assentos, plateia e bilheteria." },
     { value: "PRODUCER", icon: <Music size={28} />, label: "Produtora", desc: "Foco em eventos e projetos itinerantes." },
     { value: "CULTURAL_SPACE", icon: <Tent size={28} />, label: "Espaço Cultural", desc: "Galerias e centros comunitários." }
   ];
