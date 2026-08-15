@@ -6,6 +6,7 @@ import { buildCityUrl, buildEquipmentUrl } from "@/utils/routes";
 import { motion } from "framer-motion";
 import { Helmet } from "react-helmet-async";
 import { MapPin, QrCode, Ticket, Star, ChevronRight, Search, Compass, Trophy, Theater, Calendar } from "lucide-react";
+import { TheaterPlayModal, type TheaterPlay as ModalPlay } from "../components/TheaterPlayModal";
 import "./VisitorHub.css";
 
 interface Equipamento {
@@ -120,6 +121,7 @@ export const VisitorHub: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [theaterPlays, setTheaterPlays] = useState<TheaterPlay[]>(DEMO_THEATER_PLAYS);
   const [theaterFilter, setTheaterFilter] = useState<'my_city' | 'all'>('my_city');
+  const [selectedPlayForModal, setSelectedPlayForModal] = useState<ModalPlay | null>(null);
 
   const fetchData = useCallback(async () => {
     try {
@@ -382,7 +384,19 @@ export const VisitorHub: React.FC = () => {
                     transition: "all 0.2s ease"
                   }}
                 >
-                  <div>
+                  <div
+                    onClick={() => setSelectedPlayForModal({
+                      id: play.id,
+                      title: play.title,
+                      theaterName: play.theaterName,
+                      cityName: play.cityName,
+                      posterUrl: play.imageUrl || "https://images.unsplash.com/photo-1507676184212-d03ab07a01bf?auto=format&fit=crop&w=600&q=80",
+                      dates: play.date,
+                      price: `R$ ${play.price.toFixed(2)}`,
+                      isLocal: !!play.isLocal
+                    })}
+                    style={{ cursor: "pointer" }}
+                  >
                     <div style={{ height: "130px", background: "#0a0a0f", position: "relative", overflow: "hidden" }}>
                       {play.imageUrl ? (
                         <img src={play.imageUrl} alt={play.title} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
@@ -416,7 +430,16 @@ export const VisitorHub: React.FC = () => {
 
                   <div style={{ padding: "14px", paddingTop: "0" }}>
                     <button
-                      onClick={() => navigate("/theater/sessoes")}
+                      onClick={() => setSelectedPlayForModal({
+                        id: play.id,
+                        title: play.title,
+                        theaterName: play.theaterName,
+                        cityName: play.cityName,
+                        posterUrl: play.imageUrl || "https://images.unsplash.com/photo-1507676184212-d03ab07a01bf?auto=format&fit=crop&w=600&q=80",
+                        dates: play.date,
+                        price: `R$ ${play.price.toFixed(2)}`,
+                        isLocal: !!play.isLocal
+                      })}
                       style={{
                         width: "100%",
                         padding: "10px",
@@ -569,6 +592,15 @@ export const VisitorHub: React.FC = () => {
             </div>
           </motion.section>
         )}
+
+        <TheaterPlayModal
+          play={selectedPlayForModal}
+          onClose={() => setSelectedPlayForModal(null)}
+          onBuy={(playId) => {
+            setSelectedPlayForModal(null);
+            navigate("/theater/sessoes");
+          }}
+        />
       </div>
     </>
   );
