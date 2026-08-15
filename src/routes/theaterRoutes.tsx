@@ -14,6 +14,7 @@ const TheaterSubscriptions = React.lazy(() => import("../modules/theater/pages/T
 const AdminTicketVerifier = React.lazy(() => import("../modules/backoffice/equipment/pages/AdminTicketVerifier").then(m => ({ default: m.AdminTicketVerifier })));
 const TheaterTeamManagement = React.lazy(() => import("../modules/theater/pages/TheaterTeamManagement").then(m => ({ default: m.TheaterTeamManagement })));
 const TheaterKiosk = React.lazy(() => import("../modules/theater/pages/TheaterKiosk").then(m => ({ default: m.TheaterKiosk })));
+const AdminExportReports = React.lazy(() => import("../modules/backoffice/equipment/pages/AdminExportReports").then(m => ({ default: m.AdminExportReports })));
 
 const THEATER_ALLOWED_ROLES = ["theater", "theater_admin", "admin", "equipment_admin", "master", "municipal_admin", "producer"];
 
@@ -239,5 +240,27 @@ export const theaterRoutes = (RequireRole: React.FC<{ allowed: (Role | string)[]
         <Route path="/theater/totem" element={<TheaterKiosk />} />
         <Route path="/teatro/totem" element={<TheaterKiosk />} />
         <Route path="/theater/kiosk" element={<TheaterKiosk />} />
+
+        {/* Relatórios Exportáveis PDF & Excel */}
+        <Route
+            path="/theater/relatorios"
+            element={
+                <RequireRole allowed={THEATER_ALLOWED_ROLES}>
+                    <TheaterLayout>
+                        <AdminExportReports />
+                    </TheaterLayout>
+                </RequireRole>
+            }
+        />
+        <Route
+            path="/teatro/relatorios"
+            element={
+                <RequireRole allowed={THEATER_ALLOWED_ROLES}>
+                    <TheaterLayout>
+                        <AdminExportReports />
+                    </TheaterLayout>
+                </RequireRole>
+            }
+        />
     </>
 );

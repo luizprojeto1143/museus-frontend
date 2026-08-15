@@ -3,7 +3,7 @@ import { Link, useLocation } from "react-router-dom";
 import { useAuth } from "../../auth/AuthContext";
 import { useTranslation } from "react-i18next";
 import { LanguageSwitcher } from "../../../components/LanguageSwitcher";
-import { LayoutDashboard, Theater, Armchair, Users2, LogOut, Menu, X, FileText, Ticket, QrCode, Shield, Monitor } from "lucide-react";
+import { LayoutDashboard, Theater, Armchair, Users2, LogOut, Menu, X, FileText, Ticket, QrCode, Shield, Monitor, FileSpreadsheet } from "lucide-react";
 import "./TheaterLayout.css";
 
 interface TheaterLayoutProps {
@@ -25,6 +25,7 @@ export const TheaterLayout: React.FC<TheaterLayoutProps> = ({ children }) => {
     { path: "/theater/playbill", label: "Programação (Playbill)", icon: <FileText size={20} />, key: "theater_playbill" },
     { path: "/theater/elenco", label: "Elenco e Staff", icon: <Users2 size={20} />, key: "theater_cast" },
     { path: "/theater/theater-club", label: "Clube de Teatro", icon: <Theater size={20} />, key: "theater_club" },
+    { path: "/theater/relatorios", label: "Relatórios & Auditoria", icon: <FileSpreadsheet size={20} />, key: "theater_reports" },
     { path: "/theater/equipe", label: "Equipe & Permissões", icon: <Shield size={20} />, key: "theater_admin" },
   ];
 
