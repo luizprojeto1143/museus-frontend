@@ -5,7 +5,7 @@ import { api } from "../../../api/client";
 import { buildCityUrl, buildEquipmentUrl } from "@/utils/routes";
 import { motion } from "framer-motion";
 import { Helmet } from "react-helmet-async";
-import { MapPin, QrCode, Ticket, Star, ChevronRight, Search, Compass, Trophy } from "lucide-react";
+import { MapPin, QrCode, Ticket, Star, ChevronRight, Search, Compass, Trophy, Theater, Calendar } from "lucide-react";
 import "./VisitorHub.css";
 
 interface Equipamento {
@@ -47,6 +47,59 @@ interface UserStats {
   trailsCompleted: number;
 }
 
+interface TheaterPlay {
+  id: string;
+  title: string;
+  theaterName: string;
+  cityName: string;
+  date: string;
+  price: number;
+  imageUrl?: string;
+  isLocal?: boolean;
+}
+
+const DEMO_THEATER_PLAYS: TheaterPlay[] = [
+  {
+    id: "play-1",
+    title: "O Auto da Compadecida",
+    theaterName: "Teatro Municipal de Ouro Preto",
+    cityName: "Ouro Preto, MG",
+    date: "Hoje às 20h00",
+    price: 25,
+    imageUrl: "https://images.unsplash.com/photo-1507676184212-d03ab07a01bf?auto=format&fit=crop&w=600&q=80",
+    isLocal: true
+  },
+  {
+    id: "play-2",
+    title: "O Fantasma da Ópera",
+    theaterName: "Teatro Amazonas",
+    cityName: "Manaus, AM",
+    date: "Amanhã às 19h30",
+    price: 40,
+    imageUrl: "https://images.unsplash.com/photo-1469488865564-c2de10f69f96?auto=format&fit=crop&w=600&q=80",
+    isLocal: false
+  },
+  {
+    id: "play-3",
+    title: "Romeu & Julieta - O Musical",
+    theaterName: "Teatro Castro Alves",
+    cityName: "Salvador, BA",
+    date: "Sábado às 21h00",
+    price: 35,
+    imageUrl: "https://images.unsplash.com/photo-1514306191717-452ec28c7814?auto=format&fit=crop&w=600&q=80",
+    isLocal: false
+  },
+  {
+    id: "play-4",
+    title: "Divaldo & Cecília - Amor à Arte",
+    theaterName: "Teatro Municipal de Tiradentes",
+    cityName: "Tiradentes, MG",
+    date: "Domingo às 18h00",
+    price: 20,
+    imageUrl: "https://images.unsplash.com/photo-1460723237483-7a6dc9d0b212?auto=format&fit=crop&w=600&q=80",
+    isLocal: true
+  }
+];
 
 type ListResponse<T> = T[] | {
   data?: T[];
@@ -65,6 +118,8 @@ export const VisitorHub: React.FC = () => {
   const [stats, setStats] = useState<UserStats>({ xp: 0, level: 1, visitsCount: 0, badgesCount: 0, trailsCompleted: 0 });
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
+  const [theaterPlays, setTheaterPlays] = useState<TheaterPlay[]>(DEMO_THEATER_PLAYS);
+  const [theaterFilter, setTheaterFilter] = useState<'my_city' | 'all'>('my_city');
 
   const fetchData = useCallback(async () => {
     try {
@@ -251,6 +306,141 @@ export const VisitorHub: React.FC = () => {
             <Compass size={22} />
             <span>Meu Perfil</span>
           </button>
+        </motion.section>
+
+        {/* Teatros & Espetáculos em Cartaz */}
+        <motion.section
+          className="hub-theater-section"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4, delay: 0.15 }}
+          style={{ padding: "24px 16px 0" }}
+        >
+          <div className="hub-section-header">
+            <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+              <Theater size={22} color="#d4af37" />
+              <h2 style={{ fontSize: "1.1rem", fontWeight: "800", color: "#fff", margin: 0 }}>
+                Teatros & Espetáculos em Cartaz
+              </h2>
+            </div>
+            <button className="hub-see-all" onClick={() => navigate("/theater/sessoes")}>
+              Ver bilheteria <ChevronRight size={16} />
+            </button>
+          </div>
+
+          {/* Filter Tabs */}
+          <div style={{ display: "flex", gap: "8px", marginBottom: "16px", overflowX: "auto" }}>
+            <button
+              onClick={() => setTheaterFilter('my_city')}
+              style={{
+                padding: "6px 14px",
+                borderRadius: "20px",
+                fontSize: "0.75rem",
+                fontWeight: "700",
+                cursor: "pointer",
+                border: "1px solid",
+                borderColor: theaterFilter === 'my_city' ? "#d4af37" : "rgba(255,255,255,0.1)",
+                background: theaterFilter === 'my_city' ? "rgba(212, 175, 55, 0.2)" : "rgba(255,255,255,0.05)",
+                color: theaterFilter === 'my_city' ? "#d4af37" : "#94a3b8"
+              }}
+            >
+              🏙️ Na Minha Cidade
+            </button>
+            <button
+              onClick={() => setTheaterFilter('all')}
+              style={{
+                padding: "6px 14px",
+                borderRadius: "20px",
+                fontSize: "0.75rem",
+                fontWeight: "700",
+                cursor: "pointer",
+                border: "1px solid",
+                borderColor: theaterFilter === 'all' ? "#d4af37" : "rgba(255,255,255,0.1)",
+                background: theaterFilter === 'all' ? "rgba(212, 175, 55, 0.2)" : "rgba(255,255,255,0.05)",
+                color: theaterFilter === 'all' ? "#d4af37" : "#94a3b8"
+              }}
+            >
+              🌎 Outras Cidades & Nacional
+            </button>
+          </div>
+
+          {/* Grid of Plays */}
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(220px, 1fr))", gap: "14px" }}>
+            {theaterPlays
+              .filter(p => theaterFilter === 'all' || p.isLocal)
+              .map(play => (
+                <div
+                  key={play.id}
+                  style={{
+                    background: "rgba(255,255,255,0.04)",
+                    border: "1px solid rgba(255,255,255,0.08)",
+                    borderRadius: "20px",
+                    overflow: "hidden",
+                    display: "flex",
+                    flexDirection: "column",
+                    justifyContent: "space-between",
+                    transition: "all 0.2s ease"
+                  }}
+                >
+                  <div>
+                    <div style={{ height: "130px", background: "#0a0a0f", position: "relative", overflow: "hidden" }}>
+                      {play.imageUrl ? (
+                        <img src={play.imageUrl} alt={play.title} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                      ) : (
+                        <div style={{ width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center", color: "#64748b" }}>
+                          <Theater size={36} />
+                        </div>
+                      )}
+                      <span style={{ position: "absolute", top: "8px", right: "8px", background: "rgba(212, 175, 55, 0.25)", border: "1px solid rgba(212, 175, 55, 0.5)", color: "#fef08a", fontSize: "0.65rem", fontWeight: "800", padding: "2px 8px", borderRadius: "12px" }}>
+                        Em Cartaz
+                      </span>
+                    </div>
+
+                    <div style={{ padding: "14px", display: "flex", flexDirection: "column", gap: "6px" }}>
+                      <div style={{ display: "flex", alignItems: "center", gap: "4px", color: "#d4af37", fontSize: "0.75rem", fontWeight: "700" }}>
+                        <MapPin size={12} />
+                        <span>{play.cityName}</span>
+                      </div>
+                      <h3 style={{ fontSize: "0.95rem", fontWeight: "800", color: "#fff", margin: 0, lineHeight: "1.2" }}>
+                        {play.title}
+                      </h3>
+                      <span style={{ fontSize: "0.75rem", color: "#94a3b8" }}>{play.theaterName}</span>
+                      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: "4px", fontSize: "0.75rem" }}>
+                        <span style={{ color: "#cbd5e1", display: "flex", alignItems: "center", gap: "4px" }}>
+                          <Calendar size={12} /> {play.date}
+                        </span>
+                        <strong style={{ color: "#34d399", fontWeight: "800" }}>A partir de R$ {play.price.toFixed(2)}</strong>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div style={{ padding: "14px", paddingTop: "0" }}>
+                    <button
+                      onClick={() => navigate("/theater/sessoes")}
+                      style={{
+                        width: "100%",
+                        padding: "10px",
+                        borderRadius: "12px",
+                        background: "linear-gradient(135deg, #d4af37 0%, #f59e0b 100%)",
+                        color: "#0f172a",
+                        fontWeight: "900",
+                        fontSize: "0.75rem",
+                        textTransform: "uppercase",
+                        letterSpacing: "0.5px",
+                        border: "none",
+                        cursor: "pointer",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        gap: "6px"
+                      }}
+                    >
+                      <Ticket size={14} /> Comprar Ingresso
+                    </button>
+                  </div>
+                </div>
+              ))}
+          </div>
         </motion.section>
 
         {/* Buscar cidade */}
