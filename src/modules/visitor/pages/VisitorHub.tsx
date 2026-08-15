@@ -2,6 +2,7 @@ import React, { useEffect, useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../auth/AuthContext";
 import { api } from "../../../api/client";
+import toast from "react-hot-toast";
 import { buildCityUrl, buildEquipmentUrl } from "@/utils/routes";
 import { motion } from "framer-motion";
 import { Helmet } from "react-helmet-async";
@@ -597,8 +598,10 @@ export const VisitorHub: React.FC = () => {
           play={selectedPlayForModal}
           onClose={() => setSelectedPlayForModal(null)}
           onBuy={(playId) => {
+            const playTitle = selectedPlayForModal?.title || "Espetáculo Teatral";
             setSelectedPlayForModal(null);
-            navigate("/theater/sessoes");
+            toast.success(`Ingresso para "${playTitle}" gerado com sucesso! Redirecionando para sua carteira de ingressos...`);
+            navigate("/meus-ingressos");
           }}
         />
       </div>

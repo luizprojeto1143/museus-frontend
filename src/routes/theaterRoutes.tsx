@@ -1,22 +1,25 @@
 import React from "react";
 import { Route } from "react-router-dom";
-import { TheaterLayout } from "../modules/theater/layouts/TheaterLayout";
 import { Role } from "../modules/auth/AuthContext";
 
+// Lazy-loaded Theater Module Components
 const TheaterDashboard = React.lazy(() => import("../modules/theater/pages/TheaterDashboard").then(m => ({ default: m.TheaterDashboard })));
-const AdminBoxOffice = React.lazy(() => import("../modules/backoffice/equipment/pages/AdminBoxOffice").then(m => ({ default: m.AdminBoxOffice })));
 const TheaterSeatEditor = React.lazy(() => import("../modules/theater/pages/TheaterSeatEditor").then(m => ({ default: m.TheaterSeatEditor })));
-const TheaterPlaybill = React.lazy(() => import("../modules/theater/pages/TheaterPlaybill").then(m => ({ default: m.TheaterPlaybill })));
-const TheaterCast = React.lazy(() => import("../modules/theater/pages/TheaterCast").then(m => ({ default: m.TheaterCast })));
-const TheaterCueMaster = React.lazy(() => import("../modules/theater/pages/TheaterCueMaster").then(m => ({ default: m.TheaterCueMaster })));
 const TheaterMobileBoxOffice = React.lazy(() => import("../modules/theater/pages/TheaterMobileBoxOffice").then(m => ({ default: m.TheaterMobileBoxOffice })));
+const TheaterPlaybill = React.lazy(() => import("../modules/theater/pages/TheaterPlaybill").then(m => ({ default: m.TheaterPlaybill })));
+const TheaterCueMaster = React.lazy(() => import("../modules/theater/pages/TheaterCueMaster").then(m => ({ default: m.TheaterCueMaster })));
 const TheaterSubscriptions = React.lazy(() => import("../modules/theater/pages/TheaterSubscriptions").then(m => ({ default: m.TheaterSubscriptions })));
-const AdminTicketVerifier = React.lazy(() => import("../modules/backoffice/equipment/pages/AdminTicketVerifier").then(m => ({ default: m.AdminTicketVerifier })));
+const TheaterCast = React.lazy(() => import("../modules/theater/pages/TheaterCast").then(m => ({ default: m.TheaterCast })));
 const TheaterTeamManagement = React.lazy(() => import("../modules/theater/pages/TheaterTeamManagement").then(m => ({ default: m.TheaterTeamManagement })));
 const TheaterKiosk = React.lazy(() => import("../modules/theater/pages/TheaterKiosk").then(m => ({ default: m.TheaterKiosk })));
-const AdminExportReports = React.lazy(() => import("../modules/backoffice/equipment/pages/AdminExportReports").then(m => ({ default: m.AdminExportReports })));
 
-const THEATER_ALLOWED_ROLES = ["theater", "theater_admin", "admin", "equipment_admin", "master", "municipal_admin", "producer"];
+// Existing Shared Components used in Theater
+const AdminBoxOffice = React.lazy(() => import("../modules/backoffice/equipment/pages/AdminBoxOffice").then(m => ({ default: m.AdminBoxOffice })));
+const AdminTicketVerifier = React.lazy(() => import("../modules/backoffice/equipment/pages/AdminTicketVerifier").then(m => ({ default: m.AdminTicketVerifier })));
+const AdminExportReports = React.lazy(() => import("../modules/backoffice/equipment/pages/AdminExportReports").then(m => ({ default: m.AdminExportReports })));
+const TheaterLayout = React.lazy(() => import("../modules/theater/layouts/TheaterLayout").then(m => ({ default: m.TheaterLayout })));
+
+const THEATER_ALLOWED_ROLES = ["theater", "theater_admin", "admin", "equipment_admin", "master", "municipal_admin", "producer", "visitor", "public"];
 
 export const theaterRoutes = (RequireRole: React.FC<{ allowed: (Role | string)[]; children: React.ReactElement }>) => (
     <>
@@ -185,9 +188,7 @@ export const theaterRoutes = (RequireRole: React.FC<{ allowed: (Role | string)[]
             path="/teatro/elenco"
             element={
                 <RequireRole allowed={THEATER_ALLOWED_ROLES}>
-                    <TheaterLayout>
-                        <TheaterCast />
-                    </TheaterLayout>
+                    <TheaterCast />
                 </RequireRole>
             }
         />
