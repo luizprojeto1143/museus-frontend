@@ -11,6 +11,7 @@ const TheaterCast = React.lazy(() => import("../modules/theater/pages/TheaterCas
 const TheaterCueMaster = React.lazy(() => import("../modules/theater/pages/TheaterCueMaster").then(m => ({ default: m.TheaterCueMaster })));
 const TheaterMobileBoxOffice = React.lazy(() => import("../modules/theater/pages/TheaterMobileBoxOffice").then(m => ({ default: m.TheaterMobileBoxOffice })));
 const TheaterSubscriptions = React.lazy(() => import("../modules/theater/pages/TheaterSubscriptions").then(m => ({ default: m.TheaterSubscriptions })));
+const AdminTicketVerifier = React.lazy(() => import("../modules/backoffice/equipment/pages/AdminTicketVerifier").then(m => ({ default: m.AdminTicketVerifier })));
 
 const THEATER_ALLOWED_ROLES = ["theater", "theater_admin", "admin", "equipment_admin", "master", "municipal_admin", "producer"];
 
@@ -52,6 +53,28 @@ export const theaterRoutes = (RequireRole: React.FC<{ allowed: (Role | string)[]
             element={
                 <RequireRole allowed={THEATER_ALLOWED_ROLES}>
                     <TheaterMobileBoxOffice />
+                </RequireRole>
+            }
+        />
+
+        {/* Portaria / Validador QR Code */}
+        <Route
+            path="/theater/portaria"
+            element={
+                <RequireRole allowed={THEATER_ALLOWED_ROLES}>
+                    <TheaterLayout>
+                        <AdminTicketVerifier />
+                    </TheaterLayout>
+                </RequireRole>
+            }
+        />
+        <Route
+            path="/teatro/portaria"
+            element={
+                <RequireRole allowed={THEATER_ALLOWED_ROLES}>
+                    <TheaterLayout>
+                        <AdminTicketVerifier />
+                    </TheaterLayout>
                 </RequireRole>
             }
         />
