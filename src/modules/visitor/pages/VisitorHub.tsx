@@ -99,8 +99,8 @@ export const VisitorHub: React.FC = () => {
         const eqData = unwrapList(results[0].value.data);
         
         const estMap = new Map<string, number>();
-        eqData.forEach(eq => {
-          if (eq.estado) {
+        eqData.forEach((eq: any) => {
+          if (eq && eq.estado) {
             estMap.set(eq.estado, (estMap.get(eq.estado) || 0) + 1);
           }
         });

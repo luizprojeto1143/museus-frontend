@@ -130,6 +130,7 @@ api.interceptors.response.use(
           // ignore
         }
 
+        const currentPath = window.location.pathname;
         const isAdminRoute = [
           "/admin", "/master", "/producer", "/provider", "/municipal", "/theater", "/totem"
         ].some(prefix => currentPath.startsWith(prefix));

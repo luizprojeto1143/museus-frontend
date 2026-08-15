@@ -24,7 +24,7 @@ export const SponsorLoginPage: React.FC = () => {
 
     setLoading(true);
     try {
-      await login(email, password);
+      await login({ email, password });
       toast.success("Bem-vindo ao Portal do Patrocinador!");
       navigate(from, { replace: true });
     } catch (err: any) {

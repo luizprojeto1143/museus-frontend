@@ -91,7 +91,7 @@ export const AdminEquipments: React.FC = () => {
                                         <span className="chip" style={{ fontSize: "0.75rem" }}>
                                             {typeInfo.icon} {typeInfo.label}
                                         </span>
-                                        {item.ativo === false && (
+                                        {(item as any).ativo === false && (
                                             <span className="chip" style={{ fontSize: "0.75rem", background: "var(--bg-danger-subtle)", color: "var(--fg-danger)", marginLeft: "0.5rem" }}>
                                                 ⚠️ Inativo (Oculto)
                                             </span>

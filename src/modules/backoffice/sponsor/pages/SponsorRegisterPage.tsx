@@ -58,7 +58,7 @@ export const SponsorRegisterPage: React.FC = () => {
       toast.success("Conta corporativa criada com sucesso!");
 
       // 2. Login Automático
-      await login(form.email, form.password);
+      await login({ email: form.email, password: form.password });
       navigate("/sponsor/dashboard", { replace: true });
     } catch (err: any) {
       const message = err?.response?.data?.message || "Erro ao criar conta de patrocinador.";
