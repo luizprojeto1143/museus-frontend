@@ -15,25 +15,28 @@ const SponsorCertificates = React.lazy(() => import('../modules/backoffice/spons
 
 import { Role } from '../types/auth';
 
+const SPONSOR_ALLOWED_ROLES = ["sponsor", "master", "municipal_admin", "admin", "producer", "visitor"];
+
 export const sponsorRoutes = (RequireRole: React.FC<{ allowed: (Role | string)[]; children: React.ReactElement }>) => (
   <>
     {/* Public/Landing paths */}
     <Route path="/patrocinar" element={<SponsorLanding />} />
     <Route path="/patrocinar/obras" element={<SponsorBrowseWorks />} />
+    <Route path="/patrocinar/dashboard" element={<SponsorImpact />} />
     <Route path="/patrocinar/checkout/:workId" element={
-      <RequireRole allowed={["sponsor", "master", "municipal_admin"]}>
+      <RequireRole allowed={SPONSOR_ALLOWED_ROLES}>
         <SponsorCheckout />
       </RequireRole>
     } />
     <Route path="/patrocinar/sucesso" element={
-      <RequireRole allowed={["sponsor", "master", "municipal_admin"]}>
+      <RequireRole allowed={SPONSOR_ALLOWED_ROLES}>
         <SponsorSuccess />
       </RequireRole>
     } />
 
     {/* New Premium Sponsor Portal under SponsorLayout */}
     <Route path="/sponsor" element={
-      <RequireRole allowed={["sponsor", "master", "municipal_admin"]}>
+      <RequireRole allowed={SPONSOR_ALLOWED_ROLES}>
         <SponsorLayout />
       </RequireRole>
     }>

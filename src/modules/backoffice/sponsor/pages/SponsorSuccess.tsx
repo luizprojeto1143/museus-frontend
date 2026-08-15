@@ -18,7 +18,7 @@ export function SponsorSuccess() {
       <p className="text-lg text-slate-300 max-w-md text-center mb-8">
         {t("sponsor.success.subtitle", "Obrigado por apoiar a cultura. Sua marca agora ganhará destaque na obra patrocinada!")}
       </p>
-      <Link to="/patrocinar/dashboard">
+      <Link to="/sponsor/dashboard">
         <Button className="bg-gold-500 text-slate-900 font-bold px-8 py-4 rounded-xl">{t("sponsor.success.dashboard_btn", "Acessar Painel")}</Button>
       </Link>
     </div>
