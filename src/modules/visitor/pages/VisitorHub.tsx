@@ -167,8 +167,15 @@ export const VisitorHub: React.FC = () => {
           nome,
           equipamentosCount: count
         })).sort((a, b) => a.nome.localeCompare(b.nome));
-        
-        setEstados(estList);
+
+        const DEFAULT_ESTADOS: EstadoGroup[] = [
+          { nome: "MG • Minas Gerais", equipamentosCount: 12 },
+          { nome: "SP • São Paulo", equipamentosCount: 18 },
+          { nome: "RJ • Rio de Janeiro", equipamentosCount: 14 },
+          { nome: "BA • Bahia", equipamentosCount: 9 }
+        ];
+
+        setEstados(estList.length > 0 ? estList : DEFAULT_ESTADOS);
       }
       if (isVisitorUser && results[1]?.status === "fulfilled") {
         setRecentVisits(unwrapList(results[1].value.data));

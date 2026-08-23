@@ -52,6 +52,8 @@
 }
 
 .menu-close-btn {
+  position: relative;
+  z-index: 100;
   background: var(--faint);
   border: 1px solid var(--border);
   color: var(--fg-main);
@@ -62,6 +64,8 @@
   align-items: center;
   justify-content: center;
   cursor: pointer;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
   transition: all 0.3s;
 }
 

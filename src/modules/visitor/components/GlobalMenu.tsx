@@ -63,7 +63,16 @@ export const GlobalMenu: React.FC<GlobalMenuProps> = ({ isOpen, onClose, current
                 <span className="brand-dot" />
                 <h2>Menu de Exploração</h2>
               </div>
-              <button className="menu-close-btn" onClick={onClose}>
+              <button 
+                type="button" 
+                className="menu-close-btn" 
+                onClick={(e) => { 
+                  e.preventDefault(); 
+                  e.stopPropagation(); 
+                  onClose(); 
+                }} 
+                aria-label="Fechar menu"
+              >
                 <X size={24} />
               </button>
             </div>

@@ -2,7 +2,7 @@
 
 .visitor-hub {
   min-height: 100vh;
-  padding: 0 0 80px;
+  padding: 0 0 180px;
   background: var(--color-bg-page, #0d0d14);
   color: var(--color-text-primary, #fff);
 }
@@ -454,4 +454,46 @@
 .hub-ticket-info small {
   font-size: 0.72rem;
   color: rgba(255,255,255,0.5);
+}
+
+/* ─── LIGHT THEME VISITOR HUB OVERRIDES ─── */
+[data-theme="light"] .visitor-hub {
+  background: #f8fafc !important;
+  color: #0f172a !important;
+}
+
+[data-theme="light"] .hub-hero {
+  background: linear-gradient(135deg, #ffffff 0%, #f1f5f9 100%) !important;
+  border-bottom: 1px solid rgba(15, 23, 42, 0.08) !important;
+}
+
+[data-theme="light"] .hub-greeting h1,
+[data-theme="light"] .hub-subtitle {
+  color: #0f172a !important;
+}
+
+[data-theme="light"] .hub-stat {
+  background: #ffffff !important;
+  border-color: rgba(15, 23, 42, 0.12) !important;
+  color: #0f172a !important;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.04) !important;
+}
+
+[data-theme="light"] .hub-stat small {
+  color: #64748b !important;
+}
+
+[data-theme="light"] .hub-action-btn {
+  background: #ffffff !important;
+  border-color: rgba(15, 23, 42, 0.12) !important;
+  color: #0f172a !important;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.04) !important;
+}
+
+[data-theme="light"] .hub-action-btn span {
+  color: #0f172a !important;
+}
+
+[data-theme="light"] .hub-section-header h2 {
+  color: #0f172a !important;
 }
