@@ -8,6 +8,7 @@ import { motion } from "framer-motion";
 import { Helmet } from "react-helmet-async";
 import { MapPin, QrCode, Ticket, Star, ChevronRight, Search, Compass, Trophy, Theater, Calendar } from "lucide-react";
 import { TheaterPlayModal, type TheaterPlay as ModalPlay } from "../components/TheaterPlayModal";
+import { useVisitorTheme } from "../context/VisitorThemeProvider";
 import "./VisitorHub.css";
 
 interface Equipamento {
@@ -113,6 +114,8 @@ const unwrapList = <T,>(payload: ListResponse<T>): T[] => {
 export const VisitorHub: React.FC = () => {
   const navigate = useNavigate();
   const { name, role, isGuest } = useAuth();
+  const { theme: visitorTheme } = useVisitorTheme();
+  const isLightMode = visitorTheme?.theme === "light";
 
   const [estados, setEstados] = useState<EstadoGroup[]>([]);
   const [recentVisits, setRecentVisits] = useState<RecentVisit[]>([]);
@@ -217,7 +220,7 @@ export const VisitorHub: React.FC = () => {
         <meta name="description" content="Explore cidades, museus, obras e eventos culturais do Brasil. Seu hub cultural personalizado." />
       </Helmet>
 
-      <div className="visitor-hub">
+      <div className={`visitor-hub${isLightMode ? " visitor-hub--light" : ""}`} data-theme={visitorTheme?.theme || "dark"}>
         {/* Header / Boas-vindas */}
         <motion.section
           className="hub-hero"
@@ -337,7 +340,7 @@ export const VisitorHub: React.FC = () => {
           <div className="hub-section-header">
             <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
               <Calendar size={22} color="#d4af37" />
-              <h2 style={{ fontSize: "1.1rem", fontWeight: "800", color: "#fff", margin: 0 }}>
+              <h2 style={{ fontSize: "1.1rem", fontWeight: "800", color: "var(--fg-main)", margin: 0 }}>
                 Agenda Cultural da Semana
               </h2>
             </div>
@@ -350,7 +353,7 @@ export const VisitorHub: React.FC = () => {
             <div 
               onClick={() => navigate("/agenda")}
               style={{
-                background: "rgba(255,255,255,0.04)",
+                background: "var(--glass-bg)",
                 border: "1px solid rgba(212, 175, 55, 0.2)",
                 borderRadius: "20px",
                 padding: "16px",
@@ -366,16 +369,16 @@ export const VisitorHub: React.FC = () => {
               </div>
               <div>
                 <span style={{ fontSize: "0.65rem", color: "#34d399", fontWeight: "800", textTransform: "uppercase" }}>Entrada Gratuita</span>
-                <h4 style={{ fontSize: "0.95rem", fontWeight: "800", color: "#fff", margin: "2px 0" }}>Noite de Jazz no Museu</h4>
-                <p style={{ fontSize: "0.75rem", color: "#94a3b8", margin: 0 }}>19:30h • Museu de Arte Sacra</p>
+                <h4 style={{ fontSize: "0.95rem", fontWeight: "800", color: "var(--fg-main)", margin: "2px 0" }}>Noite de Jazz no Museu</h4>
+                <p style={{ fontSize: "0.75rem", color: "var(--fg-secondary)", margin: 0 }}>19:30h • Museu de Arte Sacra</p>
               </div>
             </div>
 
             <div 
               onClick={() => navigate("/agenda")}
               style={{
-                background: "rgba(255,255,255,0.04)",
-                border: "1px solid rgba(255,255,255,0.08)",
+                background: "var(--glass-bg)",
+                border: "1px solid var(--border-subtle)",
                 borderRadius: "20px",
                 padding: "16px",
                 cursor: "pointer",
@@ -384,14 +387,14 @@ export const VisitorHub: React.FC = () => {
                 alignItems: "center"
               }}
             >
-              <div style={{ background: "rgba(255, 255, 255, 0.08)", borderRadius: "16px", padding: "12px", textAlign: "center", color: "#fff", minWidth: "60px" }}>
+              <div style={{ background: "var(--glass-bg-light)", borderRadius: "16px", padding: "12px", textAlign: "center", color: "var(--fg-main)", minWidth: "60px" }}>
                 <span style={{ display: "block", fontSize: "0.65rem", fontWeight: "900", textTransform: "uppercase" }}>SÁBADO</span>
                 <strong style={{ fontSize: "1.4rem", fontWeight: "900" }}>16</strong>
               </div>
               <div>
                 <span style={{ fontSize: "0.65rem", color: "#fbbf24", fontWeight: "800", textTransform: "uppercase" }}>Teatro & Música</span>
-                <h4 style={{ fontSize: "0.95rem", fontWeight: "800", color: "#fff", margin: "2px 0" }}>O Auto da Compadecida</h4>
-                <p style={{ fontSize: "0.75rem", color: "#94a3b8", margin: 0 }}>20:00h • Teatro Municipal</p>
+                <h4 style={{ fontSize: "0.95rem", fontWeight: "800", color: "var(--fg-main)", margin: "2px 0" }}>O Auto da Compadecida</h4>
+                <p style={{ fontSize: "0.75rem", color: "var(--fg-secondary)", margin: 0 }}>20:00h • Teatro Municipal</p>
               </div>
             </div>
           </div>
@@ -408,7 +411,7 @@ export const VisitorHub: React.FC = () => {
           <div className="hub-section-header">
             <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
               <Theater size={22} color="#d4af37" />
-              <h2 style={{ fontSize: "1.1rem", fontWeight: "800", color: "#fff", margin: 0 }}>
+              <h2 style={{ fontSize: "1.1rem", fontWeight: "800", color: "var(--fg-main)", margin: 0 }}>
                 Teatros & Espetáculos em Cartaz
               </h2>
             </div>
@@ -461,8 +464,8 @@ export const VisitorHub: React.FC = () => {
                 <div
                   key={play.id}
                   style={{
-                    background: "rgba(255,255,255,0.04)",
-                    border: "1px solid rgba(255,255,255,0.08)",
+                    background: "var(--glass-bg)",
+                    border: "1px solid var(--border-subtle)",
                     borderRadius: "20px",
                     overflow: "hidden",
                     display: "flex",
@@ -502,12 +505,12 @@ export const VisitorHub: React.FC = () => {
                         <MapPin size={12} />
                         <span>{play.cityName}</span>
                       </div>
-                      <h3 style={{ fontSize: "0.95rem", fontWeight: "800", color: "#fff", margin: 0, lineHeight: "1.2" }}>
+                      <h3 style={{ fontSize: "0.95rem", fontWeight: "800", color: "var(--fg-main)", margin: 0, lineHeight: "1.2" }}>
                         {play.title}
                       </h3>
-                      <span style={{ fontSize: "0.75rem", color: "#94a3b8" }}>{play.theaterName}</span>
+                      <span style={{ fontSize: "0.75rem", color: "var(--fg-secondary)" }}>{play.theaterName}</span>
                       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: "4px", fontSize: "0.75rem" }}>
-                        <span style={{ color: "#cbd5e1", display: "flex", alignItems: "center", gap: "4px" }}>
+                        <span style={{ color: "var(--fg-secondary)", display: "flex", alignItems: "center", gap: "4px" }}>
                           <Calendar size={12} /> {play.date}
                         </span>
                         <strong style={{ color: "#34d399", fontWeight: "800" }}>A partir de R$ {play.price.toFixed(2)}</strong>

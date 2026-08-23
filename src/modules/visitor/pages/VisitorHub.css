@@ -457,43 +457,163 @@
 }
 
 /* ─── LIGHT THEME VISITOR HUB OVERRIDES ─── */
-[data-theme="light"] .visitor-hub {
-  background: #f8fafc !important;
+/* These use extreme specificity to override inline styles where possible */
+[data-theme="light"] .visitor-hub,
+.visitor-hub--light {
+  background: #f0f4f8 !important;
   color: #0f172a !important;
+  /* Redefine CSS variables within the light hub context */
+  --hub-text: #0f172a;
+  --hub-text-muted: #4b5563;
+  --hub-surface: #ffffff;
+  --hub-border: rgba(15, 23, 42, 0.1);
 }
 
-[data-theme="light"] .hub-hero {
-  background: linear-gradient(135deg, #ffffff 0%, #f1f5f9 100%) !important;
-  border-bottom: 1px solid rgba(15, 23, 42, 0.08) !important;
+/* Hero in light mode */
+[data-theme="light"] .hub-hero,
+.visitor-hub--light .hub-hero {
+  background: linear-gradient(135deg, #1a0a2e 0%, #16213e 50%, #0f3460 100%) !important;
+  /* Keep dark background in hero for the luxury look, but make text white */
 }
 
 [data-theme="light"] .hub-greeting h1,
-[data-theme="light"] .hub-subtitle {
-  color: #0f172a !important;
+.visitor-hub--light .hub-greeting h1,
+[data-theme="light"] .hub-subtitle,
+.visitor-hub--light .hub-subtitle,
+[data-theme="light"] .hub-xp-info span,
+.visitor-hub--light .hub-xp-info span {
+  color: rgba(255,255,255,0.95) !important;
 }
 
-[data-theme="light"] .hub-stat {
+/* Stats in light mode */
+[data-theme="light"] .hub-stat,
+.visitor-hub--light .hub-stat {
+  background: #ffffff !important;
+  border-color: rgba(15, 23, 42, 0.1) !important;
+  color: #0f172a !important;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.06) !important;
+}
+[data-theme="light"] .hub-stat span,
+.visitor-hub--light .hub-stat span,
+[data-theme="light"] .hub-stat small,
+.visitor-hub--light .hub-stat small {
+  color: #0f172a !important;
+}
+[data-theme="light"] .hub-stat small,
+.visitor-hub--light .hub-stat small { color: #64748b !important; }
+
+/* Quick Action Buttons */
+[data-theme="light"] .hub-action-btn,
+.visitor-hub--light .hub-action-btn {
   background: #ffffff !important;
   border-color: rgba(15, 23, 42, 0.12) !important;
   color: #0f172a !important;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.04) !important;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.06) !important;
+}
+[data-theme="light"] .hub-action-btn span,
+.visitor-hub--light .hub-action-btn span,
+[data-theme="light"] .hub-action-btn svg,
+.visitor-hub--light .hub-action-btn svg {
+  color: #0f172a !important;
+}
+[data-theme="light"] .hub-action-primary span,
+.visitor-hub--light .hub-action-primary span {
+  color: var(--accent-primary) !important;
 }
 
-[data-theme="light"] .hub-stat small {
-  color: #64748b !important;
+/* Section Headers */
+[data-theme="light"] .hub-section-header h2,
+.visitor-hub--light .hub-section-header h2,
+[data-theme="light"] .hub-section-header h2 *,
+.visitor-hub--light .hub-section-header h2 * {
+  color: #0f172a !important;
 }
 
-[data-theme="light"] .hub-action-btn {
+/* All inline-styled h2s, h3s, h4s inside sections */
+[data-theme="light"] .hub-agenda-section h2,
+[data-theme="light"] .hub-theater-section h2,
+[data-theme="light"] .hub-agenda-section h4,
+[data-theme="light"] .hub-theater-section h3,
+.visitor-hub--light .hub-agenda-section h2,
+.visitor-hub--light .hub-theater-section h2,
+.visitor-hub--light .hub-agenda-section h4,
+.visitor-hub--light .hub-theater-section h3 {
+  color: #0f172a !important;
+}
+
+/* Section cards - agenda and theater */
+[data-theme="light"] .hub-agenda-section > div > div,
+[data-theme="light"] .hub-theater-section > div > div,
+.visitor-hub--light .hub-agenda-section > div > div,
+.visitor-hub--light .hub-theater-section > div > div {
   background: #ffffff !important;
-  border-color: rgba(15, 23, 42, 0.12) !important;
-  color: #0f172a !important;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.04) !important;
+  border-color: rgba(15, 23, 42, 0.1) !important;
 }
 
-[data-theme="light"] .hub-action-btn span {
-  color: #0f172a !important;
+/* Theater filter buttons in light mode */
+[data-theme="light"] .hub-theater-section button:not(.hub-see-all),
+.visitor-hub--light .hub-theater-section button:not(.hub-see-all) {
+  border-color: rgba(15, 23, 42, 0.15) !important;
+  background: rgba(15, 23, 42, 0.04) !important;
+  color: #374151 !important;
 }
 
-[data-theme="light"] .hub-section-header h2 {
+/* City cards */
+[data-theme="light"] .hub-city-card,
+.visitor-hub--light .hub-city-card {
+  background: #ffffff !important;
+  border-color: rgba(15, 23, 42, 0.1) !important;
+  color: #0f172a !important;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06) !important;
+}
+[data-theme="light"] .hub-city-card:hover,
+.visitor-hub--light .hub-city-card:hover {
+  background: #f8fafc !important;
+  border-color: rgba(184, 148, 31, 0.4) !important;
+}
+[data-theme="light"] .hub-city-info strong,
+.visitor-hub--light .hub-city-info strong { color: #0f172a !important; }
+[data-theme="light"] .hub-city-info small,
+.visitor-hub--light .hub-city-info small { color: #64748b !important; }
+[data-theme="light"] .hub-city-skeleton,
+.visitor-hub--light .hub-city-skeleton { background: #e2e8f0 !important; }
+
+/* Search input */
+[data-theme="light"] .hub-search-input,
+.visitor-hub--light .hub-search-input {
+  background: #ffffff !important;
+  border-color: rgba(15, 23, 42, 0.15) !important;
   color: #0f172a !important;
 }
+[data-theme="light"] .hub-search-input::placeholder,
+.visitor-hub--light .hub-search-input::placeholder { color: #9ca3af !important; }
+[data-theme="light"] .hub-search-icon,
+.visitor-hub--light .hub-search-icon { color: #64748b !important; }
+
+/* Recent items */
+[data-theme="light"] .hub-recent-item,
+.visitor-hub--light .hub-recent-item {
+  background: #ffffff !important;
+  border-color: rgba(15, 23, 42, 0.08) !important;
+  color: #0f172a !important;
+}
+[data-theme="light"] .hub-recent-info strong,
+.visitor-hub--light .hub-recent-info strong { color: #0f172a !important; }
+[data-theme="light"] .hub-recent-info small,
+.visitor-hub--light .hub-recent-info small { color: #64748b !important; }
+[data-theme="light"] .hub-recent-arrow,
+.visitor-hub--light .hub-recent-arrow { color: #94a3b8 !important; }
+
+/* Ticket cards */
+[data-theme="light"] .hub-ticket-info strong,
+.visitor-hub--light .hub-ticket-info strong { color: #0f172a !important; }
+[data-theme="light"] .hub-ticket-info small,
+.visitor-hub--light .hub-ticket-info small { color: #64748b !important; }
+
+/* Empty state */
+[data-theme="light"] .hub-empty-state,
+.visitor-hub--light .hub-empty-state { color: #6b7280 !important; }
+
+/* XP bar background */
+[data-theme="light"] .hub-xp-bar,
+.visitor-hub--light .hub-xp-bar { background: rgba(15, 23, 42, 0.08) !important; }

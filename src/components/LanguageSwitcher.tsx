@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { cn } from "../lib/cn";
 
@@ -10,12 +10,19 @@ interface LanguageSwitcherProps {
 
 export const LanguageSwitcher: React.FC<LanguageSwitcherProps> = ({ style, className, absolute = true }) => {
     const { i18n } = useTranslation();
+    const [currentLang, setCurrentLang] = useState(i18n.language || "pt-BR");
+
+    useEffect(() => {
+        const onLangChanged = (lng: string) => setCurrentLang(lng);
+        i18n.on("languageChanged", onLangChanged);
+        return () => { i18n.off("languageChanged", onLangChanged); };
+    }, [i18n]);
 
     const changeLanguage = (lng: string) => {
         i18n.changeLanguage(lng);
+        setCurrentLang(lng);
+        try { localStorage.setItem("cv_language", lng); } catch {}
     };
-
-    const _currentLang = i18n.language.split("-")[0]; // pt-BR -> pt
 
     const languages = [
         { code: "pt-BR", label: "PT", flag: "🇧🇷", title: "Português" },
@@ -39,10 +46,11 @@ export const LanguageSwitcher: React.FC<LanguageSwitcherProps> = ({ style, class
             }}
         >
             {languages.map((lang) => {
-                const isActive = i18n.language.startsWith(lang.code.split("-")[0]);
+                const isActive = currentLang === lang.code || currentLang.startsWith(lang.code.split("-")[0]);
                 return (
                     <button
                         key={lang.code}
+                        type="button"
                         onClick={() => changeLanguage(lang.code)}
                         className={cn(
                             "flex items-center gap-2 px-4 py-2 rounded-xl transition-all duration-300 text-[10px] font-black tracking-[0.2em] uppercase",

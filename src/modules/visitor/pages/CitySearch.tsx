@@ -271,13 +271,20 @@ const DEMO_EQUIPAMENTOS: Equipamento[] = [
 
 
   const handleSelect = async (equip: Equipamento) => {
+    // Build the target URL: museum hub if we have slugs, else personal hub
+    const citySlug = equip.cidade
+      ? equip.cidade.toLowerCase().replace(/\s+/g, '-').normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+      : null;
+    const equipSlug = equip.slug || equip.id;
+    const museumPath = citySlug && equipSlug
+      ? `/cidades/${citySlug}/equipamentos/${equipSlug}`
+      : '/hub';
+
     // Se logado, atualiza sessao
     if (isAuthenticated && !isGuest) {
       try {
-        // Reutilizamos switch-tenant mas agora focando em equipamento contextualmente se necessario,
-        // ou apenas atualizamos localmente o ID
         updateSession(role || "visitor", equip.tenantId, name, equip.id, equip.cityId || null);
-        navigate("/hub");
+        navigate(museumPath);
         return;
       } catch (err: unknown) {
         logger.error("Error selecting equipment", err);
@@ -297,7 +304,7 @@ const DEMO_EQUIPAMENTOS: Equipamento[] = [
     }
 
     enterAsGuest(equip.tenantId, equip.id, equip.cityId || null);
-    navigate("/hub");
+    navigate(museumPath);
   };
 
   const formatDistance = (dist?: number) => {

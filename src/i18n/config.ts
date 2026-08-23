@@ -5,7 +5,8 @@ import ptBR from "./locales/pt-br.json";
 import en from "./locales/en.json";
 import es from "./locales/es.json";
 
-
+// Restore saved language preference
+const savedLang = (() => { try { return localStorage.getItem("cv_language") || "pt-BR"; } catch { return "pt-BR"; } })();
 
 i18n
     .use(initReactI18next)
@@ -15,7 +16,7 @@ i18n
             en: { translation: en },
             es: { translation: es }
         },
-        lng: "pt-BR",
+        lng: savedLang,
         fallbackLng: "pt-BR",
 
         interpolation: {
@@ -24,7 +25,7 @@ i18n
         react: {
             useSuspense: false
         },
-        debug: true
+        debug: false
     });
 
 export default i18n;

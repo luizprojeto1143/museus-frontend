@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link, useNavigate, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams, useLocation } from 'react-router-dom';
 import { X, ChevronDown, ChevronUp, LogOut, RefreshCcw } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '../../auth/AuthContext';
@@ -10,19 +10,15 @@ interface GlobalMenuProps {
   isOpen: boolean;
   onClose: () => void;
   links?: unknown[];
-  currentPath: string;
+  currentPath?: string; // kept for backward compat but now derived internally
 }
 
-export const GlobalMenu: React.FC<GlobalMenuProps> = ({ isOpen, onClose, currentPath }) => {
+export const GlobalMenu: React.FC<GlobalMenuProps> = ({ isOpen, onClose }) => {
   const navigate = useNavigate();
   const { logout } = useAuth();
   const { citySlug, equipmentSlug } = useParams();
-
-  React.useEffect(() => {
-    if (isOpen) {
-      onClose();
-    }
-  }, [currentPath]); // eslint-disable-line react-hooks/exhaustive-deps
+  const location = useLocation();
+  const currentPath = location.pathname;
 
   const [expandedSection, setExpandedSection] = useState<string | null>(null);
 
