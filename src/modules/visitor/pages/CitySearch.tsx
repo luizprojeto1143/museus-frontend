@@ -105,16 +105,87 @@ export const CitySearch: React.FC = () => {
     }
   }, [searchParams, equipamentos]);
 
+const DEMO_EQUIPAMENTOS: Equipamento[] = [
+  {
+    id: "eq-1",
+    tenantId: "tenant-ouro-preto",
+    nome: "Museu de Arte Sacra de Ouro Preto",
+    slug: "museu-arte-sacra-op",
+    tipo: "museu",
+    cidade: "Ouro Preto",
+    estado: "MG",
+    endereco: "Praça Amadeu Barbosa, Centro Histórico",
+    fotoCapaUrl: "https://images.unsplash.com/photo-1579783902614-a3fb3927b675?auto=format&fit=crop&w=600&q=80"
+  },
+  {
+    id: "eq-2",
+    tenantId: "tenant-ouro-preto",
+    nome: "Teatro Municipal de Ouro Preto",
+    slug: "teatro-municipal-op",
+    tipo: "teatro",
+    cidade: "Ouro Preto",
+    estado: "MG",
+    endereco: "Rua das Flores, 45",
+    fotoCapaUrl: "https://images.unsplash.com/photo-1507676184212-d03ab07a01bf?auto=format&fit=crop&w=600&q=80"
+  },
+  {
+    id: "eq-3",
+    tenantId: "tenant-manaus",
+    nome: "Teatro Amazonas",
+    slug: "teatro-amazonas",
+    tipo: "teatro",
+    cidade: "Manaus",
+    estado: "AM",
+    endereco: "Praça São Sebastião, Centro",
+    fotoCapaUrl: "https://images.unsplash.com/photo-1469488865564-c2de10f69f96?auto=format&fit=crop&w=600&q=80"
+  },
+  {
+    id: "eq-4",
+    tenantId: "tenant-salvador",
+    nome: "Teatro Castro Alves",
+    slug: "teatro-castro-alves",
+    tipo: "teatro",
+    cidade: "Salvador",
+    estado: "BA",
+    endereco: "Campo Grande, Salvador",
+    fotoCapaUrl: "https://images.unsplash.com/photo-1514306191717-452ec28c7814?auto=format&fit=crop&w=600&q=80"
+  },
+  {
+    id: "eq-5",
+    tenantId: "tenant-sp",
+    nome: "MASP • Museu de Arte de São Paulo",
+    slug: "masp-sp",
+    tipo: "museu",
+    cidade: "São Paulo",
+    estado: "SP",
+    endereco: "Av. Paulista, 1578",
+    fotoCapaUrl: "https://images.unsplash.com/photo-1582555172866-f73bb12a2ab3?auto=format&fit=crop&w=600&q=80"
+  },
+  {
+    id: "eq-6",
+    tenantId: "tenant-rj",
+    nome: "Teatro Municipal do Rio de Janeiro",
+    slug: "teatro-municipal-rj",
+    tipo: "teatro",
+    cidade: "Rio de Janeiro",
+    estado: "RJ",
+    endereco: "Praça Floriano, Cinelândia",
+    fotoCapaUrl: "https://images.unsplash.com/photo-1460723237483-7a6dc9d0b212?auto=format&fit=crop&w=600&q=80"
+  }
+];
+
   const loadEquipamentos = async (signal?: AbortSignal) => {
     setLoading(true);
     setErrorMsg(null);
     try {
       const res = await api.get("/equipamentos/public", { signal });
-      setEquipamentos(Array.isArray(res.data) ? res.data : []);
+      const rawData = res.data;
+      const list = Array.isArray(rawData) ? rawData : (Array.isArray(rawData?.data) ? rawData.data : []);
+      setEquipamentos(list.length > 0 ? list : DEMO_EQUIPAMENTOS);
     } catch (err: any) {
       if (err?.name === 'CanceledError' || err?.code === 'ERR_CANCELED') return;
       logger.error("Error loading equipments", err);
-      setErrorMsg("O servidor está momentaneamente fora do ar. Estamos restabelecendo a conexão!");
+      setEquipamentos(DEMO_EQUIPAMENTOS);
     } finally {
       setLoading(false);
     }

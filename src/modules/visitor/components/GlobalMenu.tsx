@@ -31,10 +31,12 @@ export const GlobalMenu: React.FC<GlobalMenuProps> = ({ isOpen, onClose, current
   };
 
   const handleSwitchCity = () => {
+    onClose();
     navigate('/cidades');
   };
 
   const handleLogout = () => {
+    onClose();
     logout();
   };
 

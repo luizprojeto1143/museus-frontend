@@ -80,6 +80,7 @@ export const SponsorLayout: React.FC = () => {
                 key={item.path}
                 to={item.path}
                 className={`sponsor-nav-link ${isActive ? "active" : ""}`}
+                onClick={() => setMobileMenuOpen(false)}
               >
                 {item.icon}
                 <span>{item.label}</span>
