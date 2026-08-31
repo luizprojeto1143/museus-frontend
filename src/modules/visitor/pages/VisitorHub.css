@@ -156,9 +156,9 @@
 .hub-action-btn span {
   display: block;
   max-width: 100%;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  white-space: normal;
+  line-height: 1.1;
+  font-size: 0.65rem;
 }
 
 .hub-action-btn:hover {
@@ -315,6 +315,13 @@
   justify-content: center;
   color: #d4af37;
   flex-shrink: 0;
+  overflow: hidden;
+}
+
+.hub-city-placeholder img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
 .hub-city-info {

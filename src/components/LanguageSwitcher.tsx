@@ -2,6 +2,17 @@ import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { cn } from "../lib/cn";
 
+const supportedLanguages = ["pt-BR", "en", "es"] as const;
+type SupportedLanguage = typeof supportedLanguages[number];
+
+const normalizeLanguage = (lng?: string | null): SupportedLanguage => {
+    if (!lng) return "pt-BR";
+    const normalized = lng.toLowerCase();
+    if (normalized.startsWith("en")) return "en";
+    if (normalized.startsWith("es")) return "es";
+    return "pt-BR";
+};
+
 interface LanguageSwitcherProps {
     style?: React.CSSProperties;
     className?: string;
@@ -10,21 +21,28 @@ interface LanguageSwitcherProps {
 
 export const LanguageSwitcher: React.FC<LanguageSwitcherProps> = ({ style, className, absolute = true }) => {
     const { i18n } = useTranslation();
-    const [currentLang, setCurrentLang] = useState(i18n.language || "pt-BR");
+    const [currentLang, setCurrentLang] = useState<SupportedLanguage>(normalizeLanguage(i18n.resolvedLanguage || i18n.language));
 
     useEffect(() => {
-        const onLangChanged = (lng: string) => setCurrentLang(lng);
+        const onLangChanged = (lng: string) => {
+            const nextLang = normalizeLanguage(lng);
+            setCurrentLang(nextLang);
+            document.documentElement.lang = nextLang;
+        };
         i18n.on("languageChanged", onLangChanged);
+        onLangChanged(i18n.resolvedLanguage || i18n.language);
         return () => { i18n.off("languageChanged", onLangChanged); };
     }, [i18n]);
 
-    const changeLanguage = (lng: string) => {
-        i18n.changeLanguage(lng);
-        setCurrentLang(lng);
+    const changeLanguage = async (lng: SupportedLanguage) => {
+        const nextLang = normalizeLanguage(lng);
+        setCurrentLang(nextLang);
         try { localStorage.setItem("cv_language", lng); } catch {}
+        await i18n.changeLanguage(nextLang);
+        document.documentElement.lang = nextLang;
     };
 
-    const languages = [
+    const languages: Array<{ code: SupportedLanguage; label: string; flag: string; title: string }> = [
         { code: "pt-BR", label: "PT", flag: "🇧🇷", title: "Português" },
         { code: "en", label: "EN", flag: "🇺🇸", title: "English" },
         { code: "es", label: "ES", flag: "🇪🇸", title: "Español" },

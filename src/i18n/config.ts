@@ -5,8 +5,16 @@ import ptBR from "./locales/pt-br.json";
 import en from "./locales/en.json";
 import es from "./locales/es.json";
 
+const normalizeLanguage = (lng?: string | null) => {
+    if (!lng) return "pt-BR";
+    const normalized = lng.toLowerCase();
+    if (normalized.startsWith("en")) return "en";
+    if (normalized.startsWith("es")) return "es";
+    return "pt-BR";
+};
+
 // Restore saved language preference
-const savedLang = (() => { try { return localStorage.getItem("cv_language") || "pt-BR"; } catch { return "pt-BR"; } })();
+const savedLang = (() => { try { return normalizeLanguage(localStorage.getItem("cv_language")); } catch { return "pt-BR"; } })();
 
 i18n
     .use(initReactI18next)
@@ -18,6 +26,8 @@ i18n
         },
         lng: savedLang,
         fallbackLng: "pt-BR",
+        supportedLngs: ["pt-BR", "en", "es"],
+        nonExplicitSupportedLngs: true,
 
         interpolation: {
             escapeValue: false

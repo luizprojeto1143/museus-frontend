@@ -51,6 +51,8 @@ const CertificateList = React.lazy(() => import("../modules/visitor/pages/Certif
 const VisitorWardrobe = React.lazy(() => import("../modules/visitor/pages/VisitorWardrobe").then(m => ({ default: m.VisitorWardrobe })));
 const SkinMarketplace = React.lazy(() => import("../modules/visitor/pages/SkinMarketplace").then(m => ({ default: m.SkinMarketplace })));
 const VestigeCapture = React.lazy(() => import("../modules/visitor/pages/VestigeCapture").then(m => ({ default: m.VestigeCapture })));
+const BadgeTracking = React.lazy(() => import("../modules/visitor/pages/BadgeTracking").then(m => ({ default: m.BadgeTracking })));
+const BadgeRequestPage = React.lazy(() => import("../modules/visitor/pages/BadgeRequestPage").then(m => ({ default: m.BadgeRequestPage })));
 const CityDashboard = React.lazy(() => import("../modules/visitor/pages/CityDashboard").then(m => ({ default: m.CityDashboard })));
 const CityEquipments = React.lazy(() => import("../modules/visitor/pages/CityEquipments").then(m => ({ default: m.CityEquipments })));
 const VisitorHub = React.lazy(() => import("../modules/visitor/pages/VisitorHub").then(m => ({ default: m.VisitorHub })));
@@ -174,6 +176,8 @@ export function visitorRoutes(RequireRole: React.FC<RequireRoleProps>) {
             <Route path="/guarda-roupa" element={vr(VisitorWardrobe, RequireRole)} />
             <Route path="/wardrobe" element={<Navigate to="/guarda-roupa" replace />} />
             <Route path="/marketplace" element={vr(SkinMarketplace, RequireRole)} />
+            <Route path="/cracha" element={vr(BadgeRequestPage, RequireRole)} />
+            <Route path="/cracha/rastreio" element={vr(BadgeTracking, RequireRole)} />
             <Route path="/vestigios/capturar/:workId" element={vr(VestigeCapture, RequireRole)} />
         </>
     );

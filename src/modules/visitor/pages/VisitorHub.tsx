@@ -6,13 +6,14 @@ import toast from "react-hot-toast";
 import { buildCityUrl, buildEquipmentUrl } from "@/utils/routes";
 import { motion } from "framer-motion";
 import { Helmet } from "react-helmet-async";
-import { MapPin, QrCode, Ticket, Star, ChevronRight, Search, Compass, Trophy, Theater, Calendar } from "lucide-react";
+import { MapPin, QrCode, Ticket, Star, ChevronRight, Search, Compass, Trophy, Theater, Calendar, Landmark } from "lucide-react";
 import { TheaterPlayModal, type TheaterPlay as ModalPlay } from "../components/TheaterPlayModal";
 import { useVisitorTheme } from "../context/VisitorThemeProvider";
 import "./VisitorHub.css";
 
 interface Equipamento {
   id: string;
+  tenantId?: string;
   nome: string;
   slug: string;
   tipo: string;
@@ -118,6 +119,7 @@ export const VisitorHub: React.FC = () => {
   const isLightMode = visitorTheme?.theme === "light";
 
   const [estados, setEstados] = useState<EstadoGroup[]>([]);
+  const [equipamentos, setEquipamentos] = useState<Equipamento[]>([]);
   const [recentVisits, setRecentVisits] = useState<RecentVisit[]>([]);
   const [activeTickets, setActiveTickets] = useState<ActiveTicket[]>([]);
   const [stats, setStats] = useState<UserStats>({ xp: 0, level: 1, visitsCount: 0, badgesCount: 0, trailsCompleted: 0 });
@@ -145,7 +147,7 @@ export const VisitorHub: React.FC = () => {
       const isVisitorUser = !isGuest && (role === "visitor" || !role);
 
       const requests: Promise<any>[] = [
-        api.get<ListResponse<Equipamento>>(equipamentosQuery).catch(() => ({ data: [] } as any))
+        api.get<ListResponse<Equipamento>>(equipamentosQuery, { timeout: 10000 }).catch(() => ({ data: [] } as any))
       ];
 
       if (isVisitorUser) {
@@ -157,7 +159,8 @@ export const VisitorHub: React.FC = () => {
       const results = await Promise.allSettled(requests);
 
       if (results[0].status === "fulfilled") {
-        const eqData = unwrapList(results[0].value.data);
+        const eqData = unwrapList<Equipamento>(results[0].value.data as ListResponse<Equipamento>);
+        setEquipamentos(eqData.slice(0, 8));
         
         const estMap = new Map<string, number>();
         eqData.forEach((eq: any) => {
@@ -178,7 +181,16 @@ export const VisitorHub: React.FC = () => {
           { nome: "BA • Bahia", equipamentosCount: 9 }
         ];
 
-        setEstados(estList.length > 0 ? estList : DEFAULT_ESTADOS);
+        if (estList.length > 0) {
+          setEstados(estList);
+        } else {
+          setEstados(DEFAULT_ESTADOS);
+          setEquipamentos([
+            { id: "demo-masp", tenantId: "demo-sp", nome: "MASP - Museu de Arte de Sao Paulo", slug: "masp", tipo: "museu", cidade: "Sao Paulo", estado: "SP", imagemUrl: "https://images.unsplash.com/photo-1582555172866-f73bb12a2ab3?auto=format&fit=crop&w=600&q=80" },
+            { id: "demo-ouro", tenantId: "demo-mg", nome: "Museu de Arte Sacra de Ouro Preto", slug: "museu-arte-sacra-op", tipo: "museu", cidade: "Ouro Preto", estado: "MG", imagemUrl: "https://images.unsplash.com/photo-1579783902614-a3fb3927b675?auto=format&fit=crop&w=600&q=80" },
+            { id: "demo-teatro", tenantId: "demo-am", nome: "Teatro Amazonas", slug: "teatro-amazonas", tipo: "teatro", cidade: "Manaus", estado: "AM", imagemUrl: "https://images.unsplash.com/photo-1469488865564-c2de10f69f96?auto=format&fit=crop&w=600&q=80" }
+          ]);
+        }
       }
       if (isVisitorUser && results[1]?.status === "fulfilled") {
         setRecentVisits(unwrapList(results[1].value.data));
@@ -207,6 +219,10 @@ export const VisitorHub: React.FC = () => {
 
   const filteredEstados = estados.filter(e =>
     e.nome.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  const filteredEquipamentos = equipamentos.filter(e =>
+    [e.nome, e.cidade, e.estado, e.tipo].some(value => value?.toLowerCase().includes(searchQuery.toLowerCase()))
   );
 
   const firstName = name?.split(" ")[0] || "Visitante";
@@ -588,7 +604,7 @@ export const VisitorHub: React.FC = () => {
                 <div key={i} className="hub-city-card hub-city-skeleton" />
               ))}
             </div>
-          ) : filteredEstados.length === 0 ? (
+          ) : filteredEstados.length === 0 && filteredEquipamentos.length === 0 ? (
             <div className="hub-empty-state">
               <MapPin size={48} />
               <p>Nenhum estado encontrado.</p>
@@ -598,6 +614,32 @@ export const VisitorHub: React.FC = () => {
             </div>
           ) : (
             <div className="hub-cities-grid">
+              {filteredEquipamentos.map((equip, i) => {
+                const citySlug = equip.cidade
+                  ? equip.cidade.toLowerCase().replace(/\s+/g, "-").normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+                  : "cidade";
+                return (
+                  <motion.button
+                    key={equip.id}
+                    id={`hub-equipamento-${equip.id}`}
+                    className="hub-city-card"
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ duration: 0.3, delay: i * 0.05 }}
+                    whileHover={{ scale: 1.03 }}
+                    whileTap={{ scale: 0.97 }}
+                    onClick={() => navigate(buildEquipmentUrl(citySlug, equip.slug || equip.id))}
+                  >
+                    <div className="hub-city-placeholder">
+                      {equip.imagemUrl ? <img src={equip.imagemUrl} alt="" /> : <Landmark size={24} />}
+                    </div>
+                    <div className="hub-city-info">
+                      <strong>{equip.nome}</strong>
+                      <small>{equip.cidade} - {equip.estado}</small>
+                    </div>
+                  </motion.button>
+                );
+              })}
               {filteredEstados.map((estado, i) => (
                 <motion.button
                   key={estado.nome}
