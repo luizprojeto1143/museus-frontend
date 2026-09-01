@@ -40,17 +40,38 @@ async function getCsrfToken(): Promise<string> {
   return csrfTokenPromise;
 }
 
-api.interceptors.request.use(async (config) => {
+function readStoredTenantId(): string | null {
   try {
     const rawAuth = storage.get("museus_auth_v1");
-    if (rawAuth) {
-      const parsed = JSON.parse(rawAuth);
-      if (parsed.tenantId) {
-        config.headers["x-tenant-id"] = parsed.tenantId;
+    if (!rawAuth) return null;
+    const parsed = typeof rawAuth === "string" ? JSON.parse(rawAuth) : rawAuth;
+    const tenantId = parsed?.tenantId;
+    if (!tenantId || tenantId === "undefined" || tenantId === "null") return null;
+    return String(tenantId);
+  } catch {
+    return null;
+  }
+}
+
+const CATALOG_PATH = /\/(equipamentos|events|works|trails|obras|trilhas)(\/|$|\?)/i;
+
+function isCatalogRequest(config: { url?: string; baseURL?: string }): boolean {
+  const url = `${config.url || ""}`;
+  return CATALOG_PATH.test(url);
+}
+
+api.interceptors.request.use(async (config) => {
+  const tenantId = readStoredTenantId();
+  if (tenantId) {
+    config.headers = config.headers || {};
+    config.headers["x-tenant-id"] = tenantId;
+    if (isCatalogRequest(config)) {
+      const params = (config.params && typeof config.params === "object") ? { ...config.params } : {};
+      if (params.tenantId == null && params.tenant_id == null) {
+        params.tenantId = tenantId;
+        config.params = params;
       }
     }
-  } catch {
-    // Ignore malformed local state.
   }
 
   const method = (config.method || "get").toLowerCase();
