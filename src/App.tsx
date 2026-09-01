@@ -18,8 +18,6 @@ registerGSAPPlugins();
 
 const Login = React.lazy(() => import("./modules/auth/Login").then(m => ({ default: m.Login })));
 const RegisterWrapper = React.lazy(() => import("./modules/auth/RegisterWrapper").then(m => ({ default: m.RegisterWrapper })));
-const RegisterProducer = React.lazy(() => import("./modules/auth/RegisterProducer").then(m => ({ default: m.RegisterProducer })));
-const RegisterProvider = React.lazy(() => import("./modules/auth/RegisterProvider").then(m => ({ default: m.RegisterProvider })));
 const ForgotPassword = React.lazy(() => import("./modules/auth/ForgotPassword").then(m => ({ default: m.ForgotPassword })));
 const ResetPasswordPage = React.lazy(() => import("./modules/auth/ResetPassword").then(m => ({ default: m.ResetPasswordPage })));
 
@@ -36,11 +34,6 @@ const CheckoutReturnPage = React.lazy(() => import("./modules/public/CheckoutRet
 import { visitorRoutes } from "./routes/visitorRoutes";
 import { adminRoutes } from "./routes/adminRoutes";
 import { masterRoutes } from "./routes/masterRoutes";
-import { producerRoutes } from "./routes/producerRoutes";
-import { theaterRoutes } from "./routes/theaterRoutes";
-import { providerRoutes, totemRoutes } from "./routes/otherRoutes";
-import { municipalRoutes } from "./routes/municipalRoutes";
-import { sponsorRoutes } from "./routes/sponsorRoutes";
 import { legacyRedirects } from "./routes/legacyRedirects";
 
 const queryClient = new QueryClient({
@@ -87,7 +80,7 @@ const RootRedirector: React.FC = () => {
     return <Navigate to="/admin" replace />;
   }
   if (role === "theater_admin" || role === "producer" || role === "provider" || role === "sponsor") {
-    return <Navigate to="/hub" replace />;
+    return <Navigate to="/welcome" replace />;
   }
 
   return <Navigate to="/hub" replace />;
@@ -123,8 +116,8 @@ const App: React.FC = () => {
                   <Route path="/welcome" element={<Welcome />} />
                   <Route path="/select-museum" element={<SelectMuseum />} />
                   <Route path="/verify/:code" element={<CertificateValidator />} />
-                  <Route path="/sou-produtor" element={<RegisterProducer />} />
-                  <Route path="/sou-prestador" element={<RegisterProvider />} />
+                  <Route path="/sou-produtor" element={<Navigate to="/welcome" replace />} />
+                  <Route path="/sou-prestador" element={<Navigate to="/welcome" replace />} />
                   <Route path="/reset-password" element={<ResetPasswordPage />} />
                   <Route path="/register" element={<RegisterWrapper />} />
                   <Route path="/login" element={<Login />} />
@@ -144,12 +137,12 @@ const App: React.FC = () => {
                   {visitorRoutes(RequireRole)}
                   {adminRoutes(RequireRole)}
                   {masterRoutes(RequireRole)}
-                  {producerRoutes(RequireRole)}
-                  {theaterRoutes(RequireRole)}
-                  {providerRoutes(RequireRole)}
-                  {municipalRoutes(RequireRole)}
-                  {totemRoutes(RequireRole)}
-                  {sponsorRoutes(RequireRole)}
+                  <Route path="/producer/*" element={<Navigate to="/welcome" replace />} />
+                  <Route path="/theater/*" element={<Navigate to="/welcome" replace />} />
+                  <Route path="/provider/*" element={<Navigate to="/welcome" replace />} />
+                  <Route path="/municipal/*" element={<Navigate to="/welcome" replace />} />
+                  <Route path="/totem/*" element={<Navigate to="/welcome" replace />} />
+                  <Route path="/sponsor/*" element={<Navigate to="/welcome" replace />} />
                   <Route path="/403" element={<AccessDeniedPage />} />
                   <Route path="*" element={<Navigate to="/welcome" replace />} />
                 </Routes>
