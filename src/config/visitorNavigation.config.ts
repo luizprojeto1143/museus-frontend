@@ -1,6 +1,13 @@
-import { buildEquipmentUrl, buildMuseumMapUrl, buildScannerUrl } from '@/utils/routes';
+import { buildCityUrl, buildEquipmentUrl, buildCityMapUrl, buildMuseumMapUrl, buildScannerUrl } from '@/utils/routes';
 
-export const getCityContextLinks = (_citySlug: string) => [] as { id: string; label: string; path: string }[];
+export const getCityContextLinks = (citySlug: string) => [
+  { id: 'city-hub', label: '📍 Hub da Cidade', path: buildCityUrl(citySlug) },
+  { id: 'city-map', label: '🗺️ Mapa Cultural', path: buildCityMapUrl(citySlug) },
+  { id: 'city-agenda', label: '📅 Agenda', path: `${buildCityUrl(citySlug)}/agenda` },
+  { id: 'city-trails', label: '🛤️ Roteiros', path: `${buildCityUrl(citySlug)}/roteiros` },
+  { id: 'city-ranking', label: '🏆 Ranking', path: `${buildCityUrl(citySlug)}/ranking` },
+  { id: 'city-equipments', label: '🏛️ Equipamentos', path: `${buildCityUrl(citySlug)}/equipamentos` }
+];
 
 export const getEquipmentContextLinks = (citySlug: string, equipmentSlug: string) => [
   { id: 'eq-hub', label: '🏛️ Início do Museu', path: buildEquipmentUrl(citySlug, equipmentSlug) },
