@@ -1,30 +1,30 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import { X, ChevronDown, ChevronUp, LogOut, RefreshCcw } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '../../auth/AuthContext';
 import { getCityContextLinks, getEquipmentContextLinks } from '../../../config/visitorNavigation.config';
+import { readMuseumCtx } from '@/config/golive';
 import './GlobalMenu.css';
 
 interface GlobalMenuProps {
   isOpen: boolean;
   onClose: () => void;
   links?: unknown[];
-  currentPath?: string; // kept for backward compat but now derived internally
+  currentPath?: string;
 }
 
 export const GlobalMenu: React.FC<GlobalMenuProps> = ({ isOpen, onClose }) => {
   const navigate = useNavigate();
   const { logout } = useAuth();
-  const { citySlug, equipmentSlug } = useParams();
+  const params = useParams<{ citySlug?: string; equipmentSlug?: string }>();
+  const ctx = readMuseumCtx();
+  const citySlug = params.citySlug || ctx?.citySlug;
+  const equipmentSlug = params.equipmentSlug || ctx?.equipmentSlug;
   const location = useLocation();
   const currentPath = location.pathname;
 
   const [expandedSection, setExpandedSection] = useState<string | null>(null);
-
-  useEffect(() => {
-    if (isOpen) onClose();
-  }, [location.pathname]);
 
   const toggleSection = (section: string) => {
     setExpandedSection(prev => (prev === section ? null : section));

@@ -7,6 +7,7 @@ import { getFullUrl } from "../../../utils/url";
 import { useWorks, type Work } from "../hooks/useWorks";
 import { motion, AnimatePresence } from "framer-motion";
 import { WorkCardSkeleton } from "../../../components/ui/SkeletonLoader";
+import { readMuseumCtx } from "@/config/golive";
 import "./WorksList.css";
 
 export const WorksList: React.FC = () => {
@@ -14,6 +15,9 @@ export const WorksList: React.FC = () => {
   const { tenantId } = useAuth();
   const { data: works = [], isLoading: loading } = useWorks();
   const { citySlug, equipmentSlug } = useParams<{ citySlug: string; equipmentSlug: string }>();
+  const ctx = readMuseumCtx();
+  const city = citySlug || ctx?.citySlug;
+  const equip = equipmentSlug || ctx?.equipmentSlug;
 
   const [filter, setFilter] = React.useState("all");
 
@@ -98,7 +102,12 @@ export const WorksList: React.FC = () => {
                 exit={{ opacity: 0, scale: 0.9 }}
                 transition={{ duration: 0.4 }}
               >
-                <Link to={`/cidades/${citySlug}/equipamentos/${equipmentSlug}/obras/${work.id}`} className="work-card-premium">
+                <Link
+                  to={city && equip && city !== "undefined" && equip !== "undefined"
+                    ? `/cidades/${city}/equipamentos/${equip}/obras/${work.id}`
+                    : "/select-museum"}
+                  className="work-card-premium"
+                >
                   <div className="work-visual-premium">
                     <img
                       src={getFullUrl(work.imageUrl)}
