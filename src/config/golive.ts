@@ -33,7 +33,10 @@ export function readMuseumCtx(): MuseumCtx | null {
     const raw = localStorage.getItem(MUSEUM_CTX_KEY);
     if (!raw) return null;
     const parsed = JSON.parse(raw) as MuseumCtx;
-    if (parsed?.tenantId && parsed?.equipmentSlug && parsed?.citySlug) return parsed;
+    if (parsed?.tenantId && parsed?.equipmentSlug && parsed?.citySlug) {
+      if (parsed.citySlug === "undefined" || parsed.equipmentSlug === "undefined") return null;
+      return parsed;
+    }
   } catch {
     /* ignore */
   }
@@ -58,9 +61,19 @@ export function persistMuseumFromEquipment(equip: {
   });
 }
 
-export function hasSelectedMuseum(authTenantId?: string | null): boolean {
-  if (authTenantId && authTenantId !== "undefined" && authTenantId !== "null") return true;
-  return Boolean(readMuseumCtx()?.tenantId);
+export function museumEquipmentPath(equip: {
+  slug?: string;
+  id: string;
+  cidade?: string;
+}): string {
+  return `/cidades/${slugifyCity(equip.cidade)}/equipamentos/${equip.slug || equip.id}`;
+}
+
+export function hasSelectedMuseum(_authTenantId?: string | null): boolean {
+  const ctx = readMuseumCtx();
+  if (!ctx?.tenantId || !ctx.equipmentSlug || !ctx.citySlug) return false;
+  if (ctx.citySlug === "undefined" || ctx.equipmentSlug === "undefined") return false;
+  return true;
 }
 
 /** Recorte go-live desligado: todas as rotas admin/módulos voltam a ser visíveis. */

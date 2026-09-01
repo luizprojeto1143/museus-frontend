@@ -5,7 +5,7 @@ import { useAuth } from "../../auth/AuthContext";
 import { useTenant } from "../../auth/TenantContext";
 import { TenantLogo } from "../../../components/Branding/TenantLogo";
 import { LanguageSwitcher } from "../../../components/LanguageSwitcher";
-import { Smartphone, Eye, Lock } from "lucide-react";
+import { Compass, Eye, Lock } from "lucide-react";
 import { Button } from "@/components/ui";
 import { ParticleBackground } from "@/components/ui/ParticleBackground";
 import { motion } from "framer-motion";
@@ -15,6 +15,7 @@ export const Welcome: React.FC = () => {
   const { t } = useTranslation();
   const { isAuthenticated, isGuest, role } = useAuth();
   const tenant = useTenant();
+  const isStaff = Boolean(isAuthenticated && !isGuest && role && role !== "visitor");
 
   return (
     <motion.div 
@@ -67,12 +68,12 @@ export const Welcome: React.FC = () => {
             transition={{ delay: 0.8 }}
           >
             <Button
-              onClick={() => navigate("/login")}
+              onClick={() => navigate(isStaff ? "/app" : "/select-museum")}
               size="lg"
               className="w-full h-18 md:h-20 text-lg md:text-xl tracking-[0.2em] font-black rounded-3xl shadow-[0_20px_50px_rgba(212,175,55,0.15)] border border-white/10 active:scale-95"
-              rightIcon={<Smartphone size={24} />}
+              rightIcon={isStaff ? <Lock size={24} /> : <Compass size={24} />}
             >
-              {isAuthenticated && !isGuest && role && role !== "visitor" ? t("welcome.enter_panel", "ENTRAR NO PAINEL") : t("welcome.explore_login", "EXPLORAR / LOGIN")}
+              {isStaff ? t("welcome.enter_panel", "ENTRAR NO PAINEL") : t("welcome.explore", "EXPLORAR")}
             </Button>
           </motion.div>
           <motion.div
@@ -82,18 +83,16 @@ export const Welcome: React.FC = () => {
             className="grid grid-cols-2 gap-4 md:gap-5"
           >
             <button
-              onClick={() => {
-                navigate("/select-museum");
-              }}
+              onClick={() => navigate("/select-museum")}
               className="h-14 md:h-16 bg-white/[0.03] border border-white/5 rounded-2xl md:rounded-3xl text-[10px] font-bold uppercase tracking-widest text-[#f5e6d3]/60 hover:bg-white/10 hover:text-white transition-all flex items-center justify-center gap-2 active:scale-95"
             >
               <Eye size={16} /> {t("welcome.guest", "Visitante")}
             </button>
             <button
-              onClick={() => navigate("/login")}
+              onClick={() => navigate(isStaff ? "/app" : "/login")}
               className="h-14 md:h-16 bg-white/[0.03] border border-white/5 rounded-2xl md:rounded-3xl text-[10px] font-bold uppercase tracking-widest text-[#f5e6d3]/60 hover:bg-white/10 hover:text-white transition-all flex items-center justify-center gap-2 active:scale-95"
             >
-              <Lock size={16} /> {isAuthenticated && !isGuest && role && role !== "visitor" ? t("welcome.panel", "Painel") : t("welcome.login")}
+              <Lock size={16} /> {isStaff ? t("welcome.panel", "Painel") : t("welcome.login", "Login")}
             </button>
           </motion.div>
         </div>
