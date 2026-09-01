@@ -2,7 +2,7 @@ import React from 'react';
 import type { TFunction } from 'i18next';
 import type { Terminology } from '../../../hooks/useTerminology';
 import { buildEquipmentUrl, buildMuseumMapUrl, buildScannerUrl } from '@/utils/routes';
-import { readMuseumCtx } from '@/config/golive';
+import { readMuseumCtx, isUsableSlug } from '@/config/golive';
 
 export interface NavLink {
   to: string;
@@ -14,14 +14,14 @@ export interface NavLink {
 export const getVisitorLinks = (t: TFunction, term: Terminology, isCityMode: boolean): NavLink[] => {
   const _t = (key: string, fallback?: string) => t(key, fallback || key);
   const ctx = readMuseumCtx();
-  const hasSlugs = Boolean(ctx?.citySlug && ctx?.equipmentSlug && ctx.citySlug !== "undefined" && ctx.equipmentSlug !== "undefined");
+  const hasSlugs = Boolean(ctx && isUsableSlug(ctx.citySlug) && isUsableSlug(ctx.equipmentSlug));
   const base = hasSlugs && ctx ? buildEquipmentUrl(ctx.citySlug, ctx.equipmentSlug) : null;
   return [
     { to: base || "/hub", label: _t("visitor.sidebar.home", "Início"), icon: "🏠", feature: null },
     { to: base ? `${base}/obras` : "/select-museum", label: term.works, icon: isCityMode ? "🏛️" : "🎨", feature: "featureWorks" },
     { to: base ? `${base}/trilhas` : "/select-museum", label: term.trails, icon: "🗺️", feature: "featureTrails" },
     { to: ctx && hasSlugs ? buildMuseumMapUrl(ctx.citySlug, ctx.equipmentSlug) : "/select-museum", label: _t("visitor.sidebar.map", "Mapa"), icon: "📍", feature: null },
-    { to: "/agenda", label: "Agenda Cultural", icon: "🎟️", feature: null },
+    { to: "/agenda", label: "Agenda Cultural", icon: "🎫", feature: null },
     { to: "/meus-ingressos", label: "Meus Ingressos", icon: "🎫", feature: null },
     { to: base ? `${base}/eventos` : "/select-museum", label: _t("visitor.sidebar.events"), icon: "📅", feature: "featureEvents" },
     { to: "/desafios", label: _t("visitor.sidebar.challenges", "Desafios"), icon: "🎯", feature: "featureGamification" },
