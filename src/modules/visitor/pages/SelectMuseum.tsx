@@ -4,7 +4,7 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useAuth } from "../../auth/AuthContext";
 import { buildEquipmentUrl } from "@/utils/routes";
-import { slugifyCity, writeMuseumCtx } from "@/config/golive";
+import { slugifyCity, persistMuseumFromEquipment } from "@/config/golive";
 import { api } from "../../../api/client";
 import { LanguageSwitcher } from "../../../components/LanguageSwitcher";
 import { 
@@ -64,6 +64,12 @@ const isCanceledRequest = (err: unknown) => {
   if (!err || typeof err !== "object") return false;
   const maybeCanceled = err as { name?: string; code?: string };
   return maybeCanceled.name === "CanceledError" || maybeCanceled.code === "ERR_CANCELED";
+};
+
+const isInvalidSlugPart = (value: unknown): boolean => {
+  if (value == null) return true;
+  const s = String(value).trim();
+  return !s || s === "undefined" || s === "null";
 };
 
 export const SelectMuseum: React.FC = () => {
@@ -191,14 +197,23 @@ export const SelectMuseum: React.FC = () => {
     return filteredAndSortedEquipamentos.filter(e => (e.estado || "MG") === selectedEstado && e.cidade === selectedCidade);
   }, [filteredAndSortedEquipamentos, selectedEstado, selectedCidade]);
 
+  const goToEquipmentHub = (equip: Equipamento) => {
+    const tenantId = equip.tenantId;
+    const slug = equip.slug || equip.id;
+    const citySlug = slugifyCity(equip.cidade);
+    if (isInvalidSlugPart(tenantId) || isInvalidSlugPart(slug) || isInvalidSlugPart(citySlug)) {
+      setErrorMsg("Não foi possível entrar neste equipamento. Dados incompletos.");
+      return;
+    }
+    persistMuseumFromEquipment(equip);
+    navigate(buildEquipmentUrl(citySlug, slug));
+  };
+
   const handleSelect = async (equip: Equipamento) => {
     if (isAuthenticated && !isGuest) {
       try {
-        const citySlug = slugifyCity(equip.cidade);
-        const equipmentSlug = equip.slug || equip.id;
-        writeMuseumCtx({ citySlug, equipmentSlug, tenantId: equip.tenantId });
         updateSession(role || "visitor", equip.tenantId, name, equip.id, equip.cityId || null);
-        navigate(buildEquipmentUrl(citySlug, equipmentSlug));
+        goToEquipmentHub(equip);
         return;
       } catch (err: unknown) {
         logger.error("Error selecting equipment", err);
@@ -215,11 +230,8 @@ export const SelectMuseum: React.FC = () => {
       });
       return;
     }
-    const citySlug = slugifyCity(equip.cidade);
-    const equipmentSlug = equip.slug || equip.id;
-    writeMuseumCtx({ citySlug, equipmentSlug, tenantId: equip.tenantId });
     enterAsGuest(equip.tenantId, equip.id, equip.cityId || null);
-    navigate(buildEquipmentUrl(citySlug, equipmentSlug));
+    goToEquipmentHub(equip);
   };
 
   const formatDistance = (dist?: number) => {
@@ -241,16 +253,12 @@ export const SelectMuseum: React.FC = () => {
             variant="glass"
             size="sm"
             onClick={() => {
-              const museum = selectedLandmark;
-              if (!museum?.tenantId || museum.tenantId === "undefined" || museum.tenantId === "null") {
+              if (!selectedLandmark) {
                 setErrorMsg("Selecione um museu para entrar no Hub.");
                 return;
               }
-              const citySlug = slugifyCity(museum.cidade);
-              const equipmentSlug = museum.slug || museum.id;
-              writeMuseumCtx({ citySlug, equipmentSlug, tenantId: museum.tenantId });
-              enterAsGuest(museum.tenantId, museum.id, museum.cityId || null);
-              navigate(buildEquipmentUrl(citySlug, equipmentSlug));
+              enterAsGuest(selectedLandmark.tenantId, selectedLandmark.id, selectedLandmark.cityId || null);
+              goToEquipmentHub(selectedLandmark);
             }}
             rightIcon={<ArrowRight size={16} />}
             className="rounded-full px-5 text-xs font-bold bg-[var(--accent-primary)]/10 text-[var(--accent-primary)] border border-[var(--accent-primary)]/30 hover:bg-[var(--accent-primary)] hover:text-black transition-all"
@@ -493,11 +501,8 @@ export const SelectMuseum: React.FC = () => {
               </div>
               <div className="flex flex-col sm:flex-row gap-4">
                 <Button className="flex-1 h-14 text-lg font-bold" onClick={() => {
-                  const citySlug = slugifyCity(selectedLandmark.cidade);
-                  const equipmentSlug = selectedLandmark.slug || selectedLandmark.id;
-                  writeMuseumCtx({ citySlug, equipmentSlug, tenantId: selectedLandmark.tenantId });
                   enterAsGuest(selectedLandmark.tenantId, selectedLandmark.id, selectedLandmark.cityId || null);
-                  navigate(buildEquipmentUrl(citySlug, equipmentSlug));
+                  goToEquipmentHub(selectedLandmark);
                 }} rightIcon={<Zap size={20} />}>{t("visitor.selectMuseum.modal.enter")}</Button>
                 <Button variant="outline" className="flex-1 h-14 text-lg font-bold" onClick={() => window.open(`https://www.google.com/maps/search/?api=1&query=${selectedLandmark.lat},${selectedLandmark.lng}`, '_blank')} rightIcon={<Navigation size={20} />}>{t("visitor.selectMuseum.modal.directions")}</Button>
               </div>
