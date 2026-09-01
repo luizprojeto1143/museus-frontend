@@ -102,6 +102,14 @@ const vr = (Component: React.ComponentType, RequireRole: React.FC<RequireRolePro
     </RequireRole>
 );
 
+const RedirectPersonalHub: React.FC = () => {
+    const ctx = readMuseumCtx();
+    if (ctx?.citySlug && ctx?.equipmentSlug) {
+        return <Navigate to={buildEquipmentUrl(ctx.citySlug, ctx.equipmentSlug)} replace />;
+    }
+    return <Navigate to="/select-museum" replace />;
+};
+
 const vrHub = (Component: React.ComponentType, RequireRole: React.FC<RequireRoleProps>) => (
     <RequireRole allowed={ALL_VISITOR_ROLES}>
         <RequireMuseum>
@@ -150,7 +158,7 @@ export function visitorRoutes(RequireRole: React.FC<RequireRoleProps>) {
             </Route>
 
             {/* Hub do Visitante — tela raiz após login */}
-            <Route path="/hub" element={vrHub(VisitorHub, RequireRole)} />
+            <Route path="/hub" element={<RedirectPersonalHub />} />
 
 
             {/* Busca de cidades */}
