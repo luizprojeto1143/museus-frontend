@@ -17,42 +17,12 @@ interface Space {
     imageUrl?: string;
 };
 
-const DEMO_SPACES: Space[] = [
-    {
-        id: "space-1",
-        name: "Auditório Principal • Maestro Eleazar",
-        description: "Auditório acústico com plateia expansível, camarins e cabine de som.",
-        type: "AUDITORIUM",
-        capacity: 450,
-        isBookable: true,
-        imageUrl: "https://images.unsplash.com/photo-1469488865564-c2de10f69f96?auto=format&fit=crop&w=600&q=80"
-    },
-    {
-        id: "space-2",
-        name: "Sala de Ensaio 1 (Teatro & Dança)",
-        description: "Espaço com piso flutuante de madeira, espelhos e barras de apoio.",
-        type: "ROOM",
-        capacity: 35,
-        isBookable: true,
-        imageUrl: "https://images.unsplash.com/photo-1514306191717-452ec28c7814?auto=format&fit=crop&w=600&q=80"
-    },
-    {
-        id: "space-3",
-        name: "Estúdio Digital & Sonorização",
-        description: "Laboratório multimídia com ilha de edição e gravação acústica.",
-        type: "STUDIO",
-        capacity: 15,
-        isBookable: false,
-        imageUrl: "https://images.unsplash.com/photo-1460723237483-7a6dc9d0b212?auto=format&fit=crop&w=600&q=80"
-    }
-];
-
 export const AdminSpaces: React.FC = () => {
     const { t } = useTranslation();
     const navigate = useNavigate();
     const { addToast } = useToast();
 
-    const [spaces, setSpaces] = useState<Space[]>(DEMO_SPACES);
+    const [spaces, setSpaces] = useState<Space[]>([]);
     const [loading, setLoading] = useState(false);
     const [search, setSearch] = useState("");
     const [spaceToDelete, setSpaceToDelete] = useState<Space | null>(null);
@@ -65,11 +35,9 @@ export const AdminSpaces: React.FC = () => {
         try {
             setLoading(true);
             const res = await api.get<Space[]>("/spaces");
-            if (Array.isArray(res.data) && res.data.length > 0) {
-                setSpaces(res.data);
-            }
+            setSpaces(Array.isArray(res.data) ? res.data : []);
         } catch {
-            // Keep demo list on offline or empty
+            setSpaces([]);
         } finally {
             setLoading(false);
         }
