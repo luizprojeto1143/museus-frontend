@@ -69,6 +69,7 @@ import {
   LogOut
 } from "lucide-react";
 import { useIsCityMode } from "../../auth/TenantContext";
+import { GOLIVE_ADMIN_KEEP } from "@/config/golive";
 
 interface TenantFeatures {
   name: string;
@@ -86,13 +87,11 @@ interface TenantFeatures {
   featureReviews: boolean;
   featureGuestbook: boolean;
   featureAccessibility: boolean;
-  // Municipal Features
   featureEditais: boolean;
   featureProjects: boolean;
   featureAccessibilityMgmt: boolean;
   featureProviders: boolean;
   featureInstitutionalReports: boolean;
-  // Menu Groups
   featureGroupContent: boolean;
   featureGroupEvents: boolean;
   featureGroupEngagement: boolean;
@@ -104,7 +103,6 @@ interface TenantFeatures {
   featureGroupPreservation: boolean;
   featureGroupAI: boolean;
   featureGroupRoadmap: boolean;
-  // Hierarchy
   type: string;
   parentId: string | null;
 }
@@ -129,8 +127,6 @@ export const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children 
   const [isCollapsed, setCollapsed] = useState(false);
   const [isSidebarOpen, setSidebarOpen] = useState(false);
   const [features, setFeatures] = useState<TenantFeatures | null>(null);
-
-  // City Mode hooks
   const isCityMode = useIsCityMode();
   const term = useTerminology();
   const isTheaterRole = role === "theater_admin";
@@ -294,13 +290,14 @@ export const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children 
     }
   ];
 
-  // Filter groups based on Master Admin flags and child links
   const visibleGroups = sidebarGroups
-    .filter(g => g.showGroup !== false) // Check if the entire group is disabled
-    .map(g => ({ ...g, links: (g.links as SidebarLink[]).filter((l: SidebarLink) => l.show) }))
+    .filter(g => g.showGroup !== false)
+    .map(g => ({
+      ...g,
+      links: (g.links as SidebarLink[]).filter((l: SidebarLink) => l.show && GOLIVE_ADMIN_KEEP.has(l.to))
+    }))
     .filter(g => g.links.length > 0);
 
-  // Track which groups are expanded (auto-expand if child route active)
   const [expandedGroups, setExpandedGroups] = useState<Record<string, boolean>>({});
 
   const toggleGroup = (label: string) => {
@@ -308,7 +305,6 @@ export const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children 
   };
 
   const isGroupOpen = (group: SidebarGroup) => {
-    // Auto-expand if any child is active, otherwise check manual state
     const hasActiveChild = group.links.some(l => location.pathname === l.to);
     if (hasActiveChild) return true;
     return expandedGroups[group.label] ?? false;
@@ -316,116 +312,57 @@ export const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children 
 
   return (
     <div className={`layout-wrapper ${isCityMode ? 'city-mode' : ''}`} style={themeStyles as React.CSSProperties}>
-      {/* AMBIENT BACKGROUND - ADAPTIVE */}
       <div className="ambient-bg fixed inset-0 pointer-events-none">
         <div className={`ambient-orb w-[600px] h-[600px] bg-gold-400/5 top-[-10%] left-[-10%] blur-[120px]`} />
         <div className={`ambient-orb w-[500px] h-[500px] bg-accent-secondary/5 bottom-[-10%] right-[-10%] blur-[120px]`} />
       </div>
-
-      {/* Mobile Overlay */}
-      <div
-        className={`mobile-overlay ${isSidebarOpen ? "open" : ""}`}
-        onClick={() => setSidebarOpen(false)}
-        aria-hidden="true"
-      />
-
-      {/* Sidebar - PREMIUM INSTITUTIONAL */}
+      <div className={`mobile-overlay ${isSidebarOpen ? "open" : ""}`} onClick={() => setSidebarOpen(false)} aria-hidden="true" />
       <aside className={`layout-sidebar bg-black/60 backdrop-blur-3xl border-r border-white/5 ${isSidebarOpen ? "open" : ""} ${isCollapsed ? "collapsed" : ""}`}>
-        <button
-          className="sidebar-collapse-toggle"
-          onClick={() => setCollapsed(!isCollapsed)}
-          title={isCollapsed ? "Expandir" : "Recolher"}
-          aria-label={isCollapsed ? "Expandir barra lateral" : "Recolher barra lateral"}
-        >
+        <button className="sidebar-collapse-toggle" onClick={() => setCollapsed(!isCollapsed)} title={isCollapsed ? "Expandir" : "Recolher"} aria-label={isCollapsed ? "Expandir barra lateral" : "Recolher barra lateral"}>
           {isCollapsed ? <ChevronRight size={18} /> : <ChevronLeft size={18} />}
         </button>
-        
         <div className="p-6 border-b border-white/5">
           <div className="flex items-center gap-3">
              <div className={`w-12 h-12 rounded-2xl flex items-center justify-center overflow-hidden border border-white/10 shadow-xl ${isCityMode ? 'bg-[var(--accent-primary)] shadow-blue-500/20' : 'bg-gradient-to-br from-gold-500 to-bronze-600 shadow-gold-500/20'}`}>
-                <img 
-                  src={features?.logoUrl || "/logo-culturaviva.jpg"} 
-                  alt="" 
-                  className="w-full h-full object-cover"
-                />
+                <img src={features?.logoUrl || "/logo-culturaviva.jpg"} alt="" className="w-full h-full object-cover" />
              </div>
              {!isCollapsed && (
               <div className="flex flex-col min-w-0">
-                  <span className="text-white font-black tracking-tight text-sm truncate uppercase">
-                    {features?.name || (isCityMode ? t("admin.sidebar.secretariat", "Secretaria") : t("admin.sidebar.management", "Gestão"))}
-                  </span>
-                  <span className={`${isCityMode ? 'text-blue-400' : 'text-gold-400'} font-bold text-[9px] uppercase tracking-widest mt-0.5 truncate`}>
-                    {isCityMode ? t("admin.sidebar.municipal_portal", "Portal Municipal") : t("admin.sidebar.admin_portal", "Portal Administrativo")}
-                  </span>
+                  <span className="text-white font-black tracking-tight text-sm truncate uppercase">{features?.name || (isCityMode ? t("admin.sidebar.secretariat", "Secretaria") : t("admin.sidebar.management", "Gestão"))}</span>
+                  <span className={`${isCityMode ? 'text-blue-400' : 'text-gold-400'} font-bold text-[9px] uppercase tracking-widest mt-0.5 truncate`}>{isCityMode ? t("admin.sidebar.municipal_portal", "Portal Municipal") : t("admin.sidebar.admin_portal", "Portal Administrativo")}</span>
                </div>
              )}
           </div>
         </div>
-
         <nav className="flex-1 overflow-y-auto p-3 space-y-4 custom-scrollbar mt-2">
           {visibleGroups.map((group) => {
             const open = isGroupOpen(group);
-            
             if (group.links.length === 1 && group.label === "Painel") {
               const link = group.links[0];
-              const Icon = link.icon === "LayoutDashboard" ? LayoutDashboard : LayoutDashboard; // Fallback
+              const Icon = LayoutDashboard;
               return (
-                <Link
-                  key={link.to}
-                  to={link.to}
-                  className={`flex items-center gap-4 p-4 rounded-2xl font-bold text-xs transition-all duration-300 group ${
-                    location.pathname === link.to 
-                    ? `bg-gold-400/10 text-gold-400 border border-gold-400/20 shadow-[0_0_20px_rgba(212,175,55,0.1)]` 
-                    : "text-gray-400 hover:text-white hover:bg-white/5"
-                  }`}
-                  onClick={() => setSidebarOpen(false)}
-                  title={isCollapsed ? link.label : ""}
-                >
-                  <span className={`transition-transform duration-300 group-hover:scale-110 ${location.pathname === link.to ? "" : "opacity-50"}`}>
-                    <Icon size={20} />
-                  </span>
+                <Link key={link.to} to={link.to} className={`flex items-center gap-4 p-4 rounded-2xl font-bold text-xs transition-all duration-300 group ${location.pathname === link.to ? `bg-gold-400/10 text-gold-400 border border-gold-400/20 shadow-[0_0_20px_rgba(212,175,55,0.1)]` : "text-gray-400 hover:text-white hover:bg-white/5"}`} onClick={() => setSidebarOpen(false)} title={isCollapsed ? link.label : ""}>
+                  <span className={`transition-transform duration-300 group-hover:scale-110 ${location.pathname === link.to ? "" : "opacity-50"}`}><Icon size={20} /></span>
                   {!isCollapsed && <span className="uppercase tracking-widest">{link.label}</span>}
                 </Link>
               );
             }
-
             return (
               <div key={group.label} className="space-y-1">
                 {!isCollapsed && (
-                  <button
-                    className={`w-full flex items-center justify-between px-4 py-2 text-[10px] font-black uppercase tracking-[0.2em] transition-colors ${open ? 'text-white' : 'text-slate-600 hover:text-slate-400'}`}
-                    onClick={() => toggleGroup(group.label)}
-                    aria-expanded={open}
-                  >
+                  <button className={`w-full flex items-center justify-between px-4 py-2 text-[10px] font-black uppercase tracking-[0.2em] transition-colors ${open ? 'text-white' : 'text-slate-600 hover:text-slate-400'}`} onClick={() => toggleGroup(group.label)} aria-expanded={open}>
                     <span>{group.label}</span>
                     <span className={`text-[8px] transition-transform duration-300 ${open ? 'rotate-180' : ''}`}>▼</span>
                   </button>
                 )}
-                
                 {(open || isCollapsed) && (
                   <div className="space-y-1">
                     {group.links.map((link: SidebarLink) => {
-                       // Map string icons to components
-                       const IconMap: Record<string, LucideIcon> = {
-                         LayoutDashboard, Image, MapIcon, Tag, FolderOpen, Theater, QrCode, Ticket, Smartphone, Building2, Calendar, GraduationCap, Users, Star, ShoppingCart, Compass, Trophy, Sword, ClipboardList, Palette, HardHat, Handshake, Accessibility, BarChart, Armchair, Users2, BookOpen, Zap, Diamond, Bot, Eye, MapPin, Bell, CircleDollarSign, Settings, FileText, MessageSquare, CheckCircle2, Smile, Flame, Filter, ShieldCheck, Baby, Wrench, Target, Scroll, CalendarDays, FileSearch, Wand2, Camera, Globe, History, Inbox, TreePine
-                       };
+                       const IconMap: Record<string, LucideIcon> = { LayoutDashboard, Image, MapIcon, Tag, FolderOpen, Theater, QrCode, Ticket, Smartphone, Building2, Calendar, GraduationCap, Users, Star, ShoppingCart, Compass, Trophy, Sword, ClipboardList, Palette, HardHat, Handshake, Accessibility, BarChart, Armchair, Users2, BookOpen, Zap, Diamond, Bot, Eye, MapPin, Bell, CircleDollarSign, Settings, FileText, MessageSquare, CheckCircle2, Smile, Flame, Filter, ShieldCheck, Baby, Wrench, Target, Scroll, CalendarDays, FileSearch, Wand2, Camera, Globe, History, Inbox, TreePine };
                        const Icon = IconMap[link.icon] || LayoutDashboard;
-
                        return (
-                        <Link
-                          key={link.to}
-                          to={link.to}
-                          className={`flex items-center gap-4 p-3 rounded-xl font-bold text-[11px] transition-all duration-300 group ${
-                            location.pathname === link.to 
-                            ? `bg-gold-400/10 text-gold-400 border border-gold-400/20` 
-                            : "text-gray-500 hover:text-white hover:bg-white/5"
-                          }`}
-                          onClick={() => setSidebarOpen(false)}
-                          title={isCollapsed ? link.label : ""}
-                        >
-                          <span className={`transition-transform duration-300 group-hover:scale-110 ${location.pathname === link.to ? "" : "opacity-50 grayscale"}`}>
-                            <Icon size={18} />
-                          </span>
+                        <Link key={link.to} to={link.to} className={`flex items-center gap-4 p-3 rounded-xl font-bold text-[11px] transition-all duration-300 group ${location.pathname === link.to ? `bg-gold-400/10 text-gold-400 border border-gold-400/20` : "text-gray-500 hover:text-white hover:bg-white/5"}`} onClick={() => setSidebarOpen(false)} title={isCollapsed ? link.label : ""}>
+                          <span className={`transition-transform duration-300 group-hover:scale-110 ${location.pathname === link.to ? "" : "opacity-50 grayscale"}`}><Icon size={18} /></span>
                           {!isCollapsed && <span>{link.label}</span>}
                         </Link>
                        );
@@ -436,31 +373,17 @@ export const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children 
             );
           })}
         </nav>
-
         <div className="p-4 border-t border-white/5 bg-black/20 flex flex-col items-center">
-          {!isCollapsed && (
-            <div className="mb-4 flex justify-center w-full">
-              <LanguageSwitcher style={{ position: "static" }} className="sidebar-lang-switcher" />
-            </div>
-          )}
-          <button
-            onClick={logout}
-            className="w-full h-11 rounded-xl bg-red-500/5 border border-red-500/10 hover:bg-red-500/20 hover:text-red-400 hover:border-red-500/30 transition-all duration-300 flex items-center justify-center gap-3 font-black text-[10px] uppercase tracking-widest group"
-            aria-label={t("admin.sidebar.logout")}
-          >
+          {!isCollapsed && (<div className="mb-4 flex justify-center w-full"><LanguageSwitcher style={{ position: "static" }} className="sidebar-lang-switcher" /></div>)}
+          <button onClick={logout} className="w-full h-11 rounded-xl bg-red-500/5 border border-red-500/10 hover:bg-red-500/20 hover:text-red-400 hover:border-red-500/30 transition-all duration-300 flex items-center justify-center gap-3 font-black text-[10px] uppercase tracking-widest group" aria-label={t("admin.sidebar.logout")}>
             <LogOut size={16} className="group-hover:translate-x-1 transition-transform" />
             {!isCollapsed && <span>{t("admin.sidebar.logout")}</span>}
           </button>
         </div>
       </aside>
-
-      {/* Main Content */}
       <main className="flex-1 min-h-screen relative overflow-y-auto">
         <header className="h-20 flex items-center px-8 border-b border-white/5 sticky top-0 bg-black/40 backdrop-blur-xl z-40">
-          <button className="lg:hidden text-white mr-4 p-2 bg-white/5 rounded-xl border border-white/10" onClick={() => setSidebarOpen(true)}>
-             <Menu size={24} />
-          </button>
-          
+          <button className="lg:hidden text-white mr-4 p-2 bg-white/5 rounded-xl border border-white/10" onClick={() => setSidebarOpen(true)}><Menu size={24} /></button>
           <div className="ml-auto flex items-center gap-6">
              <div className="hidden sm:flex flex-col text-right">
                 <span className="text-slate-500 text-[10px] font-black uppercase tracking-widest">{t("admin.header.authenticated_as", "Autenticado como")}</span>
@@ -471,12 +394,8 @@ export const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children 
              </div>
           </div>
         </header>
-
-        <div className="p-8 lg:p-12 max-w-[1600px] mx-auto">
-             {children}
-        </div>
+        <div className="p-8 lg:p-12 max-w-[1600px] mx-auto">{children}</div>
       </main>
     </div>
   );
 };
-

@@ -47,6 +47,13 @@ api.interceptors.request.use(async (config) => {
       const parsed = JSON.parse(rawAuth);
       if (parsed.tenantId) {
         config.headers["x-tenant-id"] = parsed.tenantId;
+        const path = `${config.baseURL || ""}${config.url || ""}`;
+        if (/\/(works|trails|events)(\b|\/|\?|$)/.test(path) || /\/(works|trails|events)$/.test(String(config.url || ""))) {
+          const params = (config.params || {}) as Record<string, unknown>;
+          if (!params.tenantId) {
+            config.params = { ...params, tenantId: parsed.tenantId };
+          }
+        }
       }
     }
   } catch {

@@ -11,7 +11,8 @@ import { isAxiosError } from "axios";
 export type { Role };
 
 import { logger } from "@/utils/logger";
-// ─── Tipos ────────────────────────────────────────────────────────
+import { writeMuseumCtx } from "@/config/golive";
+
 interface StoredAuth {
   isGuest?: boolean;
   role?: Role | string | null;
@@ -98,13 +99,11 @@ interface AuthContextValue extends AuthState {
   hasPermission: (flag?: string) => boolean;
 }
 
-// ─── Actions ──────────────────────────────────────────────────────
 type AuthAction =
   | { type: "LOGIN"; payload: AuthState }
   | { type: "LOGOUT" }
   | { type: "UPDATE_SESSION"; payload: Partial<AuthState> };
 
-// ─── Reducer ──────────────────────────────────────────────────────
 const EMPTY_STATE: AuthState = {
   role: null,
   tenantId: null,
@@ -132,7 +131,6 @@ function authReducer(state: AuthState, action: AuthAction): AuthState {
   }
 }
 
-// ─── Leitura única do localStorage ────────────────────────────────
 const STORAGE_KEY = "museus_auth_v1";
 
 const DEFAULT_GUEST_STATE: AuthState = {
@@ -206,16 +204,11 @@ function persistAuth(state: AuthState): void {
   }
 }
 
-
-
-// ─── Context ──────────────────────────────────────────────────────
 const AuthContext = createContext<AuthContextValue | undefined>(undefined);
 
 export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  // Leitura única na inicialização — não 9 chamadas a localStorage
   const [state, dispatch] = useReducer(authReducer, undefined, readStoredAuth);
 
-  // ─── Login ────────────────────────────────────────────────────
   const login: AuthContextValue["login"] = async ({ email, password }) => {
     if (!isDemoMode && baseURL) {
       try {
@@ -238,8 +231,6 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
       dispatch({ type: "LOGIN", payload: newState });
       persistAuth(newState);
-
-      // Tokens are now securely handled via HttpOnly Cookies by the backend
 
       return { role: newState.role!, tenantType: newState.tenantType, hasProviderProfile: newState.hasProviderProfile };
     } catch (err: unknown) {
@@ -273,7 +264,6 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     }
   };
 
-  // ─── Logout ───────────────────────────────────────────────────
   const logout = async () => {
     try {
       await api.post("/auth/logout");
@@ -285,10 +275,8 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     storage.remove(STORAGE_KEY);
     storage.remove("museus_access_token");
     storage.remove("museus_refresh_token");
-
   };
 
-  // ─── Guest ────────────────────────────────────────────────────
   const enterAsGuest = (selectedTenantId?: string | null, selectedEquipamentoId?: string | null, selectedCityId?: string | null) => {
     const newState: AuthState = {
       role: "visitor",
@@ -306,9 +294,15 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
     dispatch({ type: "LOGIN", payload: newState });
     persistAuth(newState);
+    if (selectedTenantId) {
+      writeMuseumCtx({
+        tenantId: selectedTenantId,
+        equipmentSlug: selectedEquipamentoId || "museu",
+        citySlug: "museu",
+      });
+    }
   };
 
-  // ─── Update Session ───────────────────────────────────────────
   const updateSession = (
     newRole: string,
     newTenantId: string | null,
@@ -328,9 +322,15 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
     const merged = { ...state, ...partial };
     persistAuth(merged);
+    if (newTenantId) {
+      writeMuseumCtx({
+        tenantId: newTenantId,
+        equipmentSlug: newEquipamentoId || "museu",
+        citySlug: "museu",
+      });
+    }
   };
 
-  // ─── Restore Session ─────────────────────────────────────────
   const [isRestoring, setIsRestoring] = React.useState(true);
 
   React.useEffect(() => {
@@ -355,7 +355,6 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
           dispatch({ type: "LOGIN", payload: restoredState });
         }
       } catch {
-        // Not authenticated on backend -> preserve visitor guest session
         const stored = readStoredAuth();
         dispatch({ type: "LOGIN", payload: stored });
       } finally {
@@ -366,8 +365,6 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     if (isDemoMode) {
       setIsRestoring(false);
     } else if (state.isGuest) {
-      // Guest sessions are local-only — no server call needed.
-      // Restore their role and userId so the app recognises them as a visitor.
       dispatch({
         type: "LOGIN",
         payload: {
@@ -428,4 +425,3 @@ export function useAuth(): AuthContextValue {
   }
   return ctx;
 }
-

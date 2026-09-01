@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams, useLocation } from 'react-router-dom';
-import { X, ChevronDown, ChevronUp, LogOut, RefreshCcw } from 'lucide-react';
+import { X, ChevronDown, ChevronUp, LogOut } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '../../auth/AuthContext';
-import { getCityContextLinks, getEquipmentContextLinks } from '../../../config/visitorNavigation.config';
+import { getEquipmentContextLinks } from '../../../config/visitorNavigation.config';
 import './GlobalMenu.css';
 
 interface GlobalMenuProps {
@@ -28,11 +28,6 @@ export const GlobalMenu: React.FC<GlobalMenuProps> = ({ isOpen, onClose }) => {
 
   const toggleSection = (section: string) => {
     setExpandedSection(prev => (prev === section ? null : section));
-  };
-
-  const handleSwitchCity = () => {
-    onClose();
-    navigate('/cidades');
   };
 
   const handleNavigate = (path: string) => {
@@ -90,18 +85,13 @@ export const GlobalMenu: React.FC<GlobalMenuProps> = ({ isOpen, onClose }) => {
                 <span className="item-label">Início</span>
               </button>
               
-              {/* 2. CIDADES */}
-              <button type="button" className={`menu-item ${currentPath.startsWith('/cidades') && !citySlug ? 'active' : ''}`} onClick={() => handleNavigate('/cidades')}>
-                <span className="item-icon">🏙️</span>
-                <span className="item-label">Cidades</span>
-              </button>
 
               {/* 3. CONTEXTO (CIDADE OU MUSEU) */}
               {(citySlug || equipmentSlug) && (
                 <div className="menu-section-wrapper">
                   <button className={`menu-item-header ${expandedSection === 'contexto' ? 'active-header' : ''}`} onClick={() => toggleSection('contexto')}>
-                    <span className="item-icon">{equipmentSlug ? '🏛️' : '📍'}</span>
-                    <span className="item-label">{equipmentSlug ? 'No Museu' : 'Na Cidade'}</span>
+                    <span className="item-icon">'🏛️'</span>
+                    <span className="item-label">'No Museu'</span>
                     {expandedSection === 'contexto' ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
                   </button>
                   <AnimatePresence>
@@ -120,13 +110,7 @@ export const GlobalMenu: React.FC<GlobalMenuProps> = ({ isOpen, onClose }) => {
                               <span>{link.label}</span>
                             </button>
                           ))
-                        ) : (
-                          getCityContextLinks(citySlug || '').map(link => (
-                            <button key={link.id} type="button" className="submenu-item" onClick={() => handleNavigate(link.path)}>
-                              <span>{link.label}</span>
-                            </button>
-                          ))
-                        )}
+                        ) : null}
                       </motion.div>
                     )}
                   </AnimatePresence>
@@ -185,10 +169,6 @@ export const GlobalMenu: React.FC<GlobalMenuProps> = ({ isOpen, onClose }) => {
               <div className="menu-separator" />
 
               <div className="menu-actions">
-                <button className="action-item" onClick={handleSwitchCity}>
-                  <RefreshCcw size={20} className="action-icon" />
-                  <span className="action-label">Trocar de Cidade</span>
-                </button>
                 <button className="action-item logout" onClick={handleLogout}>
                   <LogOut size={20} className="action-icon" />
                   <span className="action-label">Sair da Conta</span>

@@ -1,17 +1,14 @@
 import React from "react";
 import { Route, Navigate } from "react-router-dom";
 import { VisitorLayout } from "../modules/visitor/VisitorLayout";
-import { Role } from "../modules/auth/AuthContext";
+import { Role, useAuth } from "../modules/auth/AuthContext";
+import { hasSelectedMuseum } from "../config/golive";
 
 const CulturalAgenda = React.lazy(() => import("../modules/visitor/pages/CulturalAgenda").then(m => ({ default: m.CulturalAgenda })));
 const MyTickets = React.lazy(() => import("../modules/visitor/pages/MyTickets").then(m => ({ default: m.MyTickets })));
-
-// Lazy Loaded AI Components
 const VisualScannerPage = React.lazy(() => import("../modules/visitor/pages/VisualScannerPage").then(module => ({ default: module.VisualScannerPage })));
 const ScannerHub = React.lazy(() => import("../modules/visitor/pages/ScannerHub").then(module => ({ default: module.ScannerHub })));
 const ScannerPage = React.lazy(() => import("../modules/visitor/pages/ScannerPage").then(module => ({ default: module.ScannerPage })));
-
-// Standard imports (converted to lazy)
 const WorksList = React.lazy(() => import("../modules/visitor/pages/WorksList").then(m => ({ default: m.WorksList })));
 const WorkDetail = React.lazy(() => import("../modules/visitor/pages/WorkDetail").then(m => ({ default: m.WorkDetail })));
 const TrailsList = React.lazy(() => import("../modules/visitor/pages/TrailsList").then(m => ({ default: m.TrailsList })));
@@ -40,7 +37,6 @@ const VisitorMembership = React.lazy(() => import("../modules/visitor/pages/Visi
 const VisitorCollectibles = React.lazy(() => import("../modules/visitor/pages/VisitorCollectibles").then(m => ({ default: m.VisitorCollectibles })));
 const TicketTransfer = React.lazy(() => import("../modules/visitor/pages/TicketTransfer").then(m => ({ default: m.TicketTransfer })));
 const GroupCheckout = React.lazy(() => import("../modules/visitor/pages/GroupCheckout").then(m => ({ default: m.GroupCheckout })));
-const VisitorRPG = React.lazy(() => import("../modules/visitor/pages/VisitorRPG").then(m => ({ default: m.VisitorRPG })));
 const SocialCheckinPage = React.lazy(() => import("../modules/visitor/pages/SocialCheckinPage").then(m => ({ default: m.SocialCheckinPage })));
 const TeacherPortal = React.lazy(() => import("../modules/visitor/pages/TeacherPortal").then(m => ({ default: m.TeacherPortal })));
 const CommunityFeed = React.lazy(() => import("../modules/visitor/pages/CommunityFeed").then(m => ({ default: m.CommunityFeed })));
@@ -58,8 +54,6 @@ const CityEquipments = React.lazy(() => import("../modules/visitor/pages/CityEqu
 const VisitorHub = React.lazy(() => import("../modules/visitor/pages/VisitorHub").then(m => ({ default: m.VisitorHub })));
 const CitySearch = React.lazy(() => import("../modules/visitor/pages/CitySearch").then(m => ({ default: m.CitySearch })));
 const MuseumHub = React.lazy(() => import("../modules/visitor/pages/MuseumHub").then(m => ({ default: m.MuseumHub })));
-
-// Roteiro Cultural (Turismo Inteligente)
 const RoteiroHome = React.lazy(() => import("../modules/roteiro/RoteiroHome").then(m => ({ default: m.RoteiroHome })));
 const InteractiveMap = React.lazy(() => import("../modules/roteiro/InteractiveMap").then(m => ({ default: m.InteractiveMap })));
 const SmartRouteGenerator = React.lazy(() => import("../modules/roteiro/SmartRouteGenerator").then(m => ({ default: m.SmartRouteGenerator })));
@@ -68,12 +62,19 @@ const ProviderDetail = React.lazy(() => import("../modules/roteiro/ProviderDetai
 
 type RequireRoleProps = { allowed: (Role | string)[]; children: React.ReactElement };
 
-/** Helper to wrap a visitor page with layout + role guard */
 const ALL_VISITOR_ROLES: (Role | string)[] = [
   "visitor", "admin", "equipment_admin", "equipment_collaborator", "master",
   "producer", "provider", "municipal_admin", "municipal_secretary",
   "theater_admin", "collaborator", "sponsor", "totem_operator"
 ];
+
+const RequireMuseum: React.FC<{ children: React.ReactElement }> = ({ children }) => {
+    const { tenantId } = useAuth();
+    if (!hasSelectedMuseum(tenantId)) {
+        return <Navigate to="/select-museum" replace />;
+    }
+    return children;
+};
 
 const vr = (Component: React.ComponentType, RequireRole: React.FC<RequireRoleProps>) => (
     <RequireRole allowed={ALL_VISITOR_ROLES}>
@@ -83,17 +84,25 @@ const vr = (Component: React.ComponentType, RequireRole: React.FC<RequireRolePro
     </RequireRole>
 );
 
+const vrHub = (Component: React.ComponentType, RequireRole: React.FC<RequireRoleProps>) => (
+    <RequireRole allowed={ALL_VISITOR_ROLES}>
+        <RequireMuseum>
+            <VisitorLayout>
+                <Component />
+            </VisitorLayout>
+        </RequireMuseum>
+    </RequireRole>
+);
+
 export function visitorRoutes(RequireRole: React.FC<RequireRoleProps>) {
     return (
         <>
-            {/* Roteiro Cultural */}
             <Route path="/roteiro" element={vr(RoteiroHome, RequireRole)} />
             <Route path="/roteiro/map" element={vr(InteractiveMap, RequireRole)} />
             <Route path="/roteiro/ai-generator" element={vr(SmartRouteGenerator, RequireRole)} />
             <Route path="/roteiro/passaporte" element={vr(CulturalPassport, RequireRole)} />
             <Route path="/roteiro/parceiro/:providerId" element={vr(ProviderDetail, RequireRole)} />
 
-            {/* Hub do Museu/Equipamento (Rotas aninhadas) */}
             <Route path="/cidades/:citySlug/equipamentos/:equipmentSlug">
                 <Route index element={vr(MuseumHub, RequireRole)} />
                 <Route path="obras" element={vr(WorksList, RequireRole)} />
@@ -120,14 +129,8 @@ export function visitorRoutes(RequireRole: React.FC<RequireRoleProps>) {
                 <Route path="obras/comparar" element={vr(WorkComparator, RequireRole)} />
             </Route>
 
-            {/* Hub do Visitante — tela raiz após login */}
-            <Route path="/hub" element={vr(VisitorHub, RequireRole)} />
-
-
-            {/* Busca de cidades */}
+            <Route path="/hub" element={vrHub(VisitorHub, RequireRole)} />
             <Route path="/cidades" element={vr(CitySearch, RequireRole)} />
-            
-            {/* Hub da Cidade e suas rotas contextuais */}
             <Route path="/cidades/:citySlug">
                 <Route index element={vr(CityDashboard, RequireRole)} />
                 <Route path="mapa" element={vr(MapView, RequireRole)} />
@@ -138,7 +141,6 @@ export function visitorRoutes(RequireRole: React.FC<RequireRoleProps>) {
                 <Route path="equipamentos" element={vr(CityEquipments, RequireRole)} />
             </Route>
 
-            {/* Rotas Globais do Visitante */}
             <Route path="/scanner" element={vr(ScannerHub, RequireRole)} />
             <Route path="/scanner/qr" element={vr(ScannerPage, RequireRole)} />
             <Route path="/scanner/ai" element={vr(VisualScannerPage, RequireRole)} />
@@ -148,8 +150,6 @@ export function visitorRoutes(RequireRole: React.FC<RequireRoleProps>) {
             <Route path="/trilhas" element={vr(TrailsList, RequireRole)} />
             <Route path="/eventos" element={vr(EventsList, RequireRole)} />
             <Route path="/agenda" element={vr(CulturalAgenda, RequireRole)} />
-
-            
             <Route path="/meus-ingressos" element={vr(MyTickets, RequireRole)} />
             <Route path="/ingressos" element={<Navigate to="/meus-ingressos" replace />} />
             <Route path="/passaporte" element={vr(Passport, RequireRole)} />
@@ -165,7 +165,7 @@ export function visitorRoutes(RequireRole: React.FC<RequireRoleProps>) {
             <Route path="/colecao" element={vr(VisitorCollectibles, RequireRole)} />
             <Route path="/transferir-ingresso" element={vr(TicketTransfer, RequireRole)} />
             <Route path="/grupo" element={vr(GroupCheckout, RequireRole)} />
-            <Route path="/rpg" element={vr(VisitorRPG, RequireRole)} />
+            <Route path="/rpg" element={<Navigate to="/hub" replace />} />
             <Route path="/checkin" element={vr(SocialCheckinPage, RequireRole)} />
             <Route path="/professor" element={vr(TeacherPortal, RequireRole)} />
             <Route path="/comunidade" element={vr(CommunityFeed, RequireRole)} />

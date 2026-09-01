@@ -37,20 +37,8 @@ export const Login: React.FC = () => {
 
       if (userRole === "master") {
         redirectPath = "/master";
-      } else if (userRole === "municipal_admin" || userRole === "municipal_secretary") {
-        redirectPath = "/municipal";
       } else if (userRole === "equipment_admin" || userRole === "equipment_collaborator" || userRole === "collaborator") {
         redirectPath = "/admin";
-      } else if (userRole === "producer") {
-        redirectPath = "/producer";
-      } else if (userRole === "sponsor") {
-        redirectPath = "/patrocinar/dashboard";
-      } else if (userRole === "theater_admin") {
-        redirectPath = "/theater";
-      } else if (userRole === "provider" || hasProviderProfile) {
-        redirectPath = "/provider";
-      } else if (userRole === "totem_operator") {
-        redirectPath = "/totem";
       } else {
         redirectPath = "/hub";
       }
@@ -67,7 +55,8 @@ export const Login: React.FC = () => {
       setIsSubmitting(false);
     }
   };
-  return (
+
+  return (
     <div className="login-page min-h-screen w-full flex items-center justify-center p-4 bg-bg-page relative overflow-hidden">
       <ParticleBackground />
       <div className="absolute inset-0 bg-gradient-to-b from-transparent to-bg-page/80 pointer-events-none"></div>

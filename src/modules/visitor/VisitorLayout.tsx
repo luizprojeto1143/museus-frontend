@@ -10,7 +10,6 @@ import { ThemeToggle } from "./components/ThemeToggle";
 
 import { useAuth } from "../auth/AuthContext";
 import { NavPill } from "./components/NavPill";
-import { HUDRPG } from "./components/HUDRPG";
 
 import { GlobalSearch } from "./components/GlobalSearch";
 import { DialerModal } from "./components/DialerModal";
@@ -283,7 +282,6 @@ export const VisitorLayout: React.FC<{ children: React.ReactNode }> = ({ childre
         </div>
       </main>
 
-      <HUDRPG />
 
       <GlobalMenu 
         isOpen={isGlobalMenuOpen} 
@@ -312,4 +310,3 @@ export const VisitorLayout: React.FC<{ children: React.ReactNode }> = ({ childre
     </div>
   );
 };
-

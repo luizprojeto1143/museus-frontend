@@ -1,7 +1,6 @@
 import React from "react";
 import { Routes, Route, Navigate, useLocation } from "react-router-dom";
 import { useAuth } from "./modules/auth/AuthContext";
-import { useIsCityMode } from "./modules/auth/TenantContext";
 import { Role } from "./types/auth";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "react-hot-toast";
@@ -15,18 +14,13 @@ import { VisitorThemeProvider } from "./modules/visitor/context/VisitorThemeProv
 import { PageLoader } from "./components/ui/PageLoader";
 import { registerGSAPPlugins } from "./lib/gsap-utils";
 
-// Register GSAP plugins once at app level
 registerGSAPPlugins();
 
-// Auth pages — lazy loaded
 const Login = React.lazy(() => import("./modules/auth/Login").then(m => ({ default: m.Login })));
 const RegisterWrapper = React.lazy(() => import("./modules/auth/RegisterWrapper").then(m => ({ default: m.RegisterWrapper })));
-const RegisterProducer = React.lazy(() => import("./modules/auth/RegisterProducer").then(m => ({ default: m.RegisterProducer })));
-const RegisterProvider = React.lazy(() => import("./modules/auth/RegisterProvider").then(m => ({ default: m.RegisterProvider })));
 const ForgotPassword = React.lazy(() => import("./modules/auth/ForgotPassword").then(m => ({ default: m.ForgotPassword })));
 const ResetPasswordPage = React.lazy(() => import("./modules/auth/ResetPassword").then(m => ({ default: m.ResetPasswordPage })));
 
-// Public pages — lazy loaded
 const LandingPage = React.lazy(() => import("./modules/public/LandingPage").then(m => ({ default: m.LandingPage })));
 const Welcome = React.lazy(() => import("./modules/visitor/pages/Welcome").then(m => ({ default: m.Welcome })));
 const SelectMuseum = React.lazy(() => import("./modules/visitor/pages/SelectMuseum").then(m => ({ default: m.SelectMuseum })));
@@ -37,25 +31,17 @@ const PublicPassportPage = React.lazy(() => import("./modules/visitor/pages/Publ
 const AccessDeniedPage = React.lazy(() => import("./modules/public/AccessDeniedPage").then(m => ({ default: m.AccessDeniedPage })));
 const CheckoutReturnPage = React.lazy(() => import("./modules/public/CheckoutReturnPage").then(m => ({ default: m.CheckoutReturnPage })));
 
-// Route groups
 import { visitorRoutes } from "./routes/visitorRoutes";
 import { adminRoutes } from "./routes/adminRoutes";
 import { masterRoutes } from "./routes/masterRoutes";
-import { producerRoutes } from "./routes/producerRoutes";
-import { theaterRoutes } from "./routes/theaterRoutes";
-import { providerRoutes, totemRoutes } from "./routes/otherRoutes";
-import { municipalRoutes } from "./routes/municipalRoutes";
-import { sponsorRoutes } from "./routes/sponsorRoutes";
 import { legacyRedirects } from "./routes/legacyRedirects";
 
-// QueryClient — with exponential retry backoff
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
       staleTime: 1000 * 60 * 5,
       retry: (failureCount, error: unknown) => {
         const status = (error as { response?: { status?: number } })?.response?.status;
-        // Don't retry on client errors (4xx)
         if (status !== undefined && status >= 400 && status < 500) return false;
         return failureCount < 3;
       },
@@ -65,7 +51,6 @@ const queryClient = new QueryClient({
   }
 });
 
-// Auth guards
 const RequireRole: React.FC<{ allowed: (Role | string)[]; children: React.ReactElement }> = ({
   allowed,
   children
@@ -73,7 +58,6 @@ const RequireRole: React.FC<{ allowed: (Role | string)[]; children: React.ReactE
   const { isAuthenticated, role } = useAuth();
   const location = useLocation();
 
-  // Visitor routes are accessible by guests and all authenticated user roles
   if (allowed.includes("visitor")) {
     return children;
   }
@@ -89,22 +73,15 @@ const RequireRole: React.FC<{ allowed: (Role | string)[]; children: React.ReactE
   return children;
 };
 
-
-
 const RootRedirector: React.FC = () => {
   const { role } = useAuth();
-  const isCityMode = useIsCityMode();
-
   if (role === "master") return <Navigate to="/master" replace />;
-  if (role === "equipment_admin" || role === "equipment_collaborator" || role === "municipal_admin" || role === "municipal_secretary") {
-    if (isCityMode || role.startsWith("municipal")) return <Navigate to="/municipal" replace />;
+  if (role === "equipment_admin" || role === "equipment_collaborator" || role === "collaborator" || role === "municipal_admin" || role === "municipal_secretary") {
     return <Navigate to="/admin" replace />;
   }
-  if (role === "theater_admin") return <Navigate to="/theater" replace />;
-  if (role === "producer") return <Navigate to="/producer" replace />;
-  if (role === "provider") return <Navigate to="/provider" replace />;
-  if (role === "sponsor") return <Navigate to="/sponsor" replace />;
-  if (role === "collaborator") return <Navigate to="/admin" replace />;
+  if (role === "theater_admin" || role === "producer" || role === "provider" || role === "sponsor") {
+    return <Navigate to="/welcome" replace />;
+  }
 
   return <Navigate to="/hub" replace />;
 };
@@ -135,13 +112,12 @@ const App: React.FC = () => {
               <ToastProvider>
               <React.Suspense fallback={<PageLoader />}>
                 <Routes key={"app-routes"}>
-                  {/* PUBLIC ROUTES */}
                   <Route path="/" element={<LandingPage />} />
                   <Route path="/welcome" element={<Welcome />} />
                   <Route path="/select-museum" element={<SelectMuseum />} />
                   <Route path="/verify/:code" element={<CertificateValidator />} />
-                  <Route path="/sou-produtor" element={<RegisterProducer />} />
-                  <Route path="/sou-prestador" element={<RegisterProvider />} />
+                  <Route path="/sou-produtor" element={<Navigate to="/welcome" replace />} />
+                  <Route path="/sou-prestador" element={<Navigate to="/welcome" replace />} />
                   <Route path="/reset-password" element={<ResetPasswordPage />} />
                   <Route path="/register" element={<RegisterWrapper />} />
                   <Route path="/login" element={<Login />} />
@@ -152,43 +128,21 @@ const App: React.FC = () => {
                   <Route path="/inbox/:id/success" element={<RequireRole allowed={["provider", "producer", "master", "equipment_admin"]}><CheckoutReturnPage status="success" context="inbox-payment" /></RequireRole>} />
                   <Route path="/inbox/:id/cancel" element={<RequireRole allowed={["provider", "producer", "master", "equipment_admin"]}><CheckoutReturnPage status="cancel" context="inbox-payment" /></RequireRole>} />
                   <Route path="/accessibility/success" element={<RequireRole allowed={["provider", "producer", "master", "equipment_admin"]}><CheckoutReturnPage status="success" context="accessibility" /></RequireRole>} />
-
-                  {/* Legacy redirect */}
                   <Route path="/app" element={
                     <RequireRole allowed={["visitor", "equipment_admin", "equipment_collaborator", "master"]}>
                       <RootRedirector />
                     </RequireRole>
                   } />
                   {legacyRedirects()}
-
-                  {/* VISITOR ROUTES */}
                   {visitorRoutes(RequireRole)}
-
-                  {/* ADMIN ROUTES */}
                   {adminRoutes(RequireRole)}
-
-                  {/* MASTER ROUTES */}
                   {masterRoutes(RequireRole)}
-
-                  {/* PRODUCER ROUTES */}
-                  {producerRoutes(RequireRole)}
-
-                  {/* THEATER ROUTES */}
-                  {theaterRoutes(RequireRole)}
-
-                  {/* PROVIDER ROUTES */}
-                  {providerRoutes(RequireRole)}
-
-                  {/* MUNICIPAL ROUTES */}
-                  {municipalRoutes(RequireRole)}
-
-                  {/* TOTEM / KIOSK ROUTES */}
-                  {totemRoutes(RequireRole)}
-
-                  {/* SPONSOR ROUTES */}
-                  {sponsorRoutes(RequireRole)}
-
-                  {/* 403 & 404 */}
+                  <Route path="/producer/*" element={<Navigate to="/welcome" replace />} />
+                  <Route path="/theater/*" element={<Navigate to="/welcome" replace />} />
+                  <Route path="/provider/*" element={<Navigate to="/welcome" replace />} />
+                  <Route path="/municipal/*" element={<Navigate to="/welcome" replace />} />
+                  <Route path="/totem/*" element={<Navigate to="/welcome" replace />} />
+                  <Route path="/sponsor/*" element={<Navigate to="/welcome" replace />} />
                   <Route path="/403" element={<AccessDeniedPage />} />
                   <Route path="*" element={<Navigate to="/welcome" replace />} />
                 </Routes>
