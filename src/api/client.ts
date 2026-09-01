@@ -4,6 +4,7 @@ import { logger } from "@/utils/logger";
 import { getApiBaseUrl } from "@/utils/url";
 import axiosRetry from "axios-retry";
 import toast from "react-hot-toast";
+import { readMuseumCtx } from "@/config/golive";
 
 export const baseURL = getApiBaseUrl();
 
@@ -40,17 +41,41 @@ async function getCsrfToken(): Promise<string> {
   return csrfTokenPromise;
 }
 
-api.interceptors.request.use(async (config) => {
+function readStoredTenantId(): string | null {
   try {
     const rawAuth = storage.get("museus_auth_v1");
     if (rawAuth) {
-      const parsed = JSON.parse(rawAuth);
-      if (parsed.tenantId) {
-        config.headers["x-tenant-id"] = parsed.tenantId;
+      const parsed = typeof rawAuth === "string" ? JSON.parse(rawAuth) : rawAuth;
+      const tenantId = parsed?.tenantId;
+      if (tenantId && tenantId !== "undefined" && tenantId !== "null") {
+        return String(tenantId);
       }
     }
   } catch {
-    // Ignore malformed local state.
+    // ignore malformed auth
+  }
+  const ctx = readMuseumCtx();
+  return ctx?.tenantId || null;
+}
+
+const CATALOG_PATH = /\/(equipamentos|events|works|trails|obras|trilhas)(\/|$|\?)/i;
+
+function isCatalogRequest(url?: string): boolean {
+  return CATALOG_PATH.test(url || "");
+}
+
+api.interceptors.request.use(async (config) => {
+  const tenantId = readStoredTenantId();
+  if (tenantId) {
+    config.headers = config.headers || {};
+    config.headers["x-tenant-id"] = tenantId;
+    if (isCatalogRequest(config.url)) {
+      const params = (config.params && typeof config.params === "object") ? { ...config.params } : {};
+      if (params.tenantId == null && params.tenant_id == null) {
+        params.tenantId = tenantId;
+        config.params = params;
+      }
+    }
   }
 
   const method = (config.method || "get").toLowerCase();
