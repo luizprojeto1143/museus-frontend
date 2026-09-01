@@ -37,6 +37,7 @@ const VisitorMembership = React.lazy(() => import("../modules/visitor/pages/Visi
 const VisitorCollectibles = React.lazy(() => import("../modules/visitor/pages/VisitorCollectibles").then(m => ({ default: m.VisitorCollectibles })));
 const TicketTransfer = React.lazy(() => import("../modules/visitor/pages/TicketTransfer").then(m => ({ default: m.TicketTransfer })));
 const GroupCheckout = React.lazy(() => import("../modules/visitor/pages/GroupCheckout").then(m => ({ default: m.GroupCheckout })));
+const VisitorRPG = React.lazy(() => import("../modules/visitor/pages/VisitorRPG").then(m => ({ default: m.VisitorRPG })));
 const SocialCheckinPage = React.lazy(() => import("../modules/visitor/pages/SocialCheckinPage").then(m => ({ default: m.SocialCheckinPage })));
 const TeacherPortal = React.lazy(() => import("../modules/visitor/pages/TeacherPortal").then(m => ({ default: m.TeacherPortal })));
 const CommunityFeed = React.lazy(() => import("../modules/visitor/pages/CommunityFeed").then(m => ({ default: m.CommunityFeed })));
@@ -165,7 +166,7 @@ export function visitorRoutes(RequireRole: React.FC<RequireRoleProps>) {
             <Route path="/colecao" element={vr(VisitorCollectibles, RequireRole)} />
             <Route path="/transferir-ingresso" element={vr(TicketTransfer, RequireRole)} />
             <Route path="/grupo" element={vr(GroupCheckout, RequireRole)} />
-            <Route path="/rpg" element={<Navigate to="/hub" replace />} />
+            <Route path="/rpg" element={vr(VisitorRPG, RequireRole)} />
             <Route path="/checkin" element={vr(SocialCheckinPage, RequireRole)} />
             <Route path="/professor" element={vr(TeacherPortal, RequireRole)} />
             <Route path="/comunidade" element={vr(CommunityFeed, RequireRole)} />
