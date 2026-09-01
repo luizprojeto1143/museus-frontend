@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link, useLocation, useParams } from 'react-router-dom';
 import { buildEquipmentUrl, buildMuseumMapUrl, buildScannerUrl } from '@/utils/routes';
-import { readMuseumCtx } from '@/config/golive';
+import { readMuseumCtx, isUsableSlug } from '@/config/golive';
 import './NavPill.css';
 
 interface NavPillProps {
@@ -12,13 +12,13 @@ export const NavPill: React.FC<NavPillProps> = ({ onMenuClick }) => {
   const location = useLocation();
   const params = useParams<{ citySlug?: string; equipmentSlug?: string }>();
   const ctx = readMuseumCtx();
-  const citySlug = params.citySlug || ctx?.citySlug;
-  const equipmentSlug = params.equipmentSlug || ctx?.equipmentSlug;
+  const citySlug = isUsableSlug(params.citySlug) ? params.citySlug : (isUsableSlug(ctx?.citySlug) ? ctx!.citySlug : undefined);
+  const equipmentSlug = isUsableSlug(params.equipmentSlug) ? params.equipmentSlug : (isUsableSlug(ctx?.equipmentSlug) ? ctx!.equipmentSlug : undefined);
   const base = citySlug && equipmentSlug ? buildEquipmentUrl(citySlug, equipmentSlug) : null;
 
   const navItems = [
     { to: base || '/hub', label: 'Início', icon: '🏠' },
-    { to: base ? `${base}/obras` : '/obras', label: 'Obras', icon: '🏜️' },
+    { to: base ? `${base}/obras` : '/obras', label: 'Obras', icon: '🇜️' },
     { to: citySlug && equipmentSlug ? buildScannerUrl(citySlug, equipmentSlug) : '/scanner', label: 'Scan', icon: '📷' },
     { to: citySlug && equipmentSlug ? buildMuseumMapUrl(citySlug, equipmentSlug) : '/mapa', label: 'Mapa', icon: '📍' },
     { to: '/rpg', label: 'RPG', icon: '🗡️' },
