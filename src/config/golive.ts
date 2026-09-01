@@ -43,3 +43,36 @@ export function readMuseumCtx(): MuseumCtx | null {
 export function writeMuseumCtx(ctx: MuseumCtx): void {
   localStorage.setItem(MUSEUM_CTX_KEY, JSON.stringify(ctx));
 }
+
+export function persistMuseumFromEquipment(equip: {
+  tenantId: string;
+  slug?: string;
+  id: string;
+  cidade?: string;
+}): void {
+  if (!equip.tenantId) return;
+  writeMuseumCtx({
+    tenantId: equip.tenantId,
+    equipmentSlug: equip.slug || equip.id,
+    citySlug: slugifyCity(equip.cidade),
+  });
+}
+
+export function hasSelectedMuseum(authTenantId?: string | null): boolean {
+  if (authTenantId && authTenantId !== "undefined" && authTenantId !== "null") return true;
+  return Boolean(readMuseumCtx()?.tenantId);
+}
+
+export function isGoLiveAdminPath(pathname: string): boolean {
+  if (
+    pathname.startsWith("/theater") ||
+    pathname.startsWith("/municipal") ||
+    pathname.startsWith("/totem") ||
+    pathname.startsWith("/producer") ||
+    pathname.startsWith("/provider") ||
+    pathname.startsWith("/sponsor")
+  ) {
+    return false;
+  }
+  return Array.from(GOLIVE_ADMIN_KEEP).some((p) => pathname === p || pathname.startsWith(`${p}/`));
+}
