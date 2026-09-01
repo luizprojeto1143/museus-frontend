@@ -65,7 +65,10 @@ export const MuseumHub: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
 
   const fetchMuseum = useCallback(async () => {
-    if (!equipmentSlug) return;
+    if (!equipmentSlug || equipmentSlug === "undefined" || !citySlug || citySlug === "undefined") {
+      navigate("/select-museum", { replace: true });
+      return;
+    }
     try {
       setLoading(true);
       setError(null);
@@ -102,7 +105,7 @@ export const MuseumHub: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  }, [citySlug, equipmentSlug, isAuthenticated, role, authName, updateSession]);
+  }, [citySlug, equipmentSlug, isAuthenticated, role, authName, updateSession, navigate]);
 
   useEffect(() => {
     fetchMuseum();
@@ -131,8 +134,8 @@ export const MuseumHub: React.FC = () => {
               <ArrowLeft size={16} /> Voltar para a cidade
             </button>
           )}
-          <button onClick={() => navigate("/hub")} className="mh-error-btn-primary">
-            Ir para o Hub
+          <button onClick={() => navigate("/select-museum")} className="mh-error-btn-primary">
+            Escolher um museu
           </button>
         </div>
       </div>
