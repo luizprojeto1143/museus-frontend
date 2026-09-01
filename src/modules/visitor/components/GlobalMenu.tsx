@@ -1,33 +1,38 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { useNavigate, useParams, useLocation } from 'react-router-dom';
-import { X, ChevronDown, ChevronUp, LogOut } from 'lucide-react';
+import { X, ChevronDown, ChevronUp, LogOut, RefreshCcw } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '../../auth/AuthContext';
-import { getEquipmentContextLinks } from '../../../config/visitorNavigation.config';
+import { getCityContextLinks, getEquipmentContextLinks } from '../../../config/visitorNavigation.config';
+import { readMuseumCtx } from '@/config/golive';
 import './GlobalMenu.css';
 
 interface GlobalMenuProps {
   isOpen: boolean;
   onClose: () => void;
   links?: unknown[];
-  currentPath?: string; // kept for backward compat but now derived internally
+  currentPath?: string;
 }
 
 export const GlobalMenu: React.FC<GlobalMenuProps> = ({ isOpen, onClose }) => {
   const navigate = useNavigate();
   const { logout } = useAuth();
-  const { citySlug, equipmentSlug } = useParams();
+  const params = useParams<{ citySlug?: string; equipmentSlug?: string }>();
+  const ctx = readMuseumCtx();
+  const citySlug = params.citySlug || ctx?.citySlug;
+  const equipmentSlug = params.equipmentSlug || ctx?.equipmentSlug;
   const location = useLocation();
   const currentPath = location.pathname;
 
   const [expandedSection, setExpandedSection] = useState<string | null>(null);
 
-  useEffect(() => {
-    if (isOpen) onClose();
-  }, [location.pathname]);
-
   const toggleSection = (section: string) => {
     setExpandedSection(prev => (prev === section ? null : section));
+  };
+
+  const handleSwitchCity = () => {
+    onClose();
+    navigate('/cidades');
   };
 
   const handleNavigate = (path: string) => {
@@ -78,20 +83,21 @@ export const GlobalMenu: React.FC<GlobalMenuProps> = ({ isOpen, onClose }) => {
             </div>
 
             <div className="menu-content" style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-              
-              {/* 1. INÍCIO */}
               <button type="button" className={`menu-item ${currentPath === '/hub' ? 'active' : ''}`} onClick={() => handleNavigate('/hub')}>
                 <span className="item-icon">🏠</span>
                 <span className="item-label">Início</span>
               </button>
-              
 
-              {/* 3. CONTEXTO (CIDADE OU MUSEU) */}
+              <button type="button" className={`menu-item ${currentPath.startsWith('/cidades') && !citySlug ? 'active' : ''}`} onClick={() => handleNavigate('/cidades')}>
+                <span className="item-icon">🌆</span>
+                <span className="item-label">Cidades</span>
+              </button>
+
               {(citySlug || equipmentSlug) && (
                 <div className="menu-section-wrapper">
                   <button className={`menu-item-header ${expandedSection === 'contexto' ? 'active-header' : ''}`} onClick={() => toggleSection('contexto')}>
-                    <span className="item-icon">'🏛️'</span>
-                    <span className="item-label">'No Museu'</span>
+                    <span className="item-icon">{equipmentSlug ? '🏛️' : '📍'}</span>
+                    <span className="item-label">{equipmentSlug ? 'No Museu' : 'Na Cidade'}</span>
                     {expandedSection === 'contexto' ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
                   </button>
                   <AnimatePresence>
@@ -110,32 +116,39 @@ export const GlobalMenu: React.FC<GlobalMenuProps> = ({ isOpen, onClose }) => {
                               <span>{link.label}</span>
                             </button>
                           ))
-                        ) : null}
+                        ) : (
+                          getCityContextLinks(citySlug || '').map(link => (
+                            <button key={link.id} type="button" className="submenu-item" onClick={() => handleNavigate(link.path)}>
+                              <span>{link.label}</span>
+                            </button>
+                          ))
+                        )}
                       </motion.div>
                     )}
                   </AnimatePresence>
                 </div>
               )}
 
-              {/* 4. SCANNER GLOBAL */}
               <button type="button" className={`menu-item ${currentPath === '/scanner' ? 'active' : ''}`} onClick={() => handleNavigate('/scanner')}>
                 <span className="item-icon">📷</span>
                 <span className="item-label">Scanner Universal</span>
               </button>
 
-              {/* 5. PASSAPORTE GLOBAL */}
               <button type="button" className={`menu-item ${currentPath === '/passaporte' ? 'active' : ''}`} onClick={() => handleNavigate('/passaporte')}>
                 <span className="item-icon">🎫</span>
                 <span className="item-label">Passaporte</span>
               </button>
 
-              {/* 6. INGRESSOS */}
               <button type="button" className={`menu-item ${currentPath === '/meus-ingressos' ? 'active' : ''}`} onClick={() => handleNavigate('/meus-ingressos')}>
                 <span className="item-icon">🎟️</span>
                 <span className="item-label">Ingressos</span>
               </button>
 
-              {/* 7. PERFIL (Sub-menu) */}
+              <button type="button" className={`menu-item ${currentPath === '/rpg' ? 'active' : ''}`} onClick={() => handleNavigate('/rpg')}>
+                <span className="item-icon">🗡️</span>
+                <span className="item-label">RPG</span>
+              </button>
+
               <div className="menu-section-wrapper">
                 <button className={`menu-item-header ${expandedSection === 'perfil' ? 'active-header' : ''}`} onClick={() => toggleSection('perfil')}>
                   <span className="item-icon">👤</span>
@@ -169,6 +182,10 @@ export const GlobalMenu: React.FC<GlobalMenuProps> = ({ isOpen, onClose }) => {
               <div className="menu-separator" />
 
               <div className="menu-actions">
+                <button className="action-item" onClick={handleSwitchCity}>
+                  <RefreshCcw size={20} className="action-icon" />
+                  <span className="action-label">Trocar de Cidade</span>
+                </button>
                 <button className="action-item logout" onClick={handleLogout}>
                   <LogOut size={20} className="action-icon" />
                   <span className="action-label">Sair da Conta</span>

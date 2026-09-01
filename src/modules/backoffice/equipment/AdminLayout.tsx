@@ -69,7 +69,6 @@ import {
   LogOut
 } from "lucide-react";
 import { useIsCityMode } from "../../auth/TenantContext";
-import { GOLIVE_ADMIN_KEEP } from "@/config/golive";
 
 interface TenantFeatures {
   name: string;
@@ -294,7 +293,7 @@ export const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children 
     .filter(g => g.showGroup !== false)
     .map(g => ({
       ...g,
-      links: (g.links as SidebarLink[]).filter((l: SidebarLink) => l.show && GOLIVE_ADMIN_KEEP.has(l.to))
+      links: (g.links as SidebarLink[]).filter((l: SidebarLink) => l.show)
     }))
     .filter(g => g.links.length > 0);
 

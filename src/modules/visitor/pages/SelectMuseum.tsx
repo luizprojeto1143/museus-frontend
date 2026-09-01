@@ -3,6 +3,8 @@ import React, { useEffect, useState, useMemo } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useAuth } from "../../auth/AuthContext";
+import { buildEquipmentUrl } from "@/utils/routes";
+import { slugifyCity, writeMuseumCtx } from "@/config/golive";
 import { api } from "../../../api/client";
 import { LanguageSwitcher } from "../../../components/LanguageSwitcher";
 import { 
@@ -44,7 +46,6 @@ interface Equipamento {
   descricao?: string;
   address?: string;
   estado?: string;
-  // Computed client-side
   distance?: number;
 }
 
@@ -68,7 +69,7 @@ const isCanceledRequest = (err: unknown) => {
 export const SelectMuseum: React.FC = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const { isAuthenticated, updateSession, isGuest, enterAsGuest, role, name, tenantId } = useAuth();
+  const { isAuthenticated, updateSession, isGuest, enterAsGuest, role, name } = useAuth();
   const [searchParams] = useSearchParams();
   const isRegisterMode = searchParams.get("mode") === "register";
 
@@ -111,7 +112,7 @@ export const SelectMuseum: React.FC = () => {
     } catch (err: unknown) {
       if (isCanceledRequest(err)) return;
       logger.error("Error loading equipments", err);
-      setErrorMsg("O servidor est\u00e1 momentaneamente fora do ar. Estamos restabelecendo a conex\u00e3o!");
+      setErrorMsg("O servidor está momentaneamente fora do ar. Estamos restabelecendo a conexão!");
     } finally {
       setLoading(false);
     }
@@ -193,8 +194,11 @@ export const SelectMuseum: React.FC = () => {
   const handleSelect = async (equip: Equipamento) => {
     if (isAuthenticated && !isGuest) {
       try {
+        const citySlug = slugifyCity(equip.cidade);
+        const equipmentSlug = equip.slug || equip.id;
+        writeMuseumCtx({ citySlug, equipmentSlug, tenantId: equip.tenantId });
         updateSession(role || "visitor", equip.tenantId, name, equip.id, equip.cityId || null);
-        navigate("/hub");
+        navigate(buildEquipmentUrl(citySlug, equipmentSlug));
         return;
       } catch (err: unknown) {
         logger.error("Error selecting equipment", err);
@@ -211,8 +215,11 @@ export const SelectMuseum: React.FC = () => {
       });
       return;
     }
+    const citySlug = slugifyCity(equip.cidade);
+    const equipmentSlug = equip.slug || equip.id;
+    writeMuseumCtx({ citySlug, equipmentSlug, tenantId: equip.tenantId });
     enterAsGuest(equip.tenantId, equip.id, equip.cityId || null);
-    navigate("/hub");
+    navigate(buildEquipmentUrl(citySlug, equipmentSlug));
   };
 
   const formatDistance = (dist?: number) => {
@@ -235,20 +242,22 @@ export const SelectMuseum: React.FC = () => {
             size="sm"
             onClick={() => {
               const museum = selectedLandmark;
-              const nextTenantId = (museum?.tenantId || tenantId || "").trim();
-              if (!nextTenantId || nextTenantId === "undefined" || nextTenantId === "null") {
+              if (!museum?.tenantId || museum.tenantId === "undefined" || museum.tenantId === "null") {
                 setErrorMsg("Selecione um museu para entrar no Hub.");
                 return;
               }
-              enterAsGuest(nextTenantId, museum?.id ?? null, museum?.cityId || null);
-              navigate("/hub");
+              const citySlug = slugifyCity(museum.cidade);
+              const equipmentSlug = museum.slug || museum.id;
+              writeMuseumCtx({ citySlug, equipmentSlug, tenantId: museum.tenantId });
+              enterAsGuest(museum.tenantId, museum.id, museum.cityId || null);
+              navigate(buildEquipmentUrl(citySlug, equipmentSlug));
             }}
             rightIcon={<ArrowRight size={16} />}
             className="rounded-full px-5 text-xs font-bold bg-[var(--accent-primary)]/10 text-[var(--accent-primary)] border border-[var(--accent-primary)]/30 hover:bg-[var(--accent-primary)] hover:text-black transition-all"
           >
             Ir para o Hub
           </Button>
-          {isAuthenticated && <Badge variant="outline" className="text-green-400 border-green-400/30 bg-green-400/5">Online</Badge>}
+          {isAuthenticated && !isGuest && <Badge variant="outline" className="text-green-400 border-green-400/30 bg-green-400/5">Online</Badge>}
           <LanguageSwitcher absolute={false} />
           <ThemeToggle />
         </div>
@@ -301,9 +310,9 @@ export const SelectMuseum: React.FC = () => {
                       <div className="flex items-center gap-2 text-xs text-gray-400">
                         <Calendar size={12} className="text-gold-400" />
                         {new Date(event.startDate).toLocaleDateString('pt-BR', { day: '2-digit', month: 'short' })}
-                        <span className="opacity-30">\u2022</span>
+                        <span className="opacity-30">•</span>
                         <MapIcon size={12} className="text-gold-400" />
-                        {event.equipamentoNome || "Espa\u00e7o Cultural"}
+                        {event.equipamentoNome || "Espaço Cultural"}
                       </div>
                     </div>
                   </Card>
@@ -339,7 +348,7 @@ export const SelectMuseum: React.FC = () => {
         <div className="flex justify-between items-end mb-12 border-b border-[var(--border-subtle)] pb-8">
           <div>
             <h2 className="text-3xl font-black tracking-tighter mb-2">
-              {activeFilter === "EVENTOS" ? "Toda a Programa\u00e7\u00e3o" : searchTerm ? t("visitor.selectMuseum.resultsTitle", { term: searchTerm }) : t("visitor.selectMuseum.exploreAll")}
+              {activeFilter === "EVENTOS" ? "Toda a Programação" : searchTerm ? t("visitor.selectMuseum.resultsTitle", { term: searchTerm }) : t("visitor.selectMuseum.exploreAll")}
             </h2>
             <p className="text-[var(--fg-tertiary)] font-medium">
               {activeFilter === "EVENTOS" ? `${events.length} eventos encontrados` : t("visitor.selectMuseum.foundCount", { count: filteredAndSortedEquipamentos.length })}
@@ -372,7 +381,7 @@ export const SelectMuseum: React.FC = () => {
                     <div className="flex gap-3 mb-6">
                       <Badge variant="outline" className="border-gold-400 text-gold-400 bg-gold-400/5"><Clock size={12} className="mr-1" />{new Date(event.startDate).toLocaleDateString('pt-BR', { day: '2-digit', month: 'long' })}</Badge>
                     </div>
-                    <p className="text-[var(--fg-secondary)] text-sm leading-relaxed line-clamp-2 mb-8 flex-1">{event.equipamentoNome || "Espa\u00e7o Cultural"} \u2022 {event.location || "Presencial"}</p>
+                    <p className="text-[var(--fg-secondary)] text-sm leading-relaxed line-clamp-2 mb-8 flex-1">{event.equipamentoNome || "Espaço Cultural"} • {event.location || "Presencial"}</p>
                     <Button variant="primary" className="w-full py-6 text-base" rightIcon={<ArrowRight size={20} />}>Ver Detalhes do Evento</Button>
                   </div>
                 </Card>
@@ -402,7 +411,7 @@ export const SelectMuseum: React.FC = () => {
                           <Badge variant="outline" className="border-gold-400 text-gold-400 bg-gold-400/5"><MapPin size={12} className="mr-1" /> {equip.distance ? formatDistance(equip.distance) : t("visitor.home.explore")}</Badge>
                           <Badge variant="outline" className="border-yellow-500/50 text-yellow-500 bg-yellow-500/5"><Star size={12} className="mr-1 fill-current" /> 4.9</Badge>
                         </div>
-                        <p className="text-[var(--fg-secondary)] text-sm leading-relaxed line-clamp-2 mb-8 flex-1">{equip.endereco || "Localiza\u00e7\u00e3o n\u00e3o informada"} \u2022 {equip.cidade} - {equip.estado || "MG"}</p>
+                        <p className="text-[var(--fg-secondary)] text-sm leading-relaxed line-clamp-2 mb-8 flex-1">{equip.endereco || "Localização não informada"} • {equip.cidade} - {equip.estado || "MG"}</p>
                         <Button variant="primary" className="w-full shadow-lg shadow-gold-500/10 group-hover:shadow-gold-500/30 py-6 text-base" rightIcon={<ArrowRight size={20} />}>{t("visitor.selectMuseum.enterLocation")}</Button>
                       </div>
                     </Card>
@@ -442,7 +451,7 @@ export const SelectMuseum: React.FC = () => {
                           <Badge variant="outline" className="border-gold-400 text-gold-400 bg-gold-400/5"><MapPin size={12} className="mr-1" /> {equip.distance ? formatDistance(equip.distance) : t("visitor.home.explore")}</Badge>
                           <Badge variant="outline" className="border-yellow-500/50 text-yellow-500 bg-yellow-500/5"><Star size={12} className="mr-1 fill-current" /> 4.9</Badge>
                         </div>
-                        <p className="text-[var(--fg-secondary)] text-sm leading-relaxed line-clamp-2 mb-8 flex-1">{equip.endereco || "Localiza\u00e7\u00e3o n\u00e3o informada"}</p>
+                        <p className="text-[var(--fg-secondary)] text-sm leading-relaxed line-clamp-2 mb-8 flex-1">{equip.endereco || "Localização não informada"}</p>
                         <Button variant="primary" className="w-full shadow-lg shadow-gold-500/10 group-hover:shadow-gold-500/30 py-6 text-base" rightIcon={<ArrowRight size={20} />}>{t("visitor.selectMuseum.enterLocation")}</Button>
                       </div>
                     </Card>
@@ -483,7 +492,13 @@ export const SelectMuseum: React.FC = () => {
                 </div>
               </div>
               <div className="flex flex-col sm:flex-row gap-4">
-                <Button className="flex-1 h-14 text-lg font-bold" onClick={() => { enterAsGuest(selectedLandmark.tenantId, selectedLandmark.id, selectedLandmark.cityId || null); navigate("/hub"); }} rightIcon={<Zap size={20} />}>{t("visitor.selectMuseum.modal.enter")}</Button>
+                <Button className="flex-1 h-14 text-lg font-bold" onClick={() => {
+                  const citySlug = slugifyCity(selectedLandmark.cidade);
+                  const equipmentSlug = selectedLandmark.slug || selectedLandmark.id;
+                  writeMuseumCtx({ citySlug, equipmentSlug, tenantId: selectedLandmark.tenantId });
+                  enterAsGuest(selectedLandmark.tenantId, selectedLandmark.id, selectedLandmark.cityId || null);
+                  navigate(buildEquipmentUrl(citySlug, equipmentSlug));
+                }} rightIcon={<Zap size={20} />}>{t("visitor.selectMuseum.modal.enter")}</Button>
                 <Button variant="outline" className="flex-1 h-14 text-lg font-bold" onClick={() => window.open(`https://www.google.com/maps/search/?api=1&query=${selectedLandmark.lat},${selectedLandmark.lng}`, '_blank')} rightIcon={<Navigation size={20} />}>{t("visitor.selectMuseum.modal.directions")}</Button>
               </div>
             </div>

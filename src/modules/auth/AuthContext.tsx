@@ -11,7 +11,7 @@ import { isAxiosError } from "axios";
 export type { Role };
 
 import { logger } from "@/utils/logger";
-import { writeMuseumCtx } from "@/config/golive";
+import { readMuseumCtx, writeMuseumCtx } from "@/config/golive";
 
 interface StoredAuth {
   isGuest?: boolean;
@@ -295,10 +295,12 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     dispatch({ type: "LOGIN", payload: newState });
     persistAuth(newState);
     if (selectedTenantId) {
+      const prev = readMuseumCtx();
+      const keep = prev?.tenantId === selectedTenantId;
       writeMuseumCtx({
         tenantId: selectedTenantId,
-        equipmentSlug: selectedEquipamentoId || "museu",
-        citySlug: "museu",
+        equipmentSlug: keep && prev.equipmentSlug && prev.equipmentSlug !== "undefined" ? prev.equipmentSlug : (selectedEquipamentoId || prev?.equipmentSlug || "museu"),
+        citySlug: keep && prev.citySlug && prev.citySlug !== "undefined" && prev.citySlug !== "museu" ? prev.citySlug : (prev?.citySlug && prev.citySlug !== "undefined" ? prev.citySlug : "museu"),
       });
     }
   };
@@ -323,10 +325,12 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     const merged = { ...state, ...partial };
     persistAuth(merged);
     if (newTenantId) {
+      const prev = readMuseumCtx();
+      const keep = prev?.tenantId === newTenantId;
       writeMuseumCtx({
         tenantId: newTenantId,
-        equipmentSlug: newEquipamentoId || "museu",
-        citySlug: "museu",
+        equipmentSlug: keep && prev.equipmentSlug && prev.equipmentSlug !== "undefined" ? prev.equipmentSlug : (newEquipamentoId || prev?.equipmentSlug || "museu"),
+        citySlug: keep && prev.citySlug && prev.citySlug !== "undefined" && prev.citySlug !== "museu" ? prev.citySlug : (prev?.citySlug && prev.citySlug !== "undefined" ? prev.citySlug : "museu"),
       });
     }
   };
