@@ -63,16 +63,7 @@ export function hasSelectedMuseum(authTenantId?: string | null): boolean {
   return Boolean(readMuseumCtx()?.tenantId);
 }
 
-export function isGoLiveAdminPath(pathname: string): boolean {
-  if (
-    pathname.startsWith("/theater") ||
-    pathname.startsWith("/municipal") ||
-    pathname.startsWith("/totem") ||
-    pathname.startsWith("/producer") ||
-    pathname.startsWith("/provider") ||
-    pathname.startsWith("/sponsor")
-  ) {
-    return false;
-  }
-  return Array.from(GOLIVE_ADMIN_KEEP).some((p) => pathname === p || pathname.startsWith(`${p}/`));
+/** Recorte go-live desligado: todas as rotas admin/módulos voltam a ser visíveis. */
+export function isGoLiveAdminPath(_pathname: string): boolean {
+  return true;
 }
