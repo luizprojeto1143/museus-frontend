@@ -13,7 +13,7 @@ import { motion } from "framer-motion";
 export const Welcome: React.FC = () => {
   const navigate = useNavigate();
   const { t } = useTranslation();
-  const { enterAsGuest, isAuthenticated } = useAuth();
+  const { isAuthenticated, isGuest, role } = useAuth();
   const tenant = useTenant();
 
   return (
@@ -23,11 +23,7 @@ export const Welcome: React.FC = () => {
       className="welcome-container relative min-h-screen flex flex-col items-center justify-center px-6 bg-[#05050c] overflow-hidden"
     >
       <ParticleBackground count={40} />
-      
-      {/* Cinematic Ambient Glow */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120vw] h-[120vw] bg-[var(--accent-primary)]/5 blur-[150px] rounded-full pointer-events-none" />
-
-      {/* Language Switcher properly positioned at the top right of the viewport */}
       <motion.div
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -36,7 +32,6 @@ export const Welcome: React.FC = () => {
       >
         <LanguageSwitcher absolute={false} />
       </motion.div>
-
       <div className="relative z-20 flex flex-col items-center w-full max-w-lg mt-12 md:mt-0">
         <motion.div 
           initial={{ opacity: 0, scale: 0.8 }}
@@ -46,7 +41,6 @@ export const Welcome: React.FC = () => {
         >
           <TenantLogo size={100} showText={false} className="shadow-[0_20px_60px_rgba(0,0,0,0.8)] border border-white/10 rounded-[35px] bg-[#0a0a0e] p-1.5" />
         </motion.div>
-
         <motion.div
            initial={{ opacity: 0, y: 20 }}
            animate={{ opacity: 1, y: 0 }}
@@ -66,7 +60,6 @@ export const Welcome: React.FC = () => {
             {t("welcome.subtitle")}
           </p>
         </motion.div>
-
         <div className="flex flex-col w-full gap-4 md:gap-5">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -79,10 +72,9 @@ export const Welcome: React.FC = () => {
               className="w-full h-18 md:h-20 text-lg md:text-xl tracking-[0.2em] font-black rounded-3xl shadow-[0_20px_50px_rgba(212,175,55,0.15)] border border-white/10 active:scale-95"
               rightIcon={<Smartphone size={24} />}
             >
-              {isAuthenticated ? t("welcome.enter_panel", "ENTRAR NO PAINEL") : t("welcome.explore_login", "EXPLORAR / LOGIN")}
+              {isAuthenticated && !isGuest && role && role !== "visitor" ? t("welcome.enter_panel", "ENTRAR NO PAINEL") : t("welcome.explore_login", "EXPLORAR / LOGIN")}
             </Button>
           </motion.div>
-
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -91,7 +83,6 @@ export const Welcome: React.FC = () => {
           >
             <button
               onClick={() => {
-                enterAsGuest();
                 navigate("/select-museum");
               }}
               className="h-14 md:h-16 bg-white/[0.03] border border-white/5 rounded-2xl md:rounded-3xl text-[10px] font-bold uppercase tracking-widest text-[#f5e6d3]/60 hover:bg-white/10 hover:text-white transition-all flex items-center justify-center gap-2 active:scale-95"
@@ -102,17 +93,13 @@ export const Welcome: React.FC = () => {
               onClick={() => navigate("/login")}
               className="h-14 md:h-16 bg-white/[0.03] border border-white/5 rounded-2xl md:rounded-3xl text-[10px] font-bold uppercase tracking-widest text-[#f5e6d3]/60 hover:bg-white/10 hover:text-white transition-all flex items-center justify-center gap-2 active:scale-95"
             >
-              <Lock size={16} /> {isAuthenticated ? t("welcome.panel", "Painel") : t("welcome.login")}
+              <Lock size={16} /> {isAuthenticated && !isGuest && role && role !== "visitor" ? t("welcome.panel", "Painel") : t("welcome.login")}
             </button>
           </motion.div>
         </div>
       </div>
-
-      {/* Luxury Accents */}
       <div className="absolute top-12 left-12 w-2 h-2 rounded-full bg-[var(--accent-primary)]/10" />
       <div className="absolute bottom-12 right-12 w-2 h-2 rounded-full bg-[var(--accent-primary)]/10" />
-      <div className="hidden md:block absolute top-1/2 right-12 w-[1px] h-20 bg-gradient-to-b from-transparent via-[var(--accent-primary)]/20 to-transparent" />
-      <div className="hidden md:block absolute top-1/2 left-12 w-[1px] h-20 bg-gradient-to-b from-transparent via-[var(--accent-primary)]/20 to-transparent" />
     </motion.div>
   );
 };
