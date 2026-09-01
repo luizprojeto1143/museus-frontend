@@ -3,7 +3,7 @@ import { buildEquipmentUrl, buildMuseumMapUrl, buildScannerUrl } from '@/utils/r
 export const getCityContextLinks = (_citySlug: string) => [] as { id: string; label: string; path: string }[];
 
 export const getEquipmentContextLinks = (citySlug: string, equipmentSlug: string) => [
-  { id: 'eq-hub', label: '🏜️ Início do Museu', path: buildEquipmentUrl(citySlug, equipmentSlug) },
+  { id: 'eq-hub', label: '🏛️ Início do Museu', path: buildEquipmentUrl(citySlug, equipmentSlug) },
   { id: 'eq-works', label: '🎨 Obras', path: `${buildEquipmentUrl(citySlug, equipmentSlug)}/obras` },
   { id: 'eq-events', label: '📅 Eventos', path: `${buildEquipmentUrl(citySlug, equipmentSlug)}/eventos` },
   { id: 'eq-trails', label: '🗺️ Trilhas', path: `${buildEquipmentUrl(citySlug, equipmentSlug)}/trilhas` },
