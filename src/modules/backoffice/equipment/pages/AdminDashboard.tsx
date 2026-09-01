@@ -1,4 +1,4 @@
-﻿import React, { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { logger } from "@/utils/logger";
 
 import { useTranslation } from "react-i18next";
@@ -20,33 +20,15 @@ type DashboardData = {
   totalXPDistributed: number;
   weeklyGrowth: number;
   monthlyGrowth: number;
-
   visitsByDay: Array<{ date: string; count: number }>;
   visitsByWork: Array<{ workTitle: string; count: number }>;
   xpByCategory: Array<{ category: string; xp: number }>;
   accessBySource: { qr: number; app: number; map: number; trails: number };
-
-  alerts: Array<{
-    type: "warning" | "error" | "info";
-    message: string;
-    link?: string;
-  }>;
-  upcomingBookings: Array<{
-    id: string;
-    startTime: string;
-    purpose: string;
-    space: { name: string };
-    user: { name: string };
-  }>;
+  alerts: Array<{ type: "warning" | "error" | "info"; message: string; link?: string }>;
+  upcomingBookings: Array<{ id: string; startTime: string; purpose: string; space: { name: string }; user: { name: string } }>;
 };
 
-type UpcomingEvent = {
-  id: string;
-  title: string;
-  startDate: string;
-  location?: string;
-  type?: string;
-};
+type UpcomingEvent = { id: string; title: string; startDate: string; location?: string; type?: string };
 
 export const AdminDashboard: React.FC = () => {
   const { t } = useTranslation();
@@ -60,12 +42,10 @@ export const AdminDashboard: React.FC = () => {
   const loadDashboard = React.useCallback(async () => {
     try {
       if (!tenantId) return;
-
       const [dashRes, eventsRes] = await Promise.all([
         api.get<DashboardData>(`/analytics/dashboard/${tenantId}`),
         api.get<{ data?: UpcomingEvent[] } | UpcomingEvent[]>("/events", { params: { tenantId, status: 'PUBLISHED', limit: 3 } })
       ]);
-
       setData(dashRes.data);
       setUpcomingEvents(Array.isArray(eventsRes.data) ? eventsRes.data : eventsRes.data.data || []);
     } catch (err) {
@@ -76,9 +56,7 @@ export const AdminDashboard: React.FC = () => {
     }
   }, [tenantId]);
 
-  useEffect(() => {
-    loadDashboard();
-  }, [loadDashboard]);
+  useEffect(() => { loadDashboard(); }, [loadDashboard]);
 
   if (loading) {
     return (
@@ -87,13 +65,11 @@ export const AdminDashboard: React.FC = () => {
            <div className="h-10 w-64 bg-white/5 rounded-2xl animate-pulse" />
            <div className="h-6 w-full max-w-sm bg-white/5 rounded-xl animate-pulse opacity-50" />
         </div>
-        
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {[1, 2, 3, 4].map(i => (
             <Card key={i} className="p-5 md:p-8 h-32 bg-white/[0.02] border-white/5 rounded-3xl animate-pulse" />
           ))}
         </div>
-
         <div className="grid grid-cols-1 xl:grid-cols-3 gap-8">
            <Card className="xl:col-span-1 h-[500px] bg-white/[0.02] border-white/5 rounded-[40px] animate-pulse" />
            <Card className="xl:col-span-2 h-[500px] bg-white/[0.02] border-white/5 rounded-[40px] animate-pulse" />
@@ -113,27 +89,21 @@ export const AdminDashboard: React.FC = () => {
            <h2 className="text-3xl font-black text-white tracking-tighter leading-none">{t("admin.dashboard.sync_interrupted", "Sincronização Interrompida")}</h2>
            <p className="text-slate-500 max-w-sm mx-auto text-sm font-medium leading-relaxed">{t("admin.dashboard.sync_error", "Não foi possível estabelecer conexão com o centro de comando estratégico.")}</p>
         </div>
-        <Button 
-          onClick={() => { setLoading(true); loadDashboard(); }}
-          className="h-14 px-10 rounded-2xl bg-red-500 text-white font-black uppercase tracking-widest shadow-xl shadow-red-500/20"
-          leftIcon={<Zap size={18} />}
-        >
+        <Button onClick={() => { setLoading(true); loadDashboard(); }} className="h-14 px-10 rounded-2xl bg-red-500 text-white font-black uppercase tracking-widest shadow-xl shadow-red-500/20" leftIcon={<Zap size={18} />}>
           {t("admin.dashboard.retry_connection", "Tentar Reconexão")}
         </Button>
       </AnimateIn>
     );
   }
 
-  // Dashboard customization logic
   const canSeeAnalytics = hasPermission("view_analytics");
   const canSeeEvents = hasPermission("manage_events");
-  const canSeeGamification = hasPermission("manage_gamification");
+  const canSeeGamification = false;
   const canSeeScanner = hasPermission("manage_scanner");
   const canSeeOps = hasPermission("manage_operations");
 
   return (
     <div className="space-y-12 pb-32 animate-in fade-in slide-in-from-bottom-4 duration-700 max-w-7xl mx-auto">
-      {/* HEADER SECTION */}
       <header className="flex flex-col lg:flex-row lg:items-end justify-between gap-8">
         <div className="space-y-2">
           <Badge variant="glass" className={`${isCityMode ? 'text-blue-400 border-blue-400/20 bg-blue-400/5' : 'text-gold-400 border-gold-400/20 bg-gold-400/5'} px-4 py-1.5`}>
@@ -146,60 +116,32 @@ export const AdminDashboard: React.FC = () => {
               {t("admin.dashboard.title_dashboard", "Dashboard")} <span className={isCityMode ? 'text-blue-400' : 'text-gold-400'}>{t("admin.dashboard.title_strategic", "Estratégico")}</span>
             </h1>
           </div>
-          <p className="text-slate-400 font-medium max-w-lg leading-relaxed">
-            {t("admin.dashboard.subtitle", "Visão consolidada da operação, engajamento e métricas de impacto do museu.")}
-          </p>
+          <p className="text-slate-400 font-medium max-w-lg leading-relaxed">{t("admin.dashboard.subtitle", "Visão consolidada da operação, engajamento e métricas de impacto do museu.")}</p>
         </div>
         {(role === 'equipment_admin' || role === 'master') && (
           <div className="flex gap-3">
-              <Button
-                variant="glass"
-                className="h-14 px-8 rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-white hover:text-black transition-all duration-300"
-                onClick={() => navigate("/admin/configuracoes")}
-              >
+              <Button variant="glass" className="h-14 px-8 rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-white hover:text-black transition-all duration-300" onClick={() => navigate("/admin/configuracoes")}>
                  {t("admin.dashboard.configSpace")}
               </Button>
           </div>
         )}
       </header>
-
-      {/* ROADMAP ANNOUNCEMENT */}
       {hasPermission("manage_roadmap") && (
-        <motion.div 
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="relative group p-1 w-full rounded-[48px] bg-gradient-to-r from-blue-500/10 via-gold-400/10 to-blue-500/10 overflow-hidden"
-        >
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="relative group p-1 w-full rounded-[48px] bg-gradient-to-r from-blue-500/10 via-gold-400/10 to-blue-500/10 overflow-hidden">
           <div className="relative z-10 p-10 md:p-14 rounded-[47px] bg-black/40 backdrop-blur-3xl border border-white/5 flex flex-col md:flex-row items-center gap-10">
             <div className="w-24 h-24 rounded-[32px] bg-gold-400/10 hidden md:flex items-center justify-center text-5xl shadow-inner border border-gold-400/20 group-hover:scale-110 transition-transform">
                 <Sparkles className="text-gold-400" size={40} />
             </div>
             <div className="flex-1 text-center md:text-left">
-                <span className="bg-gold-400/20 text-gold-400 font-black text-[10px] md:text-[9px] px-3 py-1 rounded-full uppercase tracking-widest mb-4 inline-block border border-gold-400/20">
-                  {t("admin.dashboard.next_update", "PROXIMA ATUALIZAÇÃO 2026")}
-                </span>
+                <span className="bg-gold-400/20 text-gold-400 font-black text-[10px] md:text-[9px] px-3 py-1 rounded-full uppercase tracking-widest mb-4 inline-block border border-gold-400/20">{t("admin.dashboard.next_update", "PROXIMA ATUALIZAÇÃO 2026")}</span>
                 <h2 className="text-3xl font-black text-white tracking-tight leading-tight">{t("admin.dashboard.roadmap.title")}</h2>
-                <p className="text-slate-400 font-medium text-sm mt-2 max-w-2xl leading-relaxed">
-                  {t("admin.dashboard.roadmap.desc", "Estamos finalizando o módulo de Realidade Aumentada e Integração Web3 para o acervo digital. Participe da nossa comunidade de beta testers.")}
-                </p>
+                <p className="text-slate-400 font-medium text-sm mt-2 max-w-2xl leading-relaxed">{t("admin.dashboard.roadmap.desc", "Estamos finalizando o módulo de Realidade Aumentada e Integração Web3 para o acervo digital. Participe da nossa comunidade de beta testers.")}</p>
             </div>
-              <button 
-                className="px-10 h-14 rounded-2xl bg-white text-slate-950 font-black text-xs uppercase tracking-widest hover:bg-gold-400 transition-all shadow-xl shadow-gold-400/5 active:scale-95 flex-shrink-0"
-                onClick={() => navigate("/admin/comunidade")}
-              >
-                {t("admin.dashboard.roadmap.button")}
-              </button>
+              <button className="px-10 h-14 rounded-2xl bg-white text-slate-950 font-black text-xs uppercase tracking-widest hover:bg-gold-400 transition-all shadow-xl shadow-gold-400/5 active:scale-95 flex-shrink-0" onClick={() => navigate("/admin/comunidade")}>{t("admin.dashboard.roadmap.button")}</button>
           </div>
         </motion.div>
       )}
-
-      {/* INDICADORES PRINCIPAIS */}
-      <motion.div 
-        variants={staggerContainer(0.1, 0.2)}
-        initial="initial"
-        animate="animate"
-        className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6"
-      >
+      <motion.div variants={staggerContainer(0.1, 0.2)} initial="initial" animate="animate" className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
         {[
           { label: t("admin.dashboard.stats.visitors"), value: data.visitorsThisMonth, icon: Users, color: 'text-blue-400', show: canSeeAnalytics },
           { label: t("admin.dashboard.stats.qrScans"), value: data.totalQRScans, icon: Ticket, color: 'text-purple-400', show: canSeeScanner || canSeeGamification },
@@ -207,13 +149,9 @@ export const AdminDashboard: React.FC = () => {
           { label: t("admin.dashboard.stats.monthlyGrowth"), value: data.monthlyGrowth, icon: TrendingUp, color: 'text-green-400', unit: '%', show: canSeeAnalytics },
         ].filter(s => s.show).map((stat, i) => (
           <motion.div key={i} variants={staggerItem}>
-            <Card
-              className="p-5 md:p-8 border-white/5 bg-white/[0.02] group hover:bg-white/[0.04] transition-all rounded-[32px] overflow-hidden relative"
-            >
+            <Card className="p-5 md:p-8 border-white/5 bg-white/[0.02] group hover:bg-white/[0.04] transition-all rounded-[32px] overflow-hidden relative">
               <div className="flex justify-between items-start mb-6">
-                 <div className={`w-12 h-12 rounded-2xl flex items-center justify-center bg-white/5 border border-white/5 group-hover:border-white/20 transition-all ${stat.color}`}>
-                    <stat.icon size={20} />
-                 </div>
+                 <div className={`w-12 h-12 rounded-2xl flex items-center justify-center bg-white/5 border border-white/5 group-hover:border-white/20 transition-all ${stat.color}`}><stat.icon size={20} /></div>
               </div>
               <div className="flex flex-col relative z-10">
                  <span className="text-slate-500 font-black text-xs md:text-[10px] uppercase tracking-widest mb-2 leading-none">{stat.label}</span>
@@ -223,29 +161,19 @@ export const AdminDashboard: React.FC = () => {
                    {stat.unit && <span className="ml-1 text-sm opacity-50 text-green-400">{stat.unit}</span>}
                  </div>
               </div>
-              <div className="absolute -right-4 -bottom-4 opacity-5 group-hover:opacity-10 transition-opacity hidden md:block">
-                <stat.icon size={80} />
-              </div>
+              <div className="absolute -right-4 -bottom-4 opacity-5 group-hover:opacity-10 transition-opacity hidden md:block"><stat.icon size={80} /></div>
             </Card>
           </motion.div>
         ))}
       </motion.div>
-
       <div className="grid grid-cols-1 xl:grid-cols-12 gap-8">
-        {/* SIDEBAR COL */}
         <div className="xl:col-span-4 space-y-8">
            {canSeeEvents && (
               <section className="card border-white/5 bg-white/[0.02] p-6 md:p-8 rounded-[40px] overflow-hidden relative">
                   <div className="flex justify-between items-center mb-8">
-                    <h2 className="text-lg font-black text-white tracking-tight flex items-center gap-2">
-                      <Calendar size={18} className="text-gold-400" />
-                      {t("admin.dashboard.sections.agenda")}
-                    </h2>
-                      <button className="p-3 md:p-2 bg-white/5 rounded-xl border border-white/5 hover:bg-white/10 transition-colors min-w-[44px] min-h-[44px] flex items-center justify-center" onClick={() => navigate("/admin/eventos")}>
-                        <ChevronRight size={16} className="text-slate-500" />
-                      </button>
+                    <h2 className="text-lg font-black text-white tracking-tight flex items-center gap-2"><Calendar size={18} className="text-gold-400" />{t("admin.dashboard.sections.agenda")}</h2>
+                      <button className="p-3 md:p-2 bg-white/5 rounded-xl border border-white/5 hover:bg-white/10 transition-colors min-w-[44px] min-h-[44px] flex items-center justify-center" onClick={() => navigate("/admin/eventos")}><ChevronRight size={16} className="text-slate-500" /></button>
                   </div>
-
                   {upcomingEvents.length > 0 ? (
                     <div className="space-y-6">
                       {upcomingEvents.map((ev) => (
@@ -269,13 +197,9 @@ export const AdminDashboard: React.FC = () => {
                   )}
               </section>
            )}
-
            {canSeeOps && (
               <section className="card border-gold-400/10 bg-gold-400/[0.02] p-6 md:p-8 rounded-[40px]">
-                  <h2 className="text-lg font-black text-gold-400 tracking-tight mb-6 flex items-center gap-2">
-                    <Clock size={18} />
-                    {t("admin.dashboard.sections.bookings")}
-                  </h2>
+                  <h2 className="text-lg font-black text-gold-400 tracking-tight mb-6 flex items-center gap-2"><Clock size={18} />{t("admin.dashboard.sections.bookings")}</h2>
                   <div className="space-y-4">
                     {data.upcomingBookings?.slice(0, 3).map((booking) => (
                         <div key={booking.id} className="p-5 rounded-3xl bg-black/20 border border-white/5 hover:border-gold-400/30 transition-all group cursor-pointer min-h-[44px]">
@@ -292,8 +216,6 @@ export const AdminDashboard: React.FC = () => {
               </section>
            )}
         </div>
-
-        {/* ANALYTICS COL */}
         <div className="xl:col-span-8 space-y-8">
            {canSeeAnalytics && (
               <>
@@ -323,18 +245,11 @@ export const AdminDashboard: React.FC = () => {
                             {Object.entries(data.accessBySource).map(([source, count]) => (
                               <div key={source} className="space-y-3">
                                   <div className="flex justify-between text-[10px] font-black text-slate-400 uppercase tracking-widest">
-                                    <span className="flex items-center gap-2">
-                                      <div className="w-1.5 h-1.5 rounded-full bg-gold-400" />
-                                      {source}
-                                    </span>
+                                    <span className="flex items-center gap-2"><div className="w-1.5 h-1.5 rounded-full bg-gold-400" />{source}</span>
                                     <span className="text-white">{count}</span>
                                   </div>
                                   <div className="h-1.5 w-full bg-white/5 rounded-full overflow-hidden">
-                                    <motion.div 
-                                      initial={{ width: 0 }}
-                                      animate={{ width: `${(count / Math.max(...Object.values(data.accessBySource))) * 100}%` }}
-                                      className="h-full bg-gold-400" 
-                                    />
+                                    <motion.div initial={{ width: 0 }} animate={{ width: `${(count / Math.max(...Object.values(data.accessBySource))) * 100}%` }} className="h-full bg-gold-400" />
                                   </div>
                               </div>
                             ))}
@@ -342,7 +257,6 @@ export const AdminDashboard: React.FC = () => {
                       </div>
                     </div>
                 </div>
-
                 <div className="card p-6 md:p-10 border-white/5 bg-white/[0.02] rounded-[48px] relative overflow-hidden group">
                     <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-10 gap-4">
                       <h2 className="text-xl font-black text-white tracking-tight">{t("admin.dashboard.visibility_growth", "Crescimento de Visibilidade")}</h2>
@@ -351,16 +265,10 @@ export const AdminDashboard: React.FC = () => {
                     <div className="flex items-end gap-1 md:gap-3 h-48">
                       {data.visitsByDay.slice(-14).map((day, idx) => (
                         <div key={idx} className="flex-1 group relative flex flex-col items-center h-full justify-end">
-                            <motion.div 
-                              initial={{ height: 0 }}
-                              animate={{ height: `${(day.count / (Math.max(...data.visitsByDay.map(d => d.count)) || 1)) * 100}%` }}
-                              className="w-full bg-white/10 group-hover:bg-gold-400 transition-all rounded-t-xl relative" 
-                            >
+                            <motion.div initial={{ height: 0 }} animate={{ height: `${(day.count / (Math.max(...data.visitsByDay.map(d => d.count)) || 1)) * 100}%` }} className="w-full bg-white/10 group-hover:bg-gold-400 transition-all rounded-t-xl relative">
                               <div className="absolute inset-0 bg-gold-400/20 blur-xl opacity-0 group-hover:opacity-100 transition-opacity" />
                             </motion.div>
-                            <div className="absolute -top-8 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-all scale-90 group-hover:scale-100 bg-white text-slate-950 text-[9px] font-black px-2 py-1 rounded shadow-xl pointer-events-none">
-                              {day.count} v
-                            </div>
+                            <div className="absolute -top-8 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-all scale-90 group-hover:scale-100 bg-white text-slate-950 text-[9px] font-black px-2 py-1 rounded shadow-xl pointer-events-none">{day.count} v</div>
                         </div>
                       ))}
                     </div>
@@ -372,7 +280,6 @@ export const AdminDashboard: React.FC = () => {
                 </div>
               </>
            )}
-           
             {!canSeeAnalytics && !canSeeEvents && !canSeeOps && (
               <div className="py-20 text-center border-2 border-dashed border-white/5 rounded-[48px]">
                  <Layout size={48} className="text-zinc-700 mx-auto mb-4" />
@@ -385,4 +292,3 @@ export const AdminDashboard: React.FC = () => {
     </div>
   );
 };
-
