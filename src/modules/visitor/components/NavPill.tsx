@@ -18,7 +18,7 @@ export const NavPill: React.FC<NavPillProps> = ({ onMenuClick }) => {
 
   const navItems = [
     { to: base || '/hub', label: 'Início', icon: '🏠' },
-    { to: base ? `${base}/obras` : '/select-museum', label: 'Obras', icon: '🏛️' },
+    { to: base ? `${base}/obras` : '/select-museum', label: 'Obras', icon: '🏜️' },
     { to: citySlug && equipmentSlug ? buildScannerUrl(citySlug, equipmentSlug) : '/scanner', label: 'Scan', icon: '📷' },
     { to: citySlug && equipmentSlug ? buildMuseumMapUrl(citySlug, equipmentSlug) : '/mapa', label: 'Mapa', icon: '📍' },
     { to: '#menu', label: 'Mais', icon: '☰', isMenu: true },
