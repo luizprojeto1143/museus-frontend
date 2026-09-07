@@ -4,6 +4,7 @@ import { logger } from "@/utils/logger";
 import { getApiBaseUrl } from "@/utils/url";
 import axiosRetry from "axios-retry";
 import toast from "react-hot-toast";
+import { readMuseumCtx } from "@/config/golive";
 
 export const baseURL = getApiBaseUrl();
 
@@ -40,19 +41,36 @@ async function getCsrfToken(): Promise<string> {
   return csrfTokenPromise;
 }
 
+function resolveCatalogTenantId(): string | null {
+  try {
+    const rawAuth = storage.get("museus_auth_v1") as unknown;
+    let parsed: { tenantId?: unknown } | null = null;
+    if (typeof rawAuth === "string") {
+      parsed = JSON.parse(rawAuth);
+    } else if (rawAuth && typeof rawAuth === "object") {
+      parsed = rawAuth as { tenantId?: unknown };
+    }
+    const fromAuth = typeof parsed?.tenantId === "string" ? parsed.tenantId.trim() : "";
+    const fromCtx = readMuseumCtx()?.tenantId?.trim() || "";
+    const tenantId = fromAuth || fromCtx;
+    if (!tenantId || tenantId === "undefined" || tenantId === "null") return null;
+    return tenantId;
+  } catch {
+    return readMuseumCtx()?.tenantId?.trim() || null;
+  }
+}
+
 api.interceptors.request.use(async (config) => {
   try {
-    const rawAuth = storage.get("museus_auth_v1");
-    if (rawAuth) {
-      const parsed = JSON.parse(rawAuth);
-      if (parsed.tenantId) {
-        config.headers["x-tenant-id"] = parsed.tenantId;
-        const path = `${config.baseURL || ""}${config.url || ""}`;
-        if (/\/(works|trails|events)(\b|\/|\?|$)/.test(path) || /\/(works|trails|events)$/.test(String(config.url || ""))) {
-          const params = (config.params || {}) as Record<string, unknown>;
-          if (!params.tenantId) {
-            config.params = { ...params, tenantId: parsed.tenantId };
-          }
+    const tenantId = resolveCatalogTenantId();
+    if (tenantId) {
+      config.headers = config.headers || {};
+      config.headers["x-tenant-id"] = tenantId;
+      const url = String(config.url || "");
+      if (/(^|\/)(works|trails|events)(\/|\?|$)/.test(url)) {
+        const params = (config.params || {}) as Record<string, unknown>;
+        if (!params.tenantId) {
+          config.params = { ...params, tenantId };
         }
       }
     }
