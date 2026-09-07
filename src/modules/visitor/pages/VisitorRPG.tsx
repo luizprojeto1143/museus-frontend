@@ -7,6 +7,8 @@ import { Loader2, Sword, Shield, Trophy, User, Crown, Shirt, ShoppingBag, IdCard
 import { UserSilhouette } from "@/components/UserSilhouette";
 import { toast } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
+import { readMuseumCtx } from "@/config/golive";
+import { buildEquipmentUrl } from "@/utils/routes";
 import { SelfieCapture } from "../components/SelfieCapture";
 import "./VisitorRPG.css";
 
@@ -52,6 +54,7 @@ export const VisitorRPG: React.FC = () => {
     const [characters, setCharacters] = useState<RpgCharacter[]>([]);
     const [activeChar, setActiveChar] = useState<RpgCharacter | null>(null);
     const [loading, setLoading] = useState(true);
+    const [loadError, setLoadError] = useState(false);
     const [editing, setEditing] = useState(false);
     const [newName, setNewName] = useState('');
     const [avatarStatus, setAvatarStatus] = useState<string>('NONE');
@@ -59,6 +62,7 @@ export const VisitorRPG: React.FC = () => {
 
     const fetchRPG = useCallback(async () => {
         try {
+            setLoadError(false);
             const res = await api.get<RpgResponse>('/rpg/me');
             const loadedCharacters = res.data.characters || [];
             setVisitor(res.data.visitor || null);
@@ -72,7 +76,8 @@ export const VisitorRPG: React.FC = () => {
                 setIsGenerating(active.avatarStatus === 'GENERATING');
             }
         } catch (error) { 
-            logger.error(error); 
+            logger.error(error);
+            setLoadError(true);
         } finally { 
             setLoading(false); 
         }
@@ -102,7 +107,27 @@ export const VisitorRPG: React.FC = () => {
     }, [isGenerating, fetchRPG]);
 
     useEffect(() => { 
-        if (!isGuest) fetchRPG(); 
+        if (isGuest) {
+            setLoading(false);
+            setLoadError(false);
+            return;
+        }
+        let cancelled = false;
+        setLoading(true);
+        setLoadError(false);
+        const timer = window.setTimeout(() => {
+            if (!cancelled) {
+                setLoading(false);
+                setLoadError(true);
+            }
+        }, 8000);
+        fetchRPG().finally(() => {
+            window.clearTimeout(timer);
+        });
+        return () => {
+            cancelled = true;
+            window.clearTimeout(timer);
+        };
     }, [fetchRPG, isGuest]);
 
     const onSaveName = async () => {
@@ -131,6 +156,27 @@ export const VisitorRPG: React.FC = () => {
     };
 
     if (loading) return <div style={{ display: 'flex', justifyContent: 'center', padding: '5rem 0' }}><Loader2 className="animate-spin" style={{ color: 'var(--accent-primary)' }} /></div>;
+
+    if (loadError && !isGuest) {
+        const ctx = readMuseumCtx();
+        const museumPath = ctx ? buildEquipmentUrl(ctx.citySlug, ctx.equipmentSlug) : "/select-museum";
+        return (
+            <div className="rpg-container flex flex-col items-center justify-center min-h-[70vh] p-6">
+                <div className="rpg-card premium-glass !max-w-md text-center py-16 px-8">
+                    <h2 className="text-2xl font-black text-white mb-4 uppercase tracking-tighter">Não deu pra carregar o personagem</h2>
+                    <p className="text-zinc-400 text-sm mb-8">Tenta de novo ou volta ao museu.</p>
+                    <div className="flex flex-col sm:flex-row gap-3 justify-center">
+                        <button type="button" className="rpg-btn-primary px-6 py-3 rounded-full font-bold" onClick={() => { setLoadError(false); setLoading(true); fetchRPG(); }}>
+                            Tentar de novo
+                        </button>
+                        <button type="button" className="rpg-btn-secondary px-6 py-3 rounded-full font-bold" onClick={() => navigate(museumPath)}>
+                            Voltar ao museu
+                        </button>
+                    </div>
+                </div>
+            </div>
+        );
+    }
 
     if (isGuest) {
         return (
