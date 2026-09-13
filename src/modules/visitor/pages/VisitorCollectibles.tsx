@@ -47,8 +47,17 @@ export const VisitorCollectibles: React.FC = () => {
     const [myCards, setMyCards] = useState<OwnedCollectibleCard[]>([]);
     const [loading, setLoading] = useState(true);
     const [tab, setTab] = useState<'collection' | 'all'>('collection');
+    const [loadError, setLoadError] = useState<string | null>(null);
 
     const fetchData = useCallback(async () => {
+        if (!tenantId) {
+            setLoadError("Selecione um equipamento cultural para carregar sua coleção.");
+            setLoading(false);
+            return;
+        }
+
+        setLoading(true);
+        setLoadError(null);
         try {
             const [all, my] = await Promise.all([
                 api.get<CollectibleCard[]>(`/collectibles?tenantId=${tenantId}`),
@@ -56,11 +65,21 @@ export const VisitorCollectibles: React.FC = () => {
             ]);
             setAllCards(Array.isArray(all.data) ? all.data : []);
             setMyCards(Array.isArray(my.data) ? my.data : []);
-        } catch (error) { logger.error(error); toast.error("Erro ao carregar"); }
+        } catch (error) {
+            logger.error(error);
+            setLoadError("Nao foi possivel carregar sua colecao agora.");
+            toast.error("Erro ao carregar");
+        }
         finally { setLoading(false); }
     }, [tenantId]);
 
-    useEffect(() => { if (tenantId) fetchData(); }, [tenantId, fetchData]);
+    useEffect(() => {
+        if (isGuest) {
+            setLoading(false);
+            return;
+        }
+        fetchData();
+    }, [fetchData, isGuest]);
 
     const getOwnedCard = (owned: OwnedCollectibleCard) => owned.collectibleCard || owned.card;
     const myCardIds = new Set(myCards.map((c) => c.cardId));
@@ -76,6 +95,19 @@ export const VisitorCollectibles: React.FC = () => {
                 <h2 style={{ color: 'white', marginBottom: '1rem', fontSize: '1.5rem', fontWeight: 800 }}>Recurso Exclusivo</h2>
                 <p style={{ color: '#aaa', marginBottom: '2rem', fontSize: '0.9rem' }}>Crie uma conta gratuita para colecionar cards, interagir com o museu e ganhar recompensas virtuais!</p>
                 <button onClick={() => navigate('/register')} style={{ background: 'linear-gradient(135deg, var(--accent-primary), #b8941e)', color: '#1a1108', padding: '0.8rem 2rem', borderRadius: '1rem', fontWeight: 900, border: 'none', cursor: 'pointer', boxShadow: '0 4px 12px rgba(212,175,55,0.3)', width: '100%' }}>Criar Conta Gratuita</button>
+            </div>
+        );
+    }
+
+    if (loadError) {
+        return (
+            <div style={{ padding: '2rem', textAlign: 'center', maxWidth: '420px', margin: '4rem auto' }}>
+                <Sparkles size={42} style={{ color: 'var(--accent-primary)', margin: '0 auto 1rem' }} />
+                <h2 style={{ color: 'white', marginBottom: '0.75rem', fontSize: '1.35rem', fontWeight: 900 }}>Colecao indisponivel</h2>
+                <p style={{ color: '#aaa', marginBottom: '1.5rem', fontSize: '0.9rem' }}>{loadError}</p>
+                <button onClick={() => navigate('/cidades')} style={{ background: 'linear-gradient(135deg, var(--accent-primary), #b8941e)', color: '#1a1108', padding: '0.8rem 2rem', borderRadius: '1rem', fontWeight: 900, border: 'none', cursor: 'pointer', width: '100%' }}>
+                    Explorar equipamentos
+                </button>
             </div>
         );
     }

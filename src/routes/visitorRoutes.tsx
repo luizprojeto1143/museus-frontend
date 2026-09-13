@@ -200,6 +200,7 @@ export function visitorRoutes(RequireRole: React.FC<RequireRoleProps>) {
             <Route path="/roteiro-inteligente/resultado" element={vr(SmartItineraryResult, RequireRole)} />
             <Route path="/assinatura" element={vr(VisitorMembership, RequireRole)} />
             <Route path="/colecao" element={vr(VisitorCollectibles, RequireRole)} />
+            <Route path="/collection" element={<Navigate to="/colecao" replace />} />
             <Route path="/transferir-ingresso" element={vr(TicketTransfer, RequireRole)} />
             <Route path="/grupo" element={vr(GroupCheckout, RequireRole)} />
             <Route path="/rpg" element={vr(VisitorRPG, RequireRole)} />
@@ -213,8 +214,13 @@ export function visitorRoutes(RequireRole: React.FC<RequireRoleProps>) {
             <Route path="/guarda-roupa" element={vr(VisitorWardrobe, RequireRole)} />
             <Route path="/wardrobe" element={<Navigate to="/guarda-roupa" replace />} />
             <Route path="/marketplace" element={vr(SkinMarketplace, RequireRole)} />
+            <Route path="/desafios" element={vr(ChallengesPage, RequireRole)} />
+            <Route path="/challenges" element={<Navigate to="/desafios" replace />} />
+            <Route path="/missoes" element={<Navigate to="/desafios" replace />} />
             <Route path="/cracha" element={vr(BadgeRequestPage, RequireRole)} />
             <Route path="/cracha/rastreio" element={vr(BadgeTracking, RequireRole)} />
+            <Route path="/badge" element={<Navigate to="/cracha" replace />} />
+            <Route path="/badge/rastreio" element={<Navigate to="/cracha/rastreio" replace />} />
             <Route path="/vestigios/capturar/:workId" element={vr(VestigeCapture, RequireRole)} />
         </>
     );

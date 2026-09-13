@@ -21,12 +21,14 @@ i18n
     .init({
         resources: {
             "pt-BR": { translation: ptBR },
+            "pt-br": { translation: ptBR },
+            pt: { translation: ptBR },
             en: { translation: en },
             es: { translation: es }
         },
         lng: savedLang,
         fallbackLng: "pt-BR",
-        supportedLngs: ["pt-BR", "en", "es"],
+        supportedLngs: ["pt-BR", "pt-br", "pt", "en", "es"],
         nonExplicitSupportedLngs: true,
 
         interpolation: {

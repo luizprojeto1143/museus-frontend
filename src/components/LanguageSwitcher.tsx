@@ -37,7 +37,7 @@ export const LanguageSwitcher: React.FC<LanguageSwitcherProps> = ({ style, class
     const changeLanguage = async (lng: SupportedLanguage) => {
         const nextLang = normalizeLanguage(lng);
         setCurrentLang(nextLang);
-        try { localStorage.setItem("cv_language", lng); } catch {}
+        try { localStorage.setItem("cv_language", nextLang); } catch {}
         await i18n.changeLanguage(nextLang);
         document.documentElement.lang = nextLang;
     };

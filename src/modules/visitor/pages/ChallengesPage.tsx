@@ -6,6 +6,7 @@ import { api } from '../../../api/client';
 import { useAuth } from '../../auth/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { DailyChallengeWidget, XpProgressBar } from '../../../components/gamification/ChallengeWidget';
+import { toast } from 'react-hot-toast';
 import './Challenges.css';
 
 interface ScavengerHunt {
@@ -23,14 +24,23 @@ export const ChallengesPage: React.FC = () => {
     const [hunts, setHunts] = useState<ScavengerHunt[]>([]);
     const [loading, setLoading] = useState(true);
     const [userXp, setUserXp] = useState(0);
+    const [loadError, setLoadError] = useState<string | null>(null);
 
     useEffect(() => {
         const fetchHunts = async () => {
+            if (!tenantId) {
+                setLoadError('Selecione um equipamento cultural para ver os desafios disponiveis.');
+                setLoading(false);
+                return;
+            }
+
+            setLoadError(null);
             try {
                 const res = await api.get(`/challenges/hunts?tenantId=${tenantId}`);
                 setHunts(res.data);
             } catch (error: unknown) {
                 logger.error('Error fetching hunts:', error);
+                setLoadError('Nao foi possivel carregar os desafios agora.');
             } finally {
                 setLoading(false);
             }
@@ -45,9 +55,9 @@ export const ChallengesPage: React.FC = () => {
             }
         };
 
-        if (tenantId && !isGuest) {
+        if (!isGuest) {
             fetchHunts();
-            fetchUserStats();
+            if (tenantId) fetchUserStats();
         } else if (isGuest) {
             setLoading(false);
         }
@@ -109,6 +119,12 @@ export const ChallengesPage: React.FC = () => {
 
                         {loading ? (
                             <div className="challenges-loading">Carregando...</div>
+                        ) : loadError ? (
+                            <div className="challenges-empty">
+                                <Trophy size={48} />
+                                <h3>Desafios indisponiveis</h3>
+                                <p>{loadError}</p>
+                            </div>
                         ) : hunts.length === 0 ? (
                             <div className="challenges-empty">
                                 <Trophy size={48} />
@@ -137,9 +153,10 @@ const HuntCard: React.FC<{ hunt: ScavengerHunt }> = ({ hunt }) => {
         setStarting(true);
         try {
             await api.post(`/challenges/hunts/${hunt.id}/start`);
-            window.location.href = `/desafios/cacas/${hunt.id}`;
+            toast.success('Caca iniciada! Siga as pistas dentro do equipamento cultural.');
         } catch (error: unknown) {
             logger.error('Error starting hunt:', error);
+            toast.error('Nao foi possivel iniciar esta caca agora.');
         } finally {
             setStarting(false);
         }
