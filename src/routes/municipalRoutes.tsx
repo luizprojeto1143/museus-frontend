@@ -1,5 +1,5 @@
 import React from "react";
-import { Route } from "react-router-dom";
+import { Route, Navigate } from "react-router-dom";
 import { Role } from "../modules/auth/AuthContext";
 
 import { MunicipalLayout } from "../modules/backoffice/municipal/MunicipalLayout";
@@ -44,6 +44,7 @@ export function municipalRoutes(RequireRole: React.FC<RequireRoleProps>) {
             <Route path="/municipal/projects" element={mun(MunicipalNoticeProjects)} />
             <Route path="/municipal/reports" element={mun(MunicipalReports)} />
             <Route path="/municipal/acessibilidade" element={mun(MunicipalAccessibilityGaps)} />
+            <Route path="/municipal/compliance" element={<Navigate to="/municipal/acessibilidade" replace />} />
             <Route path="/municipal/ppa" element={mun(MunicipalPPA)} />
             <Route path="/municipal/settings" element={mun(MunicipalSettings)} />
 

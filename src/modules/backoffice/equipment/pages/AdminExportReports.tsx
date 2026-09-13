@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import { FileText, Download, FileSpreadsheet, Calendar, Filter, ShieldCheck, Theater, Building2, Landmark, CheckCircle2, TrendingUp, Users, DollarSign, Printer } from "lucide-react";
 import { motion } from "framer-motion";
 import { Button, Card, Badge, AnimateIn } from "@/components/ui";
@@ -61,8 +61,10 @@ export const AdminExportReports: React.FC = () => {
     const [dateRange, setDateRange] = useState<string>("THIS_MONTH");
     const [isExportingPDF, setIsExportingPDF] = useState(false);
     const [isExportingExcel, setIsExportingExcel] = useState(false);
+    const issuedAt = useMemo(() => new Date().toLocaleDateString("pt-BR"), []);
+    const auditCode = useMemo(() => `CV-AUDIT-${dateRange}-${selectedCategory}`.toUpperCase(), [dateRange, selectedCategory]);
 
-    const handleExportPDF = (reportId: string) => {
+    const handleExportPDF = (_reportId: string) => {
         setIsExportingPDF(true);
         setTimeout(() => {
             setIsExportingPDF(false);
@@ -216,8 +218,8 @@ export const AdminExportReports: React.FC = () => {
                             <span className="text-xs text-slate-600">Sistema Único de Governança Cultural "Cultura Viva"</span>
                         </div>
                         <div className="text-right text-xs text-slate-600">
-                            <p><strong>Emissão:</strong> {new Date().toLocaleDateString("pt-BR")}</p>
-                            <p><strong>Autenticação:</strong> CV-AUDIT-{Math.floor(100000 + Math.random() * 900000)}</p>
+                            <p><strong>Emissão:</strong> {issuedAt}</p>
+                            <p><strong>Autenticação:</strong> {auditCode}</p>
                         </div>
                     </div>
 

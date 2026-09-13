@@ -2,8 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { cn } from "../lib/cn";
 
-const supportedLanguages = ["pt-BR", "en", "es"] as const;
-type SupportedLanguage = typeof supportedLanguages[number];
+type SupportedLanguage = "pt-BR" | "en" | "es";
 
 const normalizeLanguage = (lng?: string | null): SupportedLanguage => {
     if (!lng) return "pt-BR";
@@ -37,9 +36,12 @@ export const LanguageSwitcher: React.FC<LanguageSwitcherProps> = ({ style, class
     const changeLanguage = async (lng: SupportedLanguage) => {
         const nextLang = normalizeLanguage(lng);
         setCurrentLang(nextLang);
-        try { localStorage.setItem("cv_language", nextLang); } catch {}
+        try {
+            localStorage.setItem("cv_language", nextLang);
+        } catch {
+            // Language selection still works even if localStorage is unavailable.
+        }
         await i18n.changeLanguage(nextLang);
-        document.documentElement.lang = nextLang;
     };
 
     const languages: Array<{ code: SupportedLanguage; label: string; flag: string; title: string }> = [

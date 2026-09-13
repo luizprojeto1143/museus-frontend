@@ -180,6 +180,8 @@ export function visitorRoutes(RequireRole: React.FC<RequireRoleProps>) {
             <Route path="/scanner/qr" element={vr(ScannerPage, RequireRole)} />
             <Route path="/scanner/ai" element={vr(VisualScannerPage, RequireRole)} />
             <Route path="/qr/:code" element={vr(QrVisit, RequireRole)} />
+            <Route path="/visitor" element={<Navigate to="/hub" replace />} />
+            <Route path="/visitor/map" element={<Navigate to="/mapa" replace />} />
             <Route path="/obras" element={<RedirectMuseumWorks />} />
             <Route path="/mapa" element={vr(MapView, RequireRole)} />
             <Route path="/trilhas" element={vr(TrailsList, RequireRole)} />
@@ -193,6 +195,8 @@ export function visitorRoutes(RequireRole: React.FC<RequireRoleProps>) {
             <Route path="/passaporte-cultural" element={vr(Passport, RequireRole)} />
             <Route path="/passport" element={<Navigate to="/passaporte" replace />} />
             <Route path="/favoritos" element={vr(Favorites, RequireRole)} />
+            <Route path="/conquistas" element={vr(Achievements, RequireRole)} />
+            <Route path="/ranking" element={vr(LeaderboardPage, RequireRole)} />
             <Route path="/perfil" element={vr(VisitorProfile, RequireRole)} />
             <Route path="/profile" element={<Navigate to="/perfil" replace />} />
             <Route path="/chat" element={vr(ChatAI, RequireRole)} />
@@ -200,6 +204,7 @@ export function visitorRoutes(RequireRole: React.FC<RequireRoleProps>) {
             <Route path="/roteiro-inteligente/resultado" element={vr(SmartItineraryResult, RequireRole)} />
             <Route path="/assinatura" element={vr(VisitorMembership, RequireRole)} />
             <Route path="/colecao" element={vr(VisitorCollectibles, RequireRole)} />
+            <Route path="/colecionaveis" element={<Navigate to="/colecao" replace />} />
             <Route path="/collection" element={<Navigate to="/colecao" replace />} />
             <Route path="/transferir-ingresso" element={vr(TicketTransfer, RequireRole)} />
             <Route path="/grupo" element={vr(GroupCheckout, RequireRole)} />

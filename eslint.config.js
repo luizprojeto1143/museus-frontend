@@ -16,6 +16,7 @@ export default tseslint.config(
             '*.json',
             '*.cjs',
             '*.log',
+            '*.original.tsx',
         ],
     },
     {

@@ -43,6 +43,7 @@ const AdminSponsorships = React.lazy(() => import("../modules/backoffice/equipme
 const AdminBoxOffice = React.lazy(() => import("../modules/backoffice/equipment/pages/AdminBoxOffice").then(m => ({ default: m.AdminBoxOffice })));
 
 const AdminAccessibilityForm = React.lazy(() => import("../modules/backoffice/equipment/pages/AdminAccessibilityForm").then(m => ({ default: m.AdminAccessibilityForm })));
+const AdminAccessibilityManagement = React.lazy(() => import("../modules/backoffice/equipment/pages/AdminAccessibilityManagement").then(m => ({ default: m.AdminAccessibilityManagement })));
 const AdminEquipments = React.lazy(() => import("../modules/backoffice/equipment/pages/AdminEquipments").then(m => ({ default: m.AdminEquipments })));
 const AdminEquipmentForm = React.lazy(() => import("../modules/backoffice/equipment/pages/AdminEquipmentForm").then(m => ({ default: m.AdminEquipmentForm })));
 
@@ -124,6 +125,10 @@ export function adminRoutes(RequireRole: React.FC<RequireRoleProps>) {
             <Route path="/admin/equipamentos/:id" element={ar(AdminEquipmentForm, RequireRole)} />
             <Route path="/admin/calendario" element={ar(AdminCalendar, RequireRole)} />
             <Route path="/admin/qrcodes" element={ar(AdminQRCodes, RequireRole)} />
+            <Route path="/admin/acessibilidade" element={ar(AdminAccessibilityManagement, RequireRole)} />
+            <Route path="/admin/acessibilidade-gestao" element={<Navigate to="/admin/acessibilidade" replace />} />
+            <Route path="/admin/acessibilidade/novo" element={ar(AdminAccessibilityForm, RequireRole)} />
+            <Route path="/admin/acessibilidade/:id" element={ar(AdminAccessibilityForm, RequireRole)} />
             <Route path="/admin/categorias" element={ar(AdminCategories, RequireRole)} />
             <Route path="/admin/categorias/nova" element={ar(AdminCategoryForm, RequireRole)} />
             <Route path="/admin/categorias/:id" element={ar(AdminCategoryForm, RequireRole)} />
@@ -182,6 +187,9 @@ export function adminRoutes(RequireRole: React.FC<RequireRoleProps>) {
             <Route path="/admin/parceiros-roteiro" element={ar(ServiceProvidersManagement, RequireRole)} />
             <Route path="/admin/parceiros-roteiro/novo" element={ar(ServiceProviderForm, RequireRole)} />
             <Route path="/admin/parceiros-roteiro/:id" element={ar(ServiceProviderForm, RequireRole)} />
+            <Route path="/admin/prestadores" element={ar(ServiceProvidersManagement, RequireRole)} />
+            <Route path="/admin/prestadores/novo" element={ar(ServiceProviderForm, RequireRole)} />
+            <Route path="/admin/prestadores/:id" element={ar(ServiceProviderForm, RequireRole)} />
             <Route path="/admin/meu-negocio" element={ar(ProviderDashboard, RequireRole)} />
             <Route path="/admin/ecossistema-master" element={ar(MasterEcosystemDashboard, RequireRole)} />
         </>
