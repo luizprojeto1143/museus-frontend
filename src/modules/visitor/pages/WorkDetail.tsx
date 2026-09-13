@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate, useParams, useSearchParams, Link } from "react-router-dom";
 import { useAuth } from "../../auth/AuthContext";
 import { api } from "../../../api/client";
+import { workDetailGetOptions } from "./workDetailTenant";
 import { LibrasSection } from "../../../components/accessibility/LibrasPlayer";
 import { NarrativeAudioGuide } from "../components/NarrativeAudioGuide";
 import { VideoPlayer } from "../../../components/common/VideoPlayer";
@@ -158,7 +159,7 @@ export const WorkDetail: React.FC = () => {
     if (!id) return;
     setLoading(true);
     
-    api.get<WorkApiData>(`/works/${id}`)
+    api.get<WorkApiData>(`/works/${id}`, workDetailGetOptions(tenantId))
       .then((res) => {
         const w = res.data;
         const mapped: WorkDetailData = {
