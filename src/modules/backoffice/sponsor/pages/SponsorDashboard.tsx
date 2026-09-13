@@ -31,7 +31,7 @@ const DEMO_SPONSORSHIPS: WorkSponsorship[] = [
         work: {
             id: "work-101",
             title: "Restauração do Retábulo Barroco da Matriz",
-            imageUrl: "https://images.unsplash.com/photo-1579783902614-a3fb3927b675?auto=format&fit=crop&w=600&q=80",
+            imageUrl: null,
             museumName: "Museu de Arte Sacra de Ouro Preto"
         }
     },
@@ -44,7 +44,7 @@ const DEMO_SPONSORSHIPS: WorkSponsorship[] = [
         work: {
             id: "work-102",
             title: "Exposição Imersiva • O Aleijadinho em 3D",
-            imageUrl: "https://images.unsplash.com/photo-1582555172866-f73bb12a2ab3?auto=format&fit=crop&w=600&q=80",
+            imageUrl: null,
             museumName: "Museu das Missões"
         }
     }

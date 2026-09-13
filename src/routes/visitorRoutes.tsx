@@ -208,7 +208,11 @@ export function visitorRoutes(RequireRole: React.FC<RequireRoleProps>) {
             <Route path="/collection" element={<Navigate to="/colecao" replace />} />
             <Route path="/transferir-ingresso" element={vr(TicketTransfer, RequireRole)} />
             <Route path="/grupo" element={vr(GroupCheckout, RequireRole)} />
+            <Route path="/loja" element={vr(ShopPage, RequireRole)} />
             <Route path="/rpg" element={vr(VisitorRPG, RequireRole)} />
+            <Route path="/avatar" element={<Navigate to="/rpg" replace />} />
+            <Route path="/batalha" element={<Navigate to="/rpg" replace />} />
+            <Route path="/camera" element={<Navigate to="/scanner/ai" replace />} />
             <Route path="/checkin" element={vr(SocialCheckinPage, RequireRole)} />
             <Route path="/professor" element={vr(TeacherPortal, RequireRole)} />
             <Route path="/comunidade" element={vr(CommunityFeed, RequireRole)} />
@@ -225,6 +229,7 @@ export function visitorRoutes(RequireRole: React.FC<RequireRoleProps>) {
             <Route path="/cracha" element={vr(BadgeRequestPage, RequireRole)} />
             <Route path="/cracha/rastreio" element={vr(BadgeTracking, RequireRole)} />
             <Route path="/badge" element={<Navigate to="/cracha" replace />} />
+            <Route path="/badges" element={<Navigate to="/cracha/rastreio" replace />} />
             <Route path="/badge/rastreio" element={<Navigate to="/cracha/rastreio" replace />} />
             <Route path="/vestigios/capturar/:workId" element={vr(VestigeCapture, RequireRole)} />
         </>

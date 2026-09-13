@@ -265,7 +265,7 @@ export const VisitorLayout: React.FC<{ children: React.ReactNode }> = ({ childre
       <main className="layout-main-premium">
         {isGuest && (
           <div className="guest-banner-premium">
-            <span>✨ {t("visitor.layout.guest_banner")}</span>
+            <span>✨ {t("visitor.layout.guest_banner", "Explore como visitante ou crie uma conta para ganhar selos!")}</span>
             <button
               className="guest-banner-btn"
               onClick={() => navigate("/register", {
