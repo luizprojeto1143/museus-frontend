@@ -55,6 +55,7 @@ export function normalizeRole(raw: string | null | undefined): Role {
   if (role === "master") return "master";
   if (role === "producer") return "producer";
   if (role === "prestador") return "provider";
+  if (role === "patrocinador") return "sponsor";
   if (role === "provider") return "provider";
   if (role === "sponsor") return "sponsor";
   if (role === "theater") return "theater_admin";

@@ -1,6 +1,7 @@
 import React from 'react';
-import { Route } from 'react-router-dom';
+import { Navigate, Route, useLocation } from 'react-router-dom';
 import { SponsorLayout } from '../modules/sponsor/layouts/SponsorLayout';
+import { useAuth } from '../modules/auth/AuthContext';
 
 const SponsorLanding = React.lazy(() => import('../modules/backoffice/sponsor').then(m => ({ default: m.SponsorLanding })));
 const SponsorBrowseWorks = React.lazy(() => import('../modules/backoffice/sponsor').then(m => ({ default: m.SponsorBrowseWorks })));
@@ -17,9 +18,24 @@ const SponsorRegisterPage = React.lazy(() => import('../modules/backoffice/spons
 
 import { Role } from '../types/auth';
 
-const SPONSOR_ALLOWED_ROLES = ["sponsor", "master", "municipal_admin", "admin", "producer", "visitor"];
+const SPONSOR_ALLOWED_ROLES = ["sponsor", "master", "municipal_admin", "admin", "equipment_admin"];
 
-export const sponsorRoutes = (RequireRole: React.FC<{ allowed: (Role | string)[]; children: React.ReactElement }>) => (
+const RequireSponsorAccess: React.FC<{ children: React.ReactElement }> = ({ children }) => {
+  const { isAuthenticated, isGuest, role } = useAuth();
+  const location = useLocation();
+
+  if (!isAuthenticated || isGuest || !role || role === "visitor") {
+    return <Navigate to="/sponsor/login" replace state={{ from: location }} />;
+  }
+
+  if (!SPONSOR_ALLOWED_ROLES.includes(role)) {
+    return <Navigate to="/403" replace />;
+  }
+
+  return children;
+};
+
+export const sponsorRoutes = (_RequireRole: React.FC<{ allowed: (Role | string)[]; children: React.ReactElement }>) => (
   <>
     {/* Dedicated Sponsor Auth routes */}
     <Route path="/sponsor/login" element={<SponsorLoginPage />} />
@@ -30,23 +46,27 @@ export const sponsorRoutes = (RequireRole: React.FC<{ allowed: (Role | string)[]
     {/* Public/Landing paths */}
     <Route path="/patrocinar" element={<SponsorLanding />} />
     <Route path="/patrocinar/obras" element={<SponsorBrowseWorks />} />
-    <Route path="/patrocinar/dashboard" element={<SponsorImpact />} />
+    <Route path="/patrocinar/dashboard" element={
+      <RequireSponsorAccess>
+        <SponsorImpact />
+      </RequireSponsorAccess>
+    } />
     <Route path="/patrocinar/checkout/:workId" element={
-      <RequireRole allowed={SPONSOR_ALLOWED_ROLES}>
+      <RequireSponsorAccess>
         <SponsorCheckout />
-      </RequireRole>
+      </RequireSponsorAccess>
     } />
     <Route path="/patrocinar/sucesso" element={
-      <RequireRole allowed={SPONSOR_ALLOWED_ROLES}>
+      <RequireSponsorAccess>
         <SponsorSuccess />
-      </RequireRole>
+      </RequireSponsorAccess>
     } />
 
     {/* New Premium Sponsor Portal under SponsorLayout */}
     <Route path="/sponsor" element={
-      <RequireRole allowed={SPONSOR_ALLOWED_ROLES}>
+      <RequireSponsorAccess>
         <SponsorLayout />
-      </RequireRole>
+      </RequireSponsorAccess>
     }>
       <Route index element={<SponsorImpact />} />
       <Route path="dashboard" element={<SponsorImpact />} />
